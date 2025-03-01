@@ -1,4 +1,4 @@
-import DarkModeToggle from "./Components/Buttons/ThemeButton";
+import DarkModeToggle from "../Components/UI/ThemeToggle";
 
 export default function Home() {
   return (
