@@ -13,7 +13,7 @@ const HeaderDropDown = () => {
     <div className="relative">
       <Menu>
         <MenuButton
-          className="inline-flex items-center gap-2 p-2 rounded-lg border-2 border-black dark:border-white dark:hover:bg-slate-700 dark:active:bg-slate-500
+          className="inline-flex items-center gap-2 p-2 rounded-lg border-1   dark:hover:bg-slate-700 dark:active:bg-slate-500
         cursor-pointer hover:bg-slate-300 active:bg-slate-500
         transition duration-200 ease-in-out"
         >

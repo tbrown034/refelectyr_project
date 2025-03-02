@@ -7,7 +7,9 @@ const Header = () => {
   return (
     <div className="flex items-center justify-between p-4 ">
       <HeaderBranding />
-      <HeaderNavBar />
+      <div className="hidden md:flex">
+        <HeaderNavBar />
+      </div>
       <div className="flex gap-4">
         <ThemeToggle />
         <HeaderDropDown />
