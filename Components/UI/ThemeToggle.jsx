@@ -59,7 +59,7 @@ const ThemeToggle = () => {
       />
       <button
         onClick={toggleTheme}
-        className={`relative flex items-center justify-center w-12 h-6 rounded-full transition-colors duration-300 ${
+        className={`relative flex items-center justify-center cursor-pointer w-12 h-6 rounded-full transition-colors duration-300 ${
           isDarkMode ? "bg-gray-600" : "bg-gray-200"
         }`}
       >

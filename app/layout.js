@@ -1,16 +1,19 @@
 import "./globals.css";
 import Header from "@/Components/Layout/Header/Header";
+import Footer from "@/Components/Layout/Footer/Footer";
 
 export const metadata = {
   title: "ReflectYr",
   description: "Your entertainment ranking tool",
 };
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="bg-white text-black dark:bg-black dark:text-white transition-colors duration-300">
+      <body className="flex p-2 flex-col min-h-screen bg-white text-black dark:bg-black dark:text-white transition-colors duration-300">
         <Header />
-        {children}
+        <main className="flex-grow p-4 flex">{children}</main>
+        <Footer />
       </body>
     </html>
   );
