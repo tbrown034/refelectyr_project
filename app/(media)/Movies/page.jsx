@@ -1,12 +1,12 @@
 import { getMovies } from "@/Library/Api/tmdb";
 import MoviesList from "./MoviesList";
-import YearSelector from "@/Components/UI/YearSelector"; // ✅ Import YearSelector
+import YearSelector from "@/Components/UI/YearSelector";
 
 export default async function MoviesPage({
   searchParams: searchParamsPromise,
 }) {
   const searchParams = await searchParamsPromise;
-  const selectedYear = searchParams?.year || "2025"; // ✅ Get year from URL or default to 2025
+  const selectedYear = searchParams?.year || "2025";
 
   const movies = await getMovies({
     year: selectedYear,

@@ -1,20 +1,23 @@
+import Link from "next/link";
+
 const navItems = [
   { text: "Home", href: "/" },
+  { text: "Movies", href: "/movies" },
+  { text: "TV Shows", href: "/tv" },
   { text: "About", href: "/about" },
-  { text: "Contact", href: "/contact" },
 ];
 
 const HeaderNavBar = () => {
   return (
     <nav className="flex gap-4">
       {navItems.map((item, index) => (
-        <a
+        <Link
           key={index}
           href={item.href}
-          className="text-gray-900 hover:underline"
+          className="text-gray-900 dark:text-white hover:underline transition-colors"
         >
           {item.text}
-        </a>
+        </Link>
       ))}
     </nav>
   );

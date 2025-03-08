@@ -4,8 +4,9 @@ export const getMovies = async ({
   includeAdult = false,
   includeVideo = false,
   language = "en-US",
-  limit = 20, // ✅ Default to 20 movies
+  limit = 20, // Default to 20 movies
 } = {}) => {
+  // Match the variable name in your .env.local file
   const token = process.env.TMDM_API_TOKEN;
 
   const queryParams = new URLSearchParams({
@@ -28,7 +29,7 @@ export const getMovies = async ({
         accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
-      next: { revalidate: 86400 }, // ✅ Cache for 24 hours
+      next: { revalidate: 86400 }, // Cache for 24 hours
     });
 
     if (!response.ok) {
@@ -36,7 +37,7 @@ export const getMovies = async ({
     }
 
     const data = await response.json();
-    return data.results.slice(0, limit); // ✅ Now returning top 20 movies
+    return data.results.slice(0, limit); // Return top movies
   } catch (error) {
     console.error("Error fetching movies:", error);
     return [];
