@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": ["./*"]
+      "@/Contexts/*": ["./Contexts/*"],
+      "@/Components/*": ["./Components/*"],
+      "@/Library/*": ["./Library/*"]
     }
   }
 }
