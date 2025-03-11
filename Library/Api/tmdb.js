@@ -12,7 +12,7 @@ export const getMovies = async ({
   limit = 20, // Default to 20 movies
 } = {}) => {
   // Match the variable name in your .env.local file
-  const token = process.env.TMDM_API_TOKEN;
+  const token = process.env.TMDB_API_TOKEN;
 
   const queryParams = new URLSearchParams({
     include_adult: includeAdult,
@@ -59,7 +59,7 @@ export const getTvShows = async ({
   limit = 20, // Default to 20 TV shows
 } = {}) => {
   // Match the variable name in your .env.local file
-  const token = process.env.TMDM_API_TOKEN;
+  const token = process.env.TMDB_API_TOKEN;
 
   const queryParams = new URLSearchParams({
     include_adult: includeAdult,
