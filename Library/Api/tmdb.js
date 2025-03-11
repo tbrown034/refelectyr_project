@@ -1,8 +1,5 @@
-/**
- * API functions for fetching media from TMDB
- * Optimized for ReflectYr - an end-of-year entertainment ranking tool
- */
-
+//Library/Api/tmdb.js
+// 3/11/7:54 p.m. update works in prod
 export const getMovies = async ({
   year = null,
   sortBy = "popularity.desc",
