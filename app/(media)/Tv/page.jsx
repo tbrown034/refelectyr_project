@@ -5,6 +5,7 @@ import YearSelector from "@/Components/UI/YearSelector";
 export default async function TvShowsPage({
   searchParams: searchParamsPromise,
 }) {
+  // Next.js 19 treats searchParams as a Promise
   const searchParams = await searchParamsPromise;
   const selectedYear = searchParams?.year || "2025";
 
@@ -15,8 +16,8 @@ export default async function TvShowsPage({
   });
 
   return (
-    <div>
-      <h1 className="text-xl font-bold mb-4">
+    <div className="container mx-auto">
+      <h1 className="text-2xl font-bold mb-4">
         Top 20 TV Shows of {selectedYear}
       </h1>
       <YearSelector />

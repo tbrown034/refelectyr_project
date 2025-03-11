@@ -1,28 +1,36 @@
-"use client"; // ✅ This needs to be a Client Component
+"use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { use } from "react";
+import { YearContext } from "@/contexts/YearContext";
 
-export default function YearSelector() {
+export default function YearSelector({ navigateOnChange = true }) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const currentYear = searchParams.get("year") || "2025"; // ✅ Default to 2025
+  const urlYear = searchParams.get("year");
 
-  const [selectedYear, setSelectedYear] = useState(currentYear);
+  // Use the new React 19 `use` hook to access context
+  const { selectedYear, setSelectedYear } = use(YearContext);
 
-  useEffect(() => {
-    setSelectedYear(currentYear); // ✅ Keep dropdown in sync with URL changes
-  }, [currentYear]);
-
+  // Handle year selection change
   const handleChange = (event) => {
     const newYear = event.target.value;
     setSelectedYear(newYear);
 
-    // ✅ Update the URL dynamically (keeps the app fast, no full page reload)
-    const params = new URLSearchParams(searchParams);
-    params.set("year", newYear);
-    router.push(`/movies?${params.toString()}`);
+    // Only update URL if we're on a media page or if navigateOnChange is true
+    if (pathname !== "/" || navigateOnChange) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("year", newYear);
+      router.push(`${pathname}?${params.toString()}`);
+    }
   };
+
+  // For media pages, if URL has a year parameter, sync it with context
+  if (pathname !== "/" && urlYear && urlYear !== selectedYear) {
+    // This conditional use of setSelectedYear is only possible with the new `use` hook
+    setSelectedYear(urlYear);
+  }
 
   return (
     <div className="mb-4">
@@ -42,7 +50,7 @@ export default function YearSelector() {
         {[...Array(26)].map((_, index) => {
           const year = 2000 + index;
           return (
-            <option key={year} value={year}>
+            <option key={year} value={year.toString()}>
               {year}
             </option>
           );
