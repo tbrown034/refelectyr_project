@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getTvShows } from "@/Library/Api/tmdb";
 import TvShowsList from "./TvShowsList";
 import YearSelector from "@/Components/UI/YearSelector";
@@ -21,7 +22,9 @@ export default async function TvShowsPage({
       <h1 className="text-2xl font-bold mb-4">
         Top TV Shows of {selectedYear}
       </h1>
-      <YearSelector />
+      <Suspense fallback={<div>Loading year selector...</div>}>
+        <YearSelector />
+      </Suspense>
       <TvShowsList shows={tvShows} />
     </div>
   );

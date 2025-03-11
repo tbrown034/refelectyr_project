@@ -5,6 +5,7 @@ import { useContext, useEffect } from "react";
 import { YearContext, DEFAULT_YEAR } from "@/Contexts/YearContext";
 
 export default function YearSelector({ navigateOnChange = true }) {
+  // Only use these hooks when this component is actually rendered on media pages
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -14,12 +15,13 @@ export default function YearSelector({ navigateOnChange = true }) {
     useContext(YearContext);
 
   // Get the year from URL params
-  const urlYear = searchParams.get("year");
+  const urlYear = searchParams ? searchParams.get("year") : null;
 
   // Effect to sync context with URL and vice versa
   useEffect(() => {
     // Only run once the context is initialized from localStorage
     if (!isInitialized) return;
+    if (!searchParams) return; // Skip if searchParams isn't available
 
     // For media pages (/movies or /tv), URL params take priority
     if ((pathname === "/movies" || pathname === "/tv") && urlYear) {
@@ -48,6 +50,9 @@ export default function YearSelector({ navigateOnChange = true }) {
   const handleChange = (event) => {
     const newYear = event.target.value;
     setSelectedYear(newYear);
+
+    // Skip URL updates if searchParams isn't available
+    if (!searchParams) return;
 
     // Update URL for media pages or if navigateOnChange is true
     if (pathname === "/movies" || pathname === "/tv" || navigateOnChange) {
