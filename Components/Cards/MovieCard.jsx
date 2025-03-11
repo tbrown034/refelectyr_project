@@ -1,13 +1,69 @@
-"use client"; // Mark as client component for onClick functionality
+"use client";
+
+import Image from "next/image";
+import { StarIcon } from "@heroicons/react/24/solid";
 
 export default function MovieCard({ movie }) {
+  // Format release date to just show the year
+  const releaseYear = movie.release_date
+    ? new Date(movie.release_date).getFullYear()
+    : "Unknown";
+
+  // Check if poster path exists
+  const hasPoster = Boolean(movie.poster_path);
+
   return (
-    <li
-      className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-      onClick={() => alert(`Selected: ${movie.title}`)}
-    >
-      <h2 className="text-lg font-semibold">{movie.title}</h2>
-      {/* Add more movie details here */}
+    <li className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 cursor-pointer">
+      {/* Movie Poster or Fallback */}
+      <div className="relative w-full aspect-[2/3]">
+        {hasPoster ? (
+          <Image
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            alt={`${movie.title} poster`}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover"
+            priority={false}
+            onError={(e) => {
+              // Replace with text-based container on error
+              e.target.style.display = "none";
+              e.target.parentNode.classList.add(
+                "flex",
+                "items-center",
+                "justify-center",
+                "bg-gray-800"
+              );
+              const textNode = document.createElement("div");
+              textNode.className = "text-white text-center p-4";
+              textNode.textContent = "No poster available";
+              e.target.parentNode.appendChild(textNode);
+            }}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-800 text-white">
+            <span className="text-center p-4">No poster available</span>
+          </div>
+        )}
+      </div>
+
+      {/* Movie Details */}
+      <div className="p-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+          {movie.title}
+        </h2>
+
+        <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center">
+            <StarIcon className="h-5 w-5 text-yellow-500 mr-1" />
+            <span className="text-gray-700 dark:text-gray-300">
+              {movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}
+            </span>
+          </div>
+          <span className="text-gray-600 dark:text-gray-400">
+            {releaseYear}
+          </span>
+        </div>
+      </div>
     </li>
   );
 }
