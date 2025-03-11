@@ -1,7 +1,7 @@
 import "./globals.css";
 import Header from "@/Components/Layout/Header/Header";
 import Footer from "@/Components/Layout/Footer/Footer";
-import { YearProvider } from "@/contexts/YearContext";
+import { YearProvider } from "@/Contexts/YearContext"; // Updated path
 
 export const metadata = {
   title: "ReflectYr",

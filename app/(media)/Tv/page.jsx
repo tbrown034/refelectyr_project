@@ -5,9 +5,9 @@ import YearSelector from "@/Components/UI/YearSelector";
 export default async function TvShowsPage({
   searchParams: searchParamsPromise,
 }) {
-  // Next.js 19 treats searchParams as a Promise
+  // Next.js 15 treats searchParams as a Promise
   const searchParams = await searchParamsPromise;
-  const selectedYear = searchParams?.year || "2025";
+  const selectedYear = searchParams?.year || "2024";
 
   const tvShows = await getTvShows({
     year: selectedYear,

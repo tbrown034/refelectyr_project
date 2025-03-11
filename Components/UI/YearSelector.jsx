@@ -1,17 +1,25 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { use } from "react";
-import { YearContext } from "@/contexts/YearContext";
+import { useContext, useEffect } from "react";
+import { YearContext } from "@/Contexts/YearContext"; // Updated import path
 
 export default function YearSelector({ navigateOnChange = true }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const urlYear = searchParams.get("year");
 
-  // Use the new React 19 `use` hook to access context
-  const { selectedYear, setSelectedYear } = use(YearContext);
+  // Use traditional useContext instead of use() hook for better compatibility
+  const { selectedYear, setSelectedYear } = useContext(YearContext);
+
+  // Effect to sync URL year with context when needed
+  useEffect(() => {
+    const urlYear = searchParams.get("year");
+    // For media pages, if URL has a year parameter, sync it with context
+    if (pathname !== "/" && urlYear && urlYear !== selectedYear) {
+      setSelectedYear(urlYear);
+    }
+  }, [pathname, searchParams, selectedYear, setSelectedYear]);
 
   // Handle year selection change
   const handleChange = (event) => {
@@ -20,17 +28,12 @@ export default function YearSelector({ navigateOnChange = true }) {
 
     // Only update URL if we're on a media page or if navigateOnChange is true
     if (pathname !== "/" || navigateOnChange) {
+      // Create new URLSearchParams object and update
       const params = new URLSearchParams(searchParams.toString());
       params.set("year", newYear);
       router.push(`${pathname}?${params.toString()}`);
     }
   };
-
-  // For media pages, if URL has a year parameter, sync it with context
-  if (pathname !== "/" && urlYear && urlYear !== selectedYear) {
-    // This conditional use of setSelectedYear is only possible with the new `use` hook
-    setSelectedYear(urlYear);
-  }
 
   return (
     <div className="mb-4">
