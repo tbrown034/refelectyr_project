@@ -1,3 +1,8 @@
+/**
+ * API functions for fetching media from TMDB
+ * Optimized for ReflectYr - an end-of-year entertainment ranking tool
+ */
+
 export const getMovies = async ({
   year = null,
   sortBy = "popularity.desc",
@@ -14,6 +19,8 @@ export const getMovies = async ({
     include_video: includeVideo,
     language,
     sort_by: sortBy,
+    with_original_language: "en", // Focus on English-language content
+    "vote_count.gte": 100, // Ensure sufficient votes for meaningful ratings
   });
 
   if (year) {
@@ -58,6 +65,8 @@ export const getTvShows = async ({
     include_adult: includeAdult,
     language,
     sort_by: sortBy,
+    with_original_language: "en", // Focus on English-language content
+    "vote_count.gte": 50, // Minimum votes threshold (lower for TV shows)
   });
 
   if (year) {

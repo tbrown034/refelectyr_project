@@ -2,8 +2,11 @@
 
 import Image from "next/image";
 import { StarIcon } from "@heroicons/react/24/solid";
+import { useState } from "react";
 
 export default function TvCard({ show }) {
+  const [imageError, setImageError] = useState(false);
+
   // Format first air date to just show the year
   const firstAirYear = show.first_air_date
     ? new Date(show.first_air_date).getFullYear()
@@ -16,7 +19,7 @@ export default function TvCard({ show }) {
     <li className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 cursor-pointer">
       {/* TV Show Poster or Fallback */}
       <div className="relative w-full aspect-[2/3]">
-        {hasPoster ? (
+        {hasPoster && !imageError ? (
           <Image
             src={`https://image.tmdb.org/t/p/w500${show.poster_path}`}
             alt={`${show.name} poster`}
@@ -24,20 +27,7 @@ export default function TvCard({ show }) {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover"
             priority={false}
-            onError={(e) => {
-              // Replace with text-based container on error
-              e.target.style.display = "none";
-              e.target.parentNode.classList.add(
-                "flex",
-                "items-center",
-                "justify-center",
-                "bg-gray-800"
-              );
-              const textNode = document.createElement("div");
-              textNode.className = "text-white text-center p-4";
-              textNode.textContent = "No poster available";
-              e.target.parentNode.appendChild(textNode);
-            }}
+            onError={() => setImageError(true)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-800 text-white">
