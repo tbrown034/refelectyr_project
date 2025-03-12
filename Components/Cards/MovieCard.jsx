@@ -3,9 +3,11 @@
 import Image from "next/image";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function MovieCard({ movie }) {
   const [imageError, setImageError] = useState(false);
+  const router = useRouter();
 
   // Format release date to just show the year
   const releaseYear = movie.release_date
@@ -15,8 +17,15 @@ export default function MovieCard({ movie }) {
   // Check if poster path exists
   const hasPoster = Boolean(movie.poster_path);
 
+  const handleClick = () => {
+    router.push(`/movies/${movie.id}`);
+  };
+
   return (
-    <li className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 cursor-pointer">
+    <li
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 cursor-pointer"
+      onClick={handleClick}
+    >
       {/* Movie Poster or Fallback */}
       <div className="relative w-full aspect-[2/3]">
         {hasPoster && !imageError ? (
