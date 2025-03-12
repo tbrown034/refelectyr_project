@@ -1,21 +1,28 @@
+"use client";
+
 import Link from "next/link";
+import { useContext } from "react";
+import { YearContext } from "@/Contexts/YearContext";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
-const navItems = [
-  { text: "Home", href: "/" },
-  { text: "About", href: "/about" },
-  { text: "Contact", href: "/contact" },
-];
-
 const HeaderDropDown = () => {
+  const { selectedYear } = useContext(YearContext);
+
+  const navItems = [
+    { text: "Home", href: "/" },
+    { text: "Movies", href: `/movies?year=${selectedYear}` },
+    { text: "TV Shows", href: `/tv?year=${selectedYear}` },
+    { text: "About", href: "/about" },
+  ];
+
   return (
     <div className="relative">
       <Menu>
         <MenuButton
-          className="inline-flex items-center gap-2 p-2 rounded-lg border-1   dark:hover:bg-slate-700 dark:active:bg-slate-500
-        cursor-pointer hover:bg-slate-300 active:bg-slate-500
-        transition duration-200 ease-in-out"
+          className="inline-flex items-center gap-2 p-2 rounded-lg border-1 dark:hover:bg-slate-700 dark:active:bg-slate-500
+          cursor-pointer hover:bg-slate-300 active:bg-slate-500
+          transition duration-200 ease-in-out"
         >
           Menu
           <ChevronDownIcon className="w-4 h-4" />

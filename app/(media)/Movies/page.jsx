@@ -2,7 +2,6 @@ import { getMovies } from "@/Library/Api/tmdb";
 import MoviesList from "./MoviesList";
 import YearSelector from "@/Components/UI/YearSelector";
 import { DEFAULT_YEAR } from "@/Contexts/YearContext";
-
 export default async function MoviesPage({
   searchParams: searchParamsPromise,
 }) {
@@ -10,6 +9,7 @@ export default async function MoviesPage({
   const searchParams = await searchParamsPromise;
   const selectedYear = searchParams?.year || DEFAULT_YEAR;
 
+  // Fetch data with the year
   const movies = await getMovies({
     year: selectedYear,
     sortBy: "popularity.desc",
@@ -19,7 +19,8 @@ export default async function MoviesPage({
   return (
     <div className="container mx-auto px-4">
       <h1 className="text-2xl font-bold mb-4">Top Movies of {selectedYear}</h1>
-      <YearSelector />
+      {/* Pass the initialYear to YearSelector */}
+      <YearSelector initialYear={selectedYear} />
       <MoviesList movies={movies} />
     </div>
   );

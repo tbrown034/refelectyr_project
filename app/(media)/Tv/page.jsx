@@ -21,7 +21,7 @@ export default async function TvShowsPage({
       <h1 className="text-2xl font-bold mb-4">
         Top TV Shows of {selectedYear}
       </h1>
-      <YearSelector />
+      <YearSelector initialYear={selectedYear} />
       <TvShowsList shows={tvShows} />
     </div>
   );
