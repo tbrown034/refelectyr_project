@@ -1,66 +1,26 @@
 "use client";
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useContext, useEffect } from "react";
 import { YearContext, DEFAULT_YEAR } from "@/Contexts/YearContext";
 
 export default function YearSelector({ navigateOnChange = true }) {
-  // Only use these hooks when this component is actually rendered on media pages
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   // Use traditional useContext for compatibility
   const { selectedYear, setSelectedYear, isInitialized } =
     useContext(YearContext);
-
-  // Get the year from URL params
-  const urlYear = searchParams ? searchParams.get("year") : null;
-
-  // Effect to sync context with URL and vice versa
-  useEffect(() => {
-    // Only run once the context is initialized from localStorage
-    if (!isInitialized) return;
-    if (!searchParams) return; // Skip if searchParams isn't available
-
-    // For media pages (/movies or /tv), URL params take priority
-    if ((pathname === "/movies" || pathname === "/tv") && urlYear) {
-      // If URL has a year and it's different from context, update context
-      if (urlYear !== selectedYear) {
-        setSelectedYear(urlYear);
-      }
-    }
-    // If we're on a media page but no year in URL, add the context year to URL
-    else if ((pathname === "/movies" || pathname === "/tv") && !urlYear) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("year", selectedYear);
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-    }
-  }, [
-    pathname,
-    searchParams,
-    selectedYear,
-    setSelectedYear,
-    router,
-    urlYear,
-    isInitialized,
-  ]);
 
   // Handle year selection change
   const handleChange = (event) => {
     const newYear = event.target.value;
     setSelectedYear(newYear);
 
-    // Skip URL updates if searchParams isn't available
-    if (!searchParams) return;
-
-    // Update URL for media pages or if navigateOnChange is true
+    // Only update URL for media pages or if navigateOnChange is true
     if (pathname === "/movies" || pathname === "/tv" || navigateOnChange) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("year", newYear);
-
-      // Use replace to avoid adding to history stack for simple filter changes
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      // IMPORTANT: Create a new clean URL with just the year parameter
+      router.replace(`${pathname}?year=${newYear}`, { scroll: false });
     }
   };
 
@@ -72,13 +32,13 @@ export default function YearSelector({ navigateOnChange = true }) {
   return (
     <div className="mb-4">
       <label
-        htmlFor="year"
+        htmlFor="year-selector"
         className="block text-sm font-medium text-gray-700 dark:text-gray-300"
       >
         Select Year:
       </label>
       <select
-        id="year"
+        id="year-selector"
         name="year"
         value={selectedYear}
         onChange={handleChange}

@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+} from "react";
 
 // Define a consistent default year for the app
 export const DEFAULT_YEAR = "2025";
@@ -16,9 +22,8 @@ export function YearProvider({ children }) {
   const [selectedYear, setSelectedYear] = useState(DEFAULT_YEAR);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize from localStorage if available (client-side only)
+  // Initialize from localStorage if available
   useEffect(() => {
-    // This runs only on the client side
     try {
       const storedYear = localStorage.getItem("selectedYear");
       if (storedYear) {
@@ -26,28 +31,32 @@ export function YearProvider({ children }) {
       }
       setIsInitialized(true);
     } catch (error) {
-      // Handle case where localStorage might not be available
       console.error("Error accessing localStorage:", error);
       setIsInitialized(true);
     }
   }, []);
 
-  // Update localStorage when year changes (but only after initial load)
-  useEffect(() => {
-    if (!isInitialized) return;
-
+  // Memoize the setSelectedYear function
+  const handleSetSelectedYear = useCallback((year) => {
+    setSelectedYear(year);
     try {
-      localStorage.setItem("selectedYear", selectedYear);
+      localStorage.setItem("selectedYear", year);
     } catch (error) {
       console.error("Error writing to localStorage:", error);
     }
-  }, [selectedYear, isInitialized]);
+  }, []);
+
+  // Memoize the context value
+  const contextValue = useMemo(
+    () => ({
+      selectedYear,
+      setSelectedYear: handleSetSelectedYear,
+      isInitialized,
+    }),
+    [selectedYear, handleSetSelectedYear, isInitialized]
+  );
 
   return (
-    <YearContext.Provider
-      value={{ selectedYear, setSelectedYear, isInitialized }}
-    >
-      {children}
-    </YearContext.Provider>
+    <YearContext.Provider value={contextValue}>{children}</YearContext.Provider>
   );
 }
