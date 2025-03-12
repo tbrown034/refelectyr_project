@@ -112,7 +112,7 @@ export default function YearSelector({
   ).reverse(); // Most recent years first
 
   return (
-    <div className={`${className}`}>
+    <div className={`max-w-xs mx-auto ${className}`}>
       <label
         htmlFor="year-selector"
         className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
