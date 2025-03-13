@@ -1,4 +1,4 @@
-//Library/Api/tmdb.js
+// Library/Api/tmdb.js
 // 3/11/7:54 p.m. update works in prod
 export const getMovies = async ({
   year = null,
@@ -91,5 +91,71 @@ export const getTvShows = async ({
   } catch (error) {
     console.error("Error fetching TV shows:", error);
     return [];
+  }
+};
+
+// NEW FUNCTION: Get details for a specific movie by ID
+export const getMovieById = async (id) => {
+  if (!id) return null;
+
+  const token = process.env.TMDB_API_TOKEN;
+
+  // We'll append credits to get cast and crew info in a single request
+  const url = `https://api.themoviedb.org/3/movie/${id}?append_to_response=credits`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 86400 }, // Cache for 24 hours
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null; // Movie not found
+      }
+      throw new Error(`Failed to fetch movie: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching movie ${id}:`, error);
+    return null;
+  }
+};
+
+// NEW FUNCTION: Get details for a specific TV show by ID
+export const getTvShowById = async (id) => {
+  if (!id) return null;
+
+  const token = process.env.TMDB_API_TOKEN;
+
+  // We'll append credits to get cast and crew info in a single request
+  const url = `https://api.themoviedb.org/3/tv/${id}?append_to_response=credits`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      next: { revalidate: 86400 }, // Cache for 24 hours
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null; // TV show not found
+      }
+      throw new Error(`Failed to fetch TV show: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching TV show ${id}:`, error);
+    return null;
   }
 };

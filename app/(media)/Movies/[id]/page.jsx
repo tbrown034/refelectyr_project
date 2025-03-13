@@ -9,8 +9,11 @@ import {
 import { getMovieById } from "@/Library/Api/tmdb";
 import ActionButtons from "@/Components/UI/Buttons/ActionButtons";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params: paramsPromise }) {
+  // Await the params first to get the id
+  const params = await paramsPromise;
   const movie = await getMovieById(params.id);
+
   if (!movie) return { title: "Movie Not Found" };
 
   return {
@@ -21,7 +24,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function MovieDetailPage({ params }) {
+export default async function MovieDetailPage({ params: paramsPromise }) {
+  // Await the params first to get the id
+  const params = await paramsPromise;
   const movie = await getMovieById(params.id);
 
   if (!movie) {

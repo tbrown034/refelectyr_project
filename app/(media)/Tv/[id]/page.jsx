@@ -9,8 +9,11 @@ import {
 import { getTvShowById } from "@/Library/Api/tmdb";
 import ActionButtons from "@/Components/UI/Buttons/ActionButtons";
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params: paramsPromise }) {
+  // Await the params first to get the id
+  const params = await paramsPromise;
   const show = await getTvShowById(params.id);
+
   if (!show) return { title: "TV Show Not Found" };
 
   return {
@@ -21,7 +24,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function TvShowDetailPage({ params }) {
+export default async function TvShowDetailPage({ params: paramsPromise }) {
+  // Await the params first to get the id
+  const params = await paramsPromise;
   const show = await getTvShowById(params.id);
 
   if (!show) {
