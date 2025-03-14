@@ -1,22 +1,84 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeftIcon, HomeIcon, PlusIcon } from "@heroicons/react/24/solid";
-import PrimaryButton from "@/Components/UI/Buttons/PrimaryButton";
-import SecondaryButton from "@/Components/UI/Buttons/SecondaryButton";
-import AltButton from "@/Components/UI/Buttons/AltButton";
+import {
+  ArrowLeftIcon,
+  HomeIcon,
+  PlusIcon,
+  CheckIcon,
+} from "@heroicons/react/24/solid";
 
-export default function ActionButtons({ itemType }) {
+export default function ActionButtons({ itemType, item }) {
   const router = useRouter();
+  const [isInList, setIsInList] = useState(false);
+
+  // Check if this item is in the list on mount and when item changes
+  useEffect(() => {
+    if (!item || !item.id) return;
+
+    try {
+      const listKey = itemType === "movie" ? "userMovieList" : "userTvList";
+      const storedList = localStorage.getItem(listKey);
+
+      if (storedList) {
+        const list = JSON.parse(storedList);
+        setIsInList(list.some((listItem) => listItem.id === item.id));
+      } else {
+        setIsInList(false);
+      }
+    } catch (error) {
+      console.error("Error checking list status:", error);
+      setIsInList(false);
+    }
+  }, [item, itemType]);
 
   const handleGoBack = () => {
     router.back();
   };
 
   const handleAddToList = () => {
-    console.log(`Added to ${itemType} list`);
-    // TODO: Implement actual list functionality
+    if (!item || !item.id) return;
+
+    try {
+      const listKey = itemType === "movie" ? "userMovieList" : "userTvList";
+      let list = [];
+
+      const storedList = localStorage.getItem(listKey);
+      if (storedList) {
+        list = JSON.parse(storedList);
+      }
+
+      // Don't add if already in list
+      if (list.some((listItem) => listItem.id === item.id)) {
+        return;
+      }
+
+      // Max 10 items
+      if (list.length >= 10) {
+        alert(
+          `Your ${
+            itemType === "movie" ? "movie" : "TV show"
+          } list is full (max 10 items). Remove something first.`
+        );
+        return;
+      }
+
+      // Add with timestamp
+      list.push({
+        ...item,
+        addedAt: new Date().toISOString(),
+      });
+
+      localStorage.setItem(listKey, JSON.stringify(list));
+      setIsInList(true);
+
+      // Notify about update
+      window.dispatchEvent(new Event("listUpdated"));
+    } catch (error) {
+      console.error("Error adding to list:", error);
+    }
   };
 
   return (
@@ -38,10 +100,24 @@ export default function ActionButtons({ itemType }) {
 
       <button
         onClick={handleAddToList}
-        className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        disabled={isInList}
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+          isInList
+            ? "bg-green-600 text-white cursor-default"
+            : "bg-blue-500 text-white hover:bg-blue-600"
+        }`}
       >
-        <PlusIcon className="h-5 w-5" />
-        <span>Add to My List</span>
+        {isInList ? (
+          <>
+            <CheckIcon className="h-5 w-5" />
+            <span>Added to List</span>
+          </>
+        ) : (
+          <>
+            <PlusIcon className="h-5 w-5" />
+            <span>Add to My List</span>
+          </>
+        )}
       </button>
     </div>
   );

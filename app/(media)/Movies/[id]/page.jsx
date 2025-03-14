@@ -152,7 +152,7 @@ export default async function MovieDetailPage({ params: paramsPromise }) {
             )}
 
             {/* Action Buttons */}
-            <ActionButtons itemType="movie" />
+            <ActionButtons itemType="movie" item={movie} />
           </div>
         </div>
       </div>

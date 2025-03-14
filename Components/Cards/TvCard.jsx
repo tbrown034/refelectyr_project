@@ -4,6 +4,7 @@ import Image from "next/image";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import ListActionButton from "@/Components/UI/Buttons/ListActionButton";
 
 export default function TvCard({ show }) {
   const [imageError, setImageError] = useState(false);
@@ -23,9 +24,12 @@ export default function TvCard({ show }) {
 
   return (
     <li
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 cursor-pointer"
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 cursor-pointer relative"
       onClick={handleClick}
     >
+      {/* List Action Button (Add to list) */}
+      <ListActionButton itemType="tv" item={show} />
+
       {/* TV Show Poster or Fallback */}
       <div className="relative w-full aspect-[2/3]">
         {hasPoster && !imageError ? (

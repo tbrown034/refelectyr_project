@@ -2,7 +2,8 @@ import { Suspense } from "react";
 import "./globals.css";
 import Header from "@/Components/Layout/Header/Header";
 import Footer from "@/Components/Layout/Footer/Footer";
-import { YearProvider } from "@/Contexts/YearContext"; // Updated path
+import { YearProvider } from "@/Contexts/YearContext";
+import UserListSidebar from "@/Components/UI/UserListSidebar"; // Add this import
 
 export const metadata = {
   title: "ReflectYr",
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
             <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
           </main>
           <Footer />
+          <UserListSidebar /> {/* Add UserListSidebar */}
         </YearProvider>
       </body>
     </html>

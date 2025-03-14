@@ -164,7 +164,7 @@ export default async function TvShowDetailPage({ params: paramsPromise }) {
             )}
 
             {/* Action Buttons */}
-            <ActionButtons itemType="tv show" />
+            <ActionButtons itemType="tv show" item={show} />
           </div>
         </div>
       </div>
