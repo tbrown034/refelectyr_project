@@ -1,12 +1,7 @@
+// Contexts/YearContext.js
 "use client";
 
-import {
-  createContext,
-  useState,
-  useCallback,
-  useMemo,
-  useEffect,
-} from "react";
+import { createContext, useState, useCallback, useEffect } from "react";
 
 // Define a consistent default year for the app
 export const DEFAULT_YEAR = "2025";
@@ -46,17 +41,15 @@ export function YearProvider({ children }) {
     }
   }, []);
 
-  // Memoize the context value
-  const contextValue = useMemo(
-    () => ({
-      selectedYear,
-      setSelectedYear: handleSetSelectedYear,
-      isInitialized,
-    }),
-    [selectedYear, handleSetSelectedYear, isInitialized]
-  );
-
   return (
-    <YearContext.Provider value={contextValue}>{children}</YearContext.Provider>
+    <YearContext.Provider
+      value={{
+        selectedYear,
+        setSelectedYear: handleSetSelectedYear,
+        isInitialized,
+      }}
+    >
+      {children}
+    </YearContext.Provider>
   );
 }

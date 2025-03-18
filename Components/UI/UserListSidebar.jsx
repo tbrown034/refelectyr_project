@@ -1,6 +1,7 @@
+// Components/UI/UserListSidebar.jsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -13,53 +14,22 @@ import {
   TvIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/solid";
+import { use } from "react";
+import { ListContext } from "@/Contexts/ListContext";
 
 export default function UserListSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("movies"); // "movies" or "tv"
   const [publishSuccess, setPublishSuccess] = useState(false);
-  const [movieList, setMovieList] = useState([]);
-  const [tvList, setTvList] = useState([]);
 
-  // Load lists from localStorage
-  useEffect(() => {
-    const loadLists = () => {
-      try {
-        const storedMovieList = localStorage.getItem("userMovieList");
-        const storedTvList = localStorage.getItem("userTvList");
-
-        if (storedMovieList) {
-          setMovieList(JSON.parse(storedMovieList));
-        }
-
-        if (storedTvList) {
-          setTvList(JSON.parse(storedTvList));
-        }
-      } catch (error) {
-        console.error("Error loading lists:", error);
-      }
-    };
-
-    // Initial load
-    loadLists();
-
-    // Set up event listener for storage changes
-    const handleStorageChange = (e) => {
-      if (e.key === "userMovieList" || e.key === "userTvList") {
-        loadLists();
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    // Custom event for list updates within the same window
-    window.addEventListener("listUpdated", loadLists);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("listUpdated", loadLists);
-    };
-  }, []);
+  const {
+    movieList,
+    tvList,
+    removeFromList,
+    moveItemUp,
+    moveItemDown,
+    clearList,
+  } = use(ListContext);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -104,111 +74,29 @@ export default function UserListSidebar() {
 
   // Handle removing an item
   const handleRemove = (itemId) => {
-    try {
-      if (activeTab === "movies") {
-        const newList = movieList.filter((item) => item.id !== itemId);
-        setMovieList(newList);
-        localStorage.setItem("userMovieList", JSON.stringify(newList));
-      } else {
-        const newList = tvList.filter((item) => item.id !== itemId);
-        setTvList(newList);
-        localStorage.setItem("userTvList", JSON.stringify(newList));
-      }
-
-      // Notify about update
-      window.dispatchEvent(new Event("listUpdated"));
-    } catch (error) {
-      console.error("Error removing item:", error);
-    }
+    removeFromList(activeTab === "movies" ? "movie" : "tv", itemId);
   };
 
   // Move an item up in the list
-  const moveItemUp = (itemId) => {
-    try {
-      if (activeTab === "movies") {
-        const index = movieList.findIndex((item) => item.id === itemId);
-        if (index <= 0) return;
-
-        const newList = [...movieList];
-        [newList[index - 1], newList[index]] = [
-          newList[index],
-          newList[index - 1],
-        ];
-
-        setMovieList(newList);
-        localStorage.setItem("userMovieList", JSON.stringify(newList));
-      } else {
-        const index = tvList.findIndex((item) => item.id === itemId);
-        if (index <= 0) return;
-
-        const newList = [...tvList];
-        [newList[index - 1], newList[index]] = [
-          newList[index],
-          newList[index - 1],
-        ];
-
-        setTvList(newList);
-        localStorage.setItem("userTvList", JSON.stringify(newList));
-      }
-
-      // Notify about update
-      window.dispatchEvent(new Event("listUpdated"));
-    } catch (error) {
-      console.error("Error moving item:", error);
-    }
+  const handleMoveUp = (itemId) => {
+    moveItemUp(activeTab === "movies" ? "movie" : "tv", itemId);
   };
 
   // Move an item down in the list
-  const moveItemDown = (itemId) => {
-    try {
-      if (activeTab === "movies") {
-        const index = movieList.findIndex((item) => item.id === itemId);
-        if (index === -1 || index >= movieList.length - 1) return;
-
-        const newList = [...movieList];
-        [newList[index], newList[index + 1]] = [
-          newList[index + 1],
-          newList[index],
-        ];
-
-        setMovieList(newList);
-        localStorage.setItem("userMovieList", JSON.stringify(newList));
-      } else {
-        const index = tvList.findIndex((item) => item.id === itemId);
-        if (index === -1 || index >= tvList.length - 1) return;
-
-        const newList = [...tvList];
-        [newList[index], newList[index + 1]] = [
-          newList[index + 1],
-          newList[index],
-        ];
-
-        setTvList(newList);
-        localStorage.setItem("userTvList", JSON.stringify(newList));
-      }
-
-      // Notify about update
-      window.dispatchEvent(new Event("listUpdated"));
-    } catch (error) {
-      console.error("Error moving item:", error);
-    }
+  const handleMoveDown = (itemId) => {
+    moveItemDown(activeTab === "movies" ? "movie" : "tv", itemId);
   };
 
-  // Clear the current list
-  const clearCurrentList = () => {
-    try {
-      if (activeTab === "movies") {
-        setMovieList([]);
-        localStorage.setItem("userMovieList", JSON.stringify([]));
-      } else {
-        setTvList([]);
-        localStorage.setItem("userTvList", JSON.stringify([]));
-      }
-
-      // Notify about update
-      window.dispatchEvent(new Event("listUpdated"));
-    } catch (error) {
-      console.error("Error clearing list:", error);
+  // Handle clearing list
+  const handleClearList = () => {
+    if (
+      window.confirm(
+        `Clear your entire ${
+          activeTab === "movies" ? "movie" : "TV show"
+        } list?`
+      )
+    ) {
+      clearList(activeTab === "movies" ? "movie" : "tv");
     }
   };
 
@@ -254,7 +142,7 @@ export default function UserListSidebar() {
         ></div>
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar Content */}
       <aside
         className={`fixed right-0 top-0 h-full bg-white dark:bg-gray-800 shadow-xl z-50 transition-all duration-300 ease-in-out transform ${
           isOpen ? "translate-x-0" : "translate-x-full"
@@ -363,7 +251,7 @@ export default function UserListSidebar() {
                     <div className="flex-shrink-0 flex items-center space-x-1">
                       {index > 0 && (
                         <button
-                          onClick={() => moveItemUp(item.id)}
+                          onClick={() => handleMoveUp(item.id)}
                           className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                           aria-label="Move up"
                         >
@@ -373,7 +261,7 @@ export default function UserListSidebar() {
 
                       {index < activeList.length - 1 && (
                         <button
-                          onClick={() => moveItemDown(item.id)}
+                          onClick={() => handleMoveDown(item.id)}
                           className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                           aria-label="Move down"
                         >
@@ -417,17 +305,7 @@ export default function UserListSidebar() {
               </button>
 
               <button
-                onClick={() => {
-                  if (
-                    window.confirm(
-                      `Clear your entire ${
-                        activeTab === "movies" ? "movie" : "TV show"
-                      } list?`
-                    )
-                  ) {
-                    clearCurrentList();
-                  }
-                }}
+                onClick={handleClearList}
                 className="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
               >
                 <ArrowPathIcon className="h-5 w-5" />

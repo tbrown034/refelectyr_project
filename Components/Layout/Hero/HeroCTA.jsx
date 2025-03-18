@@ -1,13 +1,14 @@
+// Components/Layout/Hero/HeroCTA.jsx
 "use client";
 
 import Link from "next/link";
-import { useContext } from "react";
+import { use } from "react";
 import { YearContext } from "@/Contexts/YearContext";
 import PrimaryButton from "@/Components/UI/Buttons/PrimaryButton";
 import SecondaryButton from "@/Components/UI/Buttons/SecondaryButton";
 
 const HeroCTA = () => {
-  const { selectedYear } = useContext(YearContext);
+  const { selectedYear } = use(YearContext);
 
   return (
     <div className="flex gap-2">

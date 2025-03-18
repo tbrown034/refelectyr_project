@@ -1,13 +1,14 @@
+// Components/Layout/Header/HeaderDropDown.jsx
 "use client";
 
 import Link from "next/link";
-import { useContext } from "react";
+import { use } from "react";
 import { YearContext } from "@/Contexts/YearContext";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
 const HeaderDropDown = () => {
-  const { selectedYear } = useContext(YearContext);
+  const { selectedYear } = use(YearContext);
 
   const navItems = [
     { text: "Home", href: "/" },
