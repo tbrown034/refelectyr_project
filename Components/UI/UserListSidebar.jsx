@@ -1,4 +1,4 @@
-// Components/UI/UserListSidebar.jsx
+// components/ui/UserListSidebar.jsx
 "use client";
 
 import { useState } from "react";
@@ -12,10 +12,12 @@ import {
   ArrowPathIcon,
   FilmIcon,
   TvIcon,
+  PlusIcon,
   CheckCircleIcon,
+  ArrowLeftIcon,
 } from "@heroicons/react/24/solid";
 import { use } from "react";
-import { ListContext } from "library/Contexts/ListContext";
+import { ListContext } from "library/contexts/ListContext";
 
 export default function UserListSidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -103,41 +105,47 @@ export default function UserListSidebar() {
   // Get the active list based on the current tab
   const activeList = activeTab === "movies" ? movieList : tvList;
 
-  // Toggle button styles
-  const toggleBtnClasses = `fixed bottom-6 right-6 z-40 p-4 rounded-full shadow-lg
-    ${isOpen ? "bg-gray-700 text-white" : "bg-blue-600 text-white"}
-    transition-all duration-300 hover:scale-105`;
+  // Check for mixed content to determine icon
+  const totalItems = movieList.length + tvList.length;
+  const hasMovies = movieList.length > 0;
+  const hasShows = tvList.length > 0;
+  const hasMixedContent = hasMovies && hasShows;
 
   return (
     <>
       {/* Toggle button */}
       <button
         onClick={toggleSidebar}
-        className={toggleBtnClasses}
+        className={`fixed bottom-6 right-6 z-40 p-4 rounded-full shadow-lg
+          ${isOpen ? "bg-gray-700 text-white" : "bg-blue-600 text-white"}
+          transition-all duration-300 hover:scale-105`}
         aria-label={isOpen ? "Close my lists" : "Open my lists"}
       >
         {isOpen ? (
           <XMarkIcon className="h-6 w-6" />
         ) : (
           <>
-            {activeTab === "movies" ? (
+            {hasMixedContent ? (
+              <FilmIcon className="h-6 w-6" />
+            ) : activeTab === "movies" ? (
               <FilmIcon className="h-6 w-6" />
             ) : (
               <TvIcon className="h-6 w-6" />
             )}
-            {(movieList.length > 0 || tvList.length > 0) && (
+            {totalItems > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {movieList.length + tvList.length}
+                {totalItems}
               </span>
             )}
           </>
         )}
       </button>
 
-      {/* Sidebar overlay */}
+      {/* Sidebar overlay - using inline style for opacity */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+          className="fixed inset-0 z-30"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
           onClick={toggleSidebar}
         ></div>
       )}
@@ -201,7 +209,7 @@ export default function UserListSidebar() {
               </Link>
             </div>
           ) : (
-            <ul className="space-y-3">
+            <ul className="space-y-6">
               {activeList.map((item, index) => {
                 const title = activeTab === "movies" ? item.title : item.name;
                 const year =
@@ -219,11 +227,11 @@ export default function UserListSidebar() {
                 return (
                   <li
                     key={item.id}
-                    className="flex items-center p-2 bg-white dark:bg-gray-700 rounded-lg shadow"
+                    className="flex items-center p-3 bg-white dark:bg-gray-800 border-b dark:border-gray-700"
                   >
-                    {/* Rank number */}
-                    <div className="flex-shrink-0 w-8 h-8 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mr-2">
-                      <span className="text-gray-700 dark:text-gray-300 font-medium">
+                    {/* Rank number - styled like screenshot */}
+                    <div className="flex-shrink-0 w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mr-3">
+                      <span className="text-gray-800 dark:text-gray-200 font-medium">
                         {index + 1}
                       </span>
                     </div>
@@ -248,26 +256,28 @@ export default function UserListSidebar() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex-shrink-0 flex items-center space-x-1">
-                      {index > 0 && (
-                        <button
-                          onClick={() => handleMoveUp(item.id)}
-                          className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                          aria-label="Move up"
-                        >
-                          <ChevronUpIcon className="h-5 w-5" />
-                        </button>
-                      )}
+                    <div className="flex-shrink-0 flex items-center space-x-2">
+                      <div className="flex flex-col">
+                        {index > 0 && (
+                          <button
+                            onClick={() => handleMoveUp(item.id)}
+                            className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                            aria-label="Move up"
+                          >
+                            <ChevronUpIcon className="h-5 w-5" />
+                          </button>
+                        )}
 
-                      {index < activeList.length - 1 && (
-                        <button
-                          onClick={() => handleMoveDown(item.id)}
-                          className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                          aria-label="Move down"
-                        >
-                          <ChevronDownIcon className="h-5 w-5" />
-                        </button>
-                      )}
+                        {index < activeList.length - 1 && (
+                          <button
+                            onClick={() => handleMoveDown(item.id)}
+                            className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                            aria-label="Move down"
+                          >
+                            <ChevronDownIcon className="h-5 w-5" />
+                          </button>
+                        )}
+                      </div>
 
                       <button
                         onClick={() => handleRemove(item.id)}
@@ -288,25 +298,36 @@ export default function UserListSidebar() {
         <div className="p-4 border-t dark:border-gray-700 space-y-2">
           {activeList.length > 0 && (
             <>
-              <button
-                onClick={handlePublishList}
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-              >
-                {publishSuccess ? (
-                  <>
-                    <CheckCircleIcon className="h-5 w-5" />
-                    <span>List Published!</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Publish List</span>
-                  </>
-                )}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={handlePublishList}
+                  className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  {publishSuccess ? (
+                    <>
+                      <CheckCircleIcon className="h-5 w-5" />
+                      <span>List Published!</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Publish List</span>
+                    </>
+                  )}
+                </button>
+
+                <Link
+                  href={activeTab === "movies" ? "/movies" : "/tv"}
+                  className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <PlusIcon className="h-5 w-5 mr-1" />
+                  <span>Add More</span>
+                </Link>
+              </div>
 
               <button
                 onClick={handleClearList}
-                className="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
+                className="w-full px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
               >
                 <ArrowPathIcon className="h-5 w-5" />
                 <span>Clear List</span>

@@ -1,7 +1,7 @@
-import { getMovies } from "library/Api/tmdb";
+import { getMovies } from "@/Library/api/tmdb";
 import MoviesList from "./MoviesList";
 import YearSelector from "components/UI/YearSelector";
-import { DEFAULT_YEAR } from "library/Contexts/YearContext";
+import { DEFAULT_YEAR } from "@/Library/contexts/YearContext";
 
 export default async function MoviesPage({
   searchParams: searchParamsPromise,

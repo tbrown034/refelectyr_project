@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { PlusIcon, CheckIcon } from "@heroicons/react/24/solid";
 import { use } from "react";
-import { ListContext } from "library/Contexts/ListContext";
+import { ListContext } from "@/Library/contexts/ListContext";
 
 export default function ListActionButton({ itemType, item }) {
   const { isInList, addToList } = use(ListContext);

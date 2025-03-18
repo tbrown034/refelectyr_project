@@ -11,7 +11,7 @@ import {
   CheckIcon,
 } from "@heroicons/react/24/solid";
 import { use } from "react";
-import { ListContext } from "library/Contexts/ListContext";
+import { ListContext } from "@/Library/contexts/ListContext";
 
 export default function ActionButtons({ itemType, item }) {
   const router = useRouter();

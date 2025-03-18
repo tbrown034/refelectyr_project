@@ -3,8 +3,8 @@ import { Suspense } from "react";
 import "./globals.css";
 import Header from "components/Layout/Header/Header";
 import Footer from "components/Layout/Footer/Footer";
-import { YearProvider } from "library/Contexts/YearContext";
-import { ListProvider } from "library/Contexts/ListContext";
+import { YearProvider } from "@/Library/contexts/YearContext";
+import { ListProvider } from "@/Library/contexts/ListContext";
 import UserListSidebar from "components/UI/UserListSidebar";
 
 export const metadata = {
