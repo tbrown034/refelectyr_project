@@ -4,7 +4,7 @@ import Image from "next/image";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import ListActionButton from "@/Components/UI/Buttons/ListActionButton";
+import ListActionButton from "components/UI/Buttons/ListActionButton";
 
 export default function TvCard({ show }) {
   const [imageError, setImageError] = useState(false);

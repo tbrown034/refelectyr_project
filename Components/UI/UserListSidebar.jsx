@@ -15,7 +15,7 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/24/solid";
 import { use } from "react";
-import { ListContext } from "@/Contexts/ListContext";
+import { ListContext } from "library/Contexts/ListContext";
 
 export default function UserListSidebar() {
   const [isOpen, setIsOpen] = useState(false);

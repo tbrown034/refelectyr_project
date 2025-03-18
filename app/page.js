@@ -1,5 +1,5 @@
-import Hero from "@/Components/Layout/Hero/Hero";
-import HomeYearReset from "@/Components/UI/HomeYearReset"; // Adjust path as needed
+import Hero from "components/Layout/Hero/Hero";
+import HomeYearReset from "components/Layout/Hero/HomeYearReset"; // Adjust path as needed
 
 export default function Home() {
   return (

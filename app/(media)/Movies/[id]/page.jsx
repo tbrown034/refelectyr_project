@@ -6,8 +6,8 @@ import {
   CalendarIcon,
   UserIcon,
 } from "@heroicons/react/24/solid";
-import { getMovieById } from "@/Library/Api/tmdb";
-import ActionButtons from "@/Components/UI/Buttons/ActionButtons";
+import { getMovieById } from "library/Api/tmdb";
+import ActionButtons from "components/UI/Buttons/ActionButtons";
 
 export async function generateMetadata({ params: paramsPromise }) {
   // Await the params first to get the id

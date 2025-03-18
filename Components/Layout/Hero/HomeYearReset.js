@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useContext } from "react";
-import { YearContext, DEFAULT_YEAR } from "@/Contexts/YearContext";
+import { YearContext, DEFAULT_YEAR } from "library/Contexts/YearContext";
 
 // This is a client component solely responsible for resetting the year
 export default function HomeYearReset() {
