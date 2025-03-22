@@ -1,6 +1,6 @@
 "use client";
 
-import MovieCard from "components/Cards/MovieCard";
+import MovieCard from "@/components/ui/cards/MovieCard";
 
 export default function MoviesList({ movies }) {
   return (

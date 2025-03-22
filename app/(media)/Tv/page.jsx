@@ -1,6 +1,6 @@
-import { getTvShows } from "@/Library/api/tmdb";
+import { getTvShows } from "@/library/api/tmdb";
 import TvShowsList from "./TvShowsList";
-import YearSelector from "components/UI/YearSelector";
+import YearSelector from "@/components/ui/inputs/YearSelector";
 import { DEFAULT_YEAR } from "@/Library/contexts/YearContext";
 
 export default async function TvShowsPage({

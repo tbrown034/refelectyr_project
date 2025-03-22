@@ -4,8 +4,8 @@
 import Link from "next/link";
 import { use } from "react";
 import { YearContext } from "@/Library/contexts/YearContext";
-import PrimaryButton from "components/UI/Buttons/PrimaryButton";
-import SecondaryButton from "components/UI/Buttons/SecondaryButton";
+import PrimaryButton from "@/components/ui/buttons/general/PrimaryButton";
+import SecondaryButton from "@/components/ui/buttons/general/SecondaryButton";
 
 const HeroCTA = () => {
   const { selectedYear } = use(YearContext);

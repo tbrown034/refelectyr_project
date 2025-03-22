@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/solid";
 
-const ThemeToggle = () => {
+const DarkModeToggle = () => {
   const [isDarkMode, setIsDarkMode] = useState(false); // Default to light mode
 
   useEffect(() => {
@@ -78,4 +78,4 @@ const ThemeToggle = () => {
   );
 };
 
-export default ThemeToggle;
+export default DarkModeToggle;

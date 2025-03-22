@@ -1,4 +1,4 @@
-import YearSelector from "components/UI/YearSelector";
+import YearSelector from "@/components/ui/inputs/YearSelector";
 import HeroCTA from "./HeroCTA";
 import HeroText from "./HeroText";
 

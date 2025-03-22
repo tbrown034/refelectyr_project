@@ -2,8 +2,7 @@
 "use client";
 
 import { createContext, useState, useEffect } from "react";
-
-const MAX_LIST_SIZE = 10;
+import { MAX_LIST_SIZE } from "@/library/utils/defaults";
 
 export const ListContext = createContext({
   movieList: [],

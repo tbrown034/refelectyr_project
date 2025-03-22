@@ -17,7 +17,7 @@ import {
   ListBulletIcon,
 } from "@heroicons/react/24/solid";
 import { use } from "react";
-import { ListContext } from "@/Library/contexts/ListContext";
+import { ListContext } from "@/library/contexts/ListContext";
 import { useRouter } from "next/navigation";
 
 export default function UserListSidebar() {

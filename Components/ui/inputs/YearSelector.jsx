@@ -2,7 +2,8 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
-import { YearContext, DEFAULT_YEAR } from "@/Library/contexts/YearContext";
+import { YearContext } from "@/library/contexts/YearContext";
+import { DEFAULT_YEAR } from "@/library/utils/defaults";
 
 export default function YearSelector({
   navigateOnChange = true,

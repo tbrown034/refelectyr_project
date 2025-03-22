@@ -1,11 +1,11 @@
 // app/layout.js
 import { Suspense } from "react";
 import "./globals.css";
-import Header from "components/Layout/Header/Header";
-import Footer from "components/Layout/Footer/Footer";
+import Header from "@/components/layout/header/Header";
+import Footer from "@/components/layout/footer/Footer";
 import { YearProvider } from "@/Library/contexts/YearContext";
-import { ListProvider } from "@/Library/contexts/ListContext";
-import UserListSidebar from "components/UI/UserListSidebar";
+import { ListProvider } from "@/library/contexts/ListContext";
+import UserListSidebar from "@/components/layout/lists/TempListsSidebar";
 
 export const metadata = {
   title: "ReflectYr",

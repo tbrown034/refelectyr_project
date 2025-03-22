@@ -1,6 +1,6 @@
 "use client";
 
-import TvCard from "components/Cards/TvCard";
+import TvCard from "@/components/ui/cards/TvCard";
 
 export default function TvShowsList({ shows }) {
   return (

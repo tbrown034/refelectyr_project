@@ -1,4 +1,4 @@
-import ThemeToggle from "components/UI/ThemeToggle";
+import ThemeToggle from "@/components/ui/toggles/DarkModeToggle";
 import HeaderBranding from "./HeaderBranding";
 import HeaderDropDown from "./HeaderDropDown";
 import HeaderNavBar from "./HeaderNavBar";

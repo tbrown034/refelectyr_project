@@ -1,10 +1,8 @@
-// Contexts/YearContext.js
+// library/contexts/YearContext.js
 "use client";
 
 import { createContext, useState, useCallback, useEffect } from "react";
-
-// Define a consistent default year for the app
-export const DEFAULT_YEAR = "2025";
+import { DEFAULT_YEAR } from "@/library/utils/defaults"; // Import from defaults
 
 // Create context with default value
 export const YearContext = createContext({
