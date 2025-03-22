@@ -1,4 +1,3 @@
-// components/ui/UserListSidebar.jsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -15,12 +14,13 @@ import {
   PlusIcon,
   CheckCircleIcon,
   ListBulletIcon,
+  ArrowLeftIcon,
 } from "@heroicons/react/24/solid";
 import { use } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 import { useRouter } from "next/navigation";
 
-export default function UserListSidebar() {
+export default function TempListsSidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("movies"); // "movies" or "tv"
   const [publishSuccess, setPublishSuccess] = useState(false);
@@ -58,6 +58,13 @@ export default function UserListSidebar() {
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+  };
+
+  // Explicitly handle tab changes separately from tab selection state
+  const handleTabChange = (tab) => {
+    if (tab !== activeTab) {
+      setActiveTab(tab);
+    }
   };
 
   // Get the active list based on the current tab
@@ -157,6 +164,75 @@ export default function UserListSidebar() {
     router.push(path);
   };
 
+  const handleGoBack = () => {
+    setIsOpen(false);
+    router.back();
+  };
+
+  // Render the empty state component
+  const renderEmptyState = () => (
+    <div className="flex flex-col items-center justify-center h-full text-center p-4">
+      <div className="mb-4 bg-gray-100 dark:bg-gray-700 p-6 rounded-full">
+        {activeTab === "movies" ? (
+          <FilmIcon className="h-16 w-16 text-blue-500 dark:text-blue-400" />
+        ) : (
+          <TvIcon className="h-16 w-16 text-purple-500 dark:text-purple-400" />
+        )}
+      </div>
+
+      <h3 className="text-xl font-semibold mb-2">
+        {activeTab === "movies"
+          ? "Your Movie List is Empty"
+          : "Your TV Show List is Empty"}
+      </h3>
+
+      <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-xs">
+        {activeTab === "movies"
+          ? "Start building your top movie picks for the year!"
+          : "Start building your top TV shows picks for the year!"}
+      </p>
+
+      <div className="flex flex-col gap-3 w-full max-w-xs">
+        <Link
+          href={activeTab === "movies" ? "/movies" : "/tv"}
+          className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+          onClick={() => setIsOpen(false)}
+        >
+          <PlusIcon className="h-5 w-5 mr-2" />
+          <span>Browse {activeTab === "movies" ? "Movies" : "TV Shows"}</span>
+        </Link>
+
+        <button
+          onClick={handleGoBack}
+          className="px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center justify-center"
+        >
+          <ArrowLeftIcon className="h-5 w-5 mr-2" />
+          <span>Return to Previous Page</span>
+        </button>
+
+        {hasMovies && activeTab === "tv" && (
+          <button
+            onClick={() => handleTabChange("movies")}
+            className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
+          >
+            <FilmIcon className="h-5 w-5 mr-2" />
+            <span>View Your Movie List ({movieList.length})</span>
+          </button>
+        )}
+
+        {hasShows && activeTab === "movies" && (
+          <button
+            onClick={() => handleTabChange("tv")}
+            className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
+          >
+            <TvIcon className="h-5 w-5 mr-2" />
+            <span>View Your TV Show List ({tvList.length})</span>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <>
       {/* Toggle button */}
@@ -174,10 +250,12 @@ export default function UserListSidebar() {
           <>
             {hasMixedContent ? (
               <ListBulletIcon className="h-6 w-6" />
-            ) : activeTab === "movies" ? (
+            ) : hasMovies ? (
               <FilmIcon className="h-6 w-6" />
-            ) : (
+            ) : hasShows ? (
               <TvIcon className="h-6 w-6" />
+            ) : (
+              <ListBulletIcon className="h-6 w-6" />
             )}
             {totalItems > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -225,8 +303,7 @@ export default function UserListSidebar() {
                 ? "text-blue-600 border-b-2 border-blue-600"
                 : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             }`}
-            onClick={() => setActiveTab("movies")}
-            disabled={activeTab === "movies"}
+            onClick={() => handleTabChange("movies")}
             aria-selected={activeTab === "movies"}
             aria-controls="movies-panel"
           >
@@ -245,8 +322,7 @@ export default function UserListSidebar() {
                 ? "text-blue-600 border-b-2 border-blue-600"
                 : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             }`}
-            onClick={() => setActiveTab("tv")}
-            disabled={activeTab === "tv"}
+            onClick={() => handleTabChange("tv")}
             aria-selected={activeTab === "tv"}
             aria-controls="tv-panel"
           >
@@ -269,30 +345,7 @@ export default function UserListSidebar() {
           aria-labelledby={activeTab === "movies" ? "movies-tab" : "tv-tab"}
         >
           {activeList.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center p-4">
-              <div className="mb-4">
-                {activeTab === "movies" ? (
-                  <FilmIcon className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto" />
-                ) : (
-                  <TvIcon className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto" />
-                )}
-              </div>
-              <p className="text-gray-500 dark:text-gray-400 mb-4">
-                {activeTab === "movies"
-                  ? "Your movie list is empty."
-                  : "Your TV show list is empty."}
-              </p>
-              <Link
-                href={activeTab === "movies" ? "/movies" : "/tv"}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-                onClick={() => setIsOpen(false)}
-              >
-                <PlusIcon className="h-5 w-5 mr-2" />
-                <span>
-                  Browse {activeTab === "movies" ? "Movies" : "TV Shows"}
-                </span>
-              </Link>
-            </div>
+            renderEmptyState()
           ) : (
             <ul className="space-y-3">
               {activeList.map((item, index) => {
