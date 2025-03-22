@@ -2,7 +2,7 @@
 "use client";
 
 import { createContext, useState, useCallback, useEffect } from "react";
-import { DEFAULT_YEAR } from "@/library/utils/defaults"; // Import from defaults
+import { DEFAULT_YEAR } from "@/library/utils/defaults";
 
 // Create context with default value
 export const YearContext = createContext({
@@ -31,6 +31,8 @@ export function YearProvider({ children }) {
 
   // Memoize the setSelectedYear function
   const handleSetSelectedYear = useCallback((year) => {
+    if (!year) return; // Add guard against null/undefined
+
     setSelectedYear(year);
     try {
       localStorage.setItem("selectedYear", year);

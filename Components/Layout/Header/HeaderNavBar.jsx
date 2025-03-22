@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { use } from "react";
-import { YearContext } from "@/Library/contexts/YearContext";
+import { YearContext } from "@/library/contexts/YearContext";
 
 const HeaderNavBar = () => {
   const { selectedYear } = use(YearContext);

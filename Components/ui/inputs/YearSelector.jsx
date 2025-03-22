@@ -1,9 +1,9 @@
+// components/ui/inputs/YearSelector.jsx
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { YearContext } from "@/library/contexts/YearContext";
-import { DEFAULT_YEAR } from "@/library/utils/defaults";
 
 export default function YearSelector({
   navigateOnChange = true,
@@ -14,95 +14,60 @@ export default function YearSelector({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParamsObj = useSearchParams();
-  const [searchParams, setSearchParams] = useState(null);
+  const searchParams = useSearchParams();
+  const { selectedYear, setSelectedYear, isInitialized } =
+    useContext(YearContext);
 
-  const { selectedYear, setSelectedYear } = useContext(YearContext);
+  // Track initialization to prevent multiple updates
+  const hasInitialized = useRef(false);
 
-  // Handle async searchParams
+  // Initialize component based on URL and context
   useEffect(() => {
-    async function resolveSearchParams() {
-      try {
-        // In client components, searchParams is still synchronous in Next.js 15
-        // but we're preparing for the possibility it might become asynchronous
-        setSearchParams(searchParamsObj);
-      } catch (error) {
-        console.error("Error resolving searchParams:", error);
-        setSearchParams(new URLSearchParams());
-      }
+    // Only run this once
+    if (hasInitialized.current || !isInitialized) return;
+
+    // Get year from URL
+    const yearFromURL = searchParams.get("year");
+
+    // Determine which year value to use
+    // Priority: 1. initialYear prop, 2. URL param, 3. Context value
+    const effectiveYear = initialYear || yearFromURL || selectedYear;
+
+    // Update context if needed
+    if (effectiveYear !== selectedYear) {
+      setSelectedYear(effectiveYear);
     }
 
-    resolveSearchParams();
-  }, [searchParamsObj]);
-
-  // Sync state on initial load and when props change
-  useEffect(() => {
-    // Wait until searchParams is resolved
-    if (!searchParams) return;
-
-    // Priority: 1. initialYear prop from server, 2. URL param, 3. Context value
-    if (initialYear) {
-      // If initialYear is provided (from server), use it
-      setSelectedYear(initialYear);
-
-      // Ensure URL matches without causing navigation
-      const yearParam = searchParams.get("year");
-      if (yearParam !== initialYear && navigateOnChange) {
-        const newParams = new URLSearchParams(searchParams);
-        newParams.set("year", initialYear);
-        router.replace(`${pathname}?${newParams.toString()}`, {
-          scroll: false,
-        });
-      }
-    } else {
-      // No initialYear provided, fall back to URL param
-      const yearParam = searchParams.get("year");
-
-      if (yearParam && yearParam !== selectedYear) {
-        // Only update context if URL param exists and differs
-        setSelectedYear(yearParam);
-      } else if (
-        !yearParam &&
-        navigateOnChange &&
-        selectedYear !== DEFAULT_YEAR
-      ) {
-        // If no year in URL but we have a non-default year in context, update URL
-        const newParams = new URLSearchParams(searchParams);
-        newParams.set("year", selectedYear);
-        router.replace(`${pathname}?${newParams.toString()}`, {
-          scroll: false,
-        });
-      }
+    // Update URL if needed
+    if (navigateOnChange && yearFromURL !== effectiveYear) {
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.set("year", effectiveYear);
+      router.replace(`${pathname}?${newParams.toString()}`, { scroll: false });
     }
+
+    hasInitialized.current = true;
   }, [
     searchParams,
+    initialYear,
     selectedYear,
     setSelectedYear,
     router,
     pathname,
     navigateOnChange,
-    initialYear,
+    isInitialized,
   ]);
 
   // Handle year selection change
   const handleChange = (event) => {
     const newYear = event.target.value;
+
+    // Update context
     setSelectedYear(newYear);
 
-    // Wait until searchParams is resolved
-    if (!searchParams) return;
-
-    // Only update URL for media pages or if navigateOnChange is true
-    if (
-      pathname.includes("/movies") ||
-      pathname.includes("/tv") ||
-      navigateOnChange
-    ) {
-      // Create a new params object based on current params
-      const newParams = new URLSearchParams(searchParams);
+    // Update URL
+    if (navigateOnChange) {
+      const newParams = new URLSearchParams(searchParams.toString());
       newParams.set("year", newYear);
-
-      // Replace URL with updated params
       router.replace(`${pathname}?${newParams.toString()}`, { scroll: false });
     }
   };

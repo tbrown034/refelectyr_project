@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { use } from "react";
-import { YearContext } from "@/Library/contexts/YearContext";
+import { YearContext } from "@/library/contexts/YearContext";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 

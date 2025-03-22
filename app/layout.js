@@ -3,9 +3,9 @@ import { Suspense } from "react";
 import "./globals.css";
 import Header from "@/components/layout/header/Header";
 import Footer from "@/components/layout/footer/Footer";
-import { YearProvider } from "@/Library/contexts/YearContext";
+import { YearProvider } from "@/library/contexts/YearContext";
 import { ListProvider } from "@/library/contexts/ListContext";
-import UserListSidebar from "@/components/layout/lists/TempListsSidebar";
+import UserListSidebar from "@/components/ui/TempListsSidebar";
 
 export const metadata = {
   title: "ReflectYr",
