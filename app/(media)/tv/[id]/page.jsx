@@ -1,3 +1,4 @@
+// app/(media)/tv/[id]/page.jsx
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
@@ -9,10 +10,10 @@ import {
 import { getTvShowById } from "@/library/api/tmdb";
 import ActionButtons from "@/components/ui/buttons/actions/DetailPageActions";
 
-export async function generateMetadata({ params: paramsPromise }) {
+export async function generateMetadata({ params }) {
   // Await the params first to get the id
-  const params = await paramsPromise;
-  const show = await getTvShowById(params.id);
+  const resolvedParams = await params;
+  const show = await getTvShowById(resolvedParams.id);
 
   if (!show) return { title: "TV Show Not Found" };
 
@@ -24,10 +25,10 @@ export async function generateMetadata({ params: paramsPromise }) {
   };
 }
 
-export default async function TvShowDetailPage({ params: paramsPromise }) {
+export default async function TvShowDetailPage({ params }) {
   // Await the params first to get the id
-  const params = await paramsPromise;
-  const show = await getTvShowById(params.id);
+  const resolvedParams = await params;
+  const show = await getTvShowById(resolvedParams.id);
 
   if (!show) {
     notFound();

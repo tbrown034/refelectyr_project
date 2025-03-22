@@ -1,13 +1,13 @@
-// Components/UI/Buttons/ListActionButton.jsx
+// Components/UI/Buttons/Actions/AddToListButton.jsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { PlusIcon, CheckIcon } from "@heroicons/react/24/solid";
-import { use } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 
 export default function AddToListButton({ itemType, item }) {
-  const { isInList, addToList } = use(ListContext);
+  // Replace use() with useContext()
+  const { isInList, addToList } = useContext(ListContext);
   const [isInListState, setIsInListState] = useState(false);
 
   // Check if this item is in the list on mount and when item changes

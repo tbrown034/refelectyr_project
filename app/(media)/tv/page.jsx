@@ -1,14 +1,13 @@
+// app/(media)/tv/page.jsx
 import { getTvShows } from "@/library/api/tmdb";
 import TvShowsList from "./TvShowsList";
 import YearSelector from "@/components/ui/inputs/YearSelector";
-import { DEFAULT_YEAR } from "@/library/contexts/YearContext";
+import { DEFAULT_YEAR } from "@/library/utils/defaults";
 
-export default async function TvShowsPage({
-  searchParams: searchParamsPromise,
-}) {
-  // Next.js 15 treats searchParams as a Promise
-  const searchParams = await searchParamsPromise;
-  const selectedYear = searchParams?.year || DEFAULT_YEAR;
+export default async function TvShowsPage({ searchParams }) {
+  // Next.js 15: searchParams is now a Promise, must await it
+  const params = await searchParams;
+  const selectedYear = params?.year || DEFAULT_YEAR;
 
   const tvShows = await getTvShows({
     year: selectedYear,
