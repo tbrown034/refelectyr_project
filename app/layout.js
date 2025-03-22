@@ -5,7 +5,7 @@ import Header from "@/components/layout/header/Header";
 import Footer from "@/components/layout/footer/Footer";
 import { YearProvider } from "@/library/contexts/YearContext";
 import { ListProvider } from "@/library/contexts/ListContext";
-import UserListSidebar from "@/components/ui/TempListsSidebar";
+import UserListSidebar from "@/components/layout/lists/TempListsSidebar";
 
 export const metadata = {
   title: "ReflectYr",
