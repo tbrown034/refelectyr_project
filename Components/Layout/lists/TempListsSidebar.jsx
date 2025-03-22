@@ -26,6 +26,7 @@ export default function TempListsSidebar() {
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [removedItemId, setRemovedItemId] = useState(null);
   const [itemAnimation, setItemAnimation] = useState({ id: null, type: null }); // For movement animations
+  const [manualTabSelection, setManualTabSelection] = useState(false); // Track if user manually changed tabs
   const router = useRouter();
 
   const {
@@ -38,8 +39,9 @@ export default function TempListsSidebar() {
   } = use(ListContext);
 
   // Auto-switch to non-empty tab if current tab is empty but other has items
+  // Only apply this logic if the user hasn't manually selected a tab
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !manualTabSelection) {
       if (
         activeTab === "movies" &&
         movieList.length === 0 &&
@@ -54,9 +56,13 @@ export default function TempListsSidebar() {
         setActiveTab("movies");
       }
     }
-  }, [isOpen, movieList.length, tvList.length, activeTab]);
+  }, [isOpen, movieList.length, tvList.length, activeTab, manualTabSelection]);
 
   const toggleSidebar = () => {
+    // Reset manual selection flag when toggling the sidebar
+    if (!isOpen) {
+      setManualTabSelection(false);
+    }
     setIsOpen(!isOpen);
   };
 
@@ -64,6 +70,8 @@ export default function TempListsSidebar() {
   const handleTabChange = (tab) => {
     if (tab !== activeTab) {
       setActiveTab(tab);
+      // Mark this as a manual selection to prevent auto-switching
+      setManualTabSelection(true);
     }
   };
 
@@ -269,7 +277,7 @@ export default function TempListsSidebar() {
       {/* Sidebar overlay - using inline style for opacity with transition */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black bg-opacity-0 transition-opacity duration-300"
+          className="fixed inset-0 z-30 bg-black transition-opacity duration-300"
           style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
           onClick={toggleSidebar}
           aria-hidden="true"
