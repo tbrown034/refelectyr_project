@@ -1,4 +1,4 @@
-// Library/Api/tmdb.js
+// library/Api/tmdb.js
 // 3/11/7:54 p.m. update works in prod
 export const getMovies = async ({
   year = null,
