@@ -1,7 +1,7 @@
 // components/layout/hero/Hero.jsx
-import YearSelector from "@/components/ui/inputs/YearSelector";
 import HeroCTA from "./HeroCTA";
 import HeroText from "./HeroText";
+import HeroYearSelector from "./HeroYearSelector";
 import ScrollingMovies from "./scrollingMedia/ScrollingMovies";
 import ScrollingTV from "./scrollingMedia/ScrollingTV";
 
@@ -17,13 +17,7 @@ export default async function Hero({ searchParams }) {
       {/* Hero text section with fixed width */}
       <div className="w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center">
         <HeroText />
-        <div className="my-6">
-          <YearSelector
-            initialYear={year}
-            navigateOnChange={false}
-            className="w-full max-w-xs"
-          />
-        </div>
+        <HeroYearSelector initialYear={year} />
         <HeroCTA year={year} />
       </div>
 

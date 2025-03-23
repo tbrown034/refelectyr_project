@@ -11,6 +11,7 @@ export default function YearSelector({
   endYear = new Date().getFullYear(),
   className = "",
   initialYear = null,
+  onYearChange = null, // Add callback prop
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -36,6 +37,8 @@ export default function YearSelector({
     // Update context if needed
     if (effectiveYear !== selectedYear) {
       setSelectedYear(effectiveYear);
+      // Also call onYearChange if provided
+      if (onYearChange) onYearChange(effectiveYear);
     }
 
     // Update URL if needed
@@ -55,6 +58,7 @@ export default function YearSelector({
     pathname,
     navigateOnChange,
     isInitialized,
+    onYearChange,
   ]);
 
   // Handle year selection change
@@ -63,6 +67,9 @@ export default function YearSelector({
 
     // Update context
     setSelectedYear(newYear);
+
+    // Call the callback if provided
+    if (onYearChange) onYearChange(newYear);
 
     // Update URL
     if (navigateOnChange) {
