@@ -2,9 +2,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getMovies } from "@/library/api/tmdb";
-import { DEFAULT_YEAR } from "@/library/utils/defaults";
 
-export default async function ScrollingMovies({ year = DEFAULT_YEAR }) {
+export default async function ScrollingMovies({ year = "2025" }) {
   // Fetch data with larger limit to have enough posters for scrolling
   let movies = [];
 
@@ -23,11 +22,17 @@ export default async function ScrollingMovies({ year = DEFAULT_YEAR }) {
   // If no movies or error, show a placeholder message
   if (movies.length === 0) {
     return (
-      <div className="w-full p-4 bg-gray-100 dark:bg-gray-800 rounded-xl text-center">
-        <h2 className="text-lg font-semibold">Popular Movies {year}</h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          No movies available to display
-        </p>
+      <div className="w-full max-w-6xl mx-auto">
+        <h2 className="mb-4 text-center">
+          <span className="inline-block px-4 py-1 text-sm font-semibold text-black rounded-full bg-amber-500">
+            Popular Movies {year}
+          </span>
+        </h2>
+        <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-xl text-center">
+          <p className="text-gray-600 dark:text-gray-400">
+            No movies available for {year}
+          </p>
+        </div>
       </div>
     );
   }
@@ -36,17 +41,17 @@ export default async function ScrollingMovies({ year = DEFAULT_YEAR }) {
   const doubledMovies = [...movies, ...movies];
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-6xl mx-auto">
       <h2 className="mb-4 text-center">
-        <span className="inline-block px-3 py-1 text-sm font-semibold text-black rounded-full bg-amber-500">
+        <span className="inline-block px-4 py-1 text-sm font-semibold text-black rounded-full bg-amber-500">
           Popular Movies {year}
         </span>
       </h2>
 
-      {/* Container with fixed width and overflow hidden */}
-      <div className="relative w-full overflow-hidden group rounded-xl">
-        {/* Make sure the inner scrolling content stays within container bounds */}
-        <div className="flex animate-scrollLeft gap-4 w-fit">
+      {/* Container with overflow hidden */}
+      <div className="relative w-full overflow-hidden rounded-xl group">
+        {/* Inner content that scrolls */}
+        <div className="flex animate-scrollLeft gap-4 w-max py-2">
           {doubledMovies.map((movie, index) => (
             <div
               key={`${movie.id}-${index}`}

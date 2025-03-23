@@ -2,9 +2,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getTvShows } from "@/library/api/tmdb";
-import { DEFAULT_YEAR } from "@/library/utils/defaults";
 
-export default async function ScrollingTV({ year = DEFAULT_YEAR }) {
+export default async function ScrollingTV({ year = "2025" }) {
   // Fetch data with larger limit to have enough posters for scrolling
   let tvShows = [];
 
@@ -23,11 +22,17 @@ export default async function ScrollingTV({ year = DEFAULT_YEAR }) {
   // If no TV shows or error, show a placeholder message
   if (tvShows.length === 0) {
     return (
-      <div className="w-full p-4 bg-gray-100 dark:bg-gray-800 rounded-xl text-center">
-        <h2 className="text-lg font-semibold">Popular TV Shows {year}</h2>
-        <p className="text-gray-600 dark:text-gray-400">
-          No TV shows available to display
-        </p>
+      <div className="w-full max-w-6xl mx-auto">
+        <h2 className="mb-4 text-center">
+          <span className="inline-block px-4 py-1 text-sm font-semibold text-black rounded-full bg-purple-500">
+            Popular TV Shows {year}
+          </span>
+        </h2>
+        <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-xl text-center">
+          <p className="text-gray-600 dark:text-gray-400">
+            No TV shows available for {year}
+          </p>
+        </div>
       </div>
     );
   }
