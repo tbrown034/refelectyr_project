@@ -10,7 +10,7 @@ export default async function ScrollingMovies({ year = DEFAULT_YEAR }) {
 
   try {
     movies = await getMovies({
-      year: year,
+      year,
       sortBy: "vote_count.desc", // Using vote count for popular movies
       limit: 15, // Get more movies for smooth scrolling
       includeAdult: false,
@@ -43,8 +43,10 @@ export default async function ScrollingMovies({ year = DEFAULT_YEAR }) {
         </span>
       </h2>
 
+      {/* Container with fixed width and overflow hidden */}
       <div className="relative w-full overflow-hidden group rounded-xl">
-        <div className="flex animate-scrollLeft gap-4">
+        {/* Make sure the inner scrolling content stays within container bounds */}
+        <div className="flex animate-scrollLeft gap-4 w-fit">
           {doubledMovies.map((movie, index) => (
             <div
               key={`${movie.id}-${index}`}

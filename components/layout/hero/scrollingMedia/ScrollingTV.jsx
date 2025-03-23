@@ -10,7 +10,7 @@ export default async function ScrollingTV({ year = DEFAULT_YEAR }) {
 
   try {
     tvShows = await getTvShows({
-      year: year,
+      year,
       sortBy: "vote_count.desc", // Using vote count for popular shows
       limit: 15, // Get more shows for smooth scrolling
       includeAdult: false,
@@ -36,15 +36,17 @@ export default async function ScrollingTV({ year = DEFAULT_YEAR }) {
   const doubledShows = [...tvShows, ...tvShows];
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-6xl mx-auto">
       <h2 className="mb-4 text-center">
-        <span className="inline-block px-3 py-1 text-sm font-semibold text-black rounded-full bg-purple-500">
+        <span className="inline-block px-4 py-1 text-sm font-semibold text-black rounded-full bg-purple-500">
           Popular TV Shows {year}
         </span>
       </h2>
 
-      <div className="relative w-full overflow-hidden group rounded-xl">
-        <div className="flex animate-scrollRight gap-4">
+      {/* Container with overflow hidden */}
+      <div className="relative w-full overflow-hidden rounded-xl group">
+        {/* Inner content that scrolls */}
+        <div className="flex animate-scrollRight gap-4 w-max py-2">
           {doubledShows.map((show, index) => (
             <div
               key={`${show.id}-${index}`}

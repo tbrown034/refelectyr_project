@@ -15,11 +15,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="flex p-2 flex-col min-h-screen bg-white text-black dark:bg-black dark:text-white transition-colors duration-300">
+      <body className="flex flex-col min-h-screen bg-white text-black dark:bg-black dark:text-white transition-colors duration-300">
         <YearProvider>
           <ListProvider>
             <Header />
-            <main className="flex-grow p-4 flex">
+            <main className="flex-grow">
               <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
             </main>
             <Footer />
