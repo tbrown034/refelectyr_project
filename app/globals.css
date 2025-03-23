@@ -1,19 +1,18 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
-/* Add these to your globals.css */
 @keyframes scrollLeft {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(calc(-50% - 1rem)); /* Accounting for gap */
+    transform: translateX(calc(-50% - 1.5rem)); /* Accounting for wider gap */
   }
 }
 
 @keyframes scrollRight {
   0% {
-    transform: translateX(calc(-50% - 1rem)); /* Accounting for gap */
+    transform: translateX(calc(-50% - 1.5rem)); /* Accounting for wider gap */
   }
   100% {
     transform: translateX(0);
@@ -21,17 +20,11 @@
 }
 
 .animate-scrollLeft {
-  animation: scrollLeft 30s linear infinite;
-  width: max-content; /* Ensures the content dictates width */
+  animation: scrollLeft 60s linear infinite; /* Slowed from 30s to 60s */
+  width: max-content;
 }
 
 .animate-scrollRight {
-  animation: scrollRight 30s linear infinite;
-  width: max-content; /* Ensures the content dictates width */
-}
-
-/* Pause animation when hovering */
-.group:hover .animate-scrollLeft,
-.group:hover .animate-scrollRight {
-  animation-play-state: paused;
+  animation: scrollRight 60s linear infinite; /* Slowed from 30s to 60s */
+  width: max-content;
 }

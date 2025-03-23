@@ -29,7 +29,7 @@ export function YearProvider({ children }) {
     }
   }, []);
 
-  // Memoize the setSelectedYear function
+  // Enhanced setSelectedYear function that persists to localStorage
   const handleSetSelectedYear = useCallback((year) => {
     if (!year) return; // Add guard against null/undefined
 
