@@ -1,4 +1,3 @@
-// Components/UI/Buttons/ActionButtons.jsx
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -18,7 +17,6 @@ export default function DetailPageActions({ itemType, item }) {
   const { isInList, addToList } = use(ListContext);
   const [isInListState, setIsInListState] = useState(false);
 
-  // Check if this item is in the list on mount and when item changes
   useEffect(() => {
     if (!item || !item.id) return;
     setIsInListState(isInList(itemType, item.id));
@@ -41,17 +39,18 @@ export default function DetailPageActions({ itemType, item }) {
     <div className="flex flex-wrap gap-3 mt-6">
       <button
         onClick={handleGoBack}
-        className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors cursor-pointer"
       >
         <ArrowLeftIcon className="h-5 w-5" />
         <span>Back</span>
       </button>
 
-      <Link href="/">
-        <button className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-          <HomeIcon className="h-5 w-5" />
-          <span>Home</span>
-        </button>
+      <Link
+        href="/"
+        className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors cursor-pointer"
+      >
+        <HomeIcon className="h-5 w-5" />
+        <span>Home</span>
       </Link>
 
       <button
@@ -60,7 +59,7 @@ export default function DetailPageActions({ itemType, item }) {
         className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
           isInListState
             ? "bg-green-600 text-white cursor-default"
-            : "bg-blue-500 text-white hover:bg-blue-600"
+            : "bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
         }`}
       >
         {isInListState ? (
