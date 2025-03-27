@@ -1,8 +1,9 @@
-// Contexts/ListContext.js
+// library/contexts/ListContext.js
 "use client";
 
 import { createContext, useState, useEffect } from "react";
 import { MAX_LIST_SIZE } from "@/library/utils/defaults";
+import { generateListId } from "@/library/utils/listUtils";
 
 export const ListContext = createContext({
   movieList: [],
@@ -13,11 +14,15 @@ export const ListContext = createContext({
   moveItemDown: () => {},
   clearList: () => {},
   isInList: () => false,
+  publishList: () => null,
+  getPublishedList: () => null,
+  publishedLists: {},
 });
 
 export function ListProvider({ children }) {
   const [movieList, setMovieList] = useState([]);
   const [tvList, setTvList] = useState([]);
+  const [publishedLists, setPublishedLists] = useState({});
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize lists from localStorage
@@ -25,6 +30,7 @@ export function ListProvider({ children }) {
     try {
       const storedMovieList = localStorage.getItem("userMovieList");
       const storedTvList = localStorage.getItem("userTvList");
+      const storedPublishedLists = localStorage.getItem("publishedLists");
 
       if (storedMovieList) {
         setMovieList(JSON.parse(storedMovieList));
@@ -32,6 +38,10 @@ export function ListProvider({ children }) {
 
       if (storedTvList) {
         setTvList(JSON.parse(storedTvList));
+      }
+
+      if (storedPublishedLists) {
+        setPublishedLists(JSON.parse(storedPublishedLists));
       }
 
       setIsInitialized(true);
@@ -86,7 +96,7 @@ export function ListProvider({ children }) {
       alert(
         `Your ${
           itemType === "movie" ? "movie" : "TV show"
-        } list is full (max 10 items). Remove something first.`
+        } list is full (max ${MAX_LIST_SIZE} items). Remove something first.`
       );
       return false;
     }
@@ -145,6 +155,45 @@ export function ListProvider({ children }) {
     setList([]);
   };
 
+  // Publish a list
+  const publishList = (itemType) => {
+    // Get the list to publish
+    const list = itemType === "movie" ? movieList : tvList;
+
+    if (list.length === 0) {
+      alert("Your list is empty! Add some items before publishing.");
+      return null;
+    }
+
+    // Generate a unique ID
+    const listId = generateListId();
+
+    // Store the published list with timestamp
+    const newPublishedList = {
+      id: listId,
+      type: itemType,
+      items: [...list],
+      publishedAt: new Date().toISOString(),
+    };
+
+    // Update published lists in state and localStorage
+    const updatedLists = { ...publishedLists, [listId]: newPublishedList };
+    setPublishedLists(updatedLists);
+
+    try {
+      localStorage.setItem("publishedLists", JSON.stringify(updatedLists));
+    } catch (error) {
+      console.error("Error saving published list:", error);
+    }
+
+    return listId;
+  };
+
+  // Get a published list by ID
+  const getPublishedList = (listId) => {
+    return publishedLists[listId] || null;
+  };
+
   return (
     <ListContext.Provider
       value={{
@@ -156,6 +205,9 @@ export function ListProvider({ children }) {
         moveItemDown,
         clearList,
         isInList,
+        publishList,
+        getPublishedList,
+        publishedLists,
       }}
     >
       {children}

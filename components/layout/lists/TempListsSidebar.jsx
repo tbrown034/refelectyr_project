@@ -1,6 +1,7 @@
+// components/layout/lists/TempListsSidebar.jsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -16,9 +17,9 @@ import {
   ListBulletIcon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/solid";
-import { use } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 import { useRouter } from "next/navigation";
+import PublishButton from "@/components/ui/buttons/actions/PublishButton";
 
 export default function TempListsSidebar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +37,9 @@ export default function TempListsSidebar() {
     moveItemUp,
     moveItemDown,
     clearList,
-  } = use(ListContext);
+    publishList,
+    isInList,
+  } = useContext(ListContext);
 
   // Auto-switch to non-empty tab if current tab is empty but other has items
   // Only apply this logic if the user hasn't manually selected a tab
@@ -84,13 +87,19 @@ export default function TempListsSidebar() {
   const hasShows = tvList.length > 0;
   const hasMixedContent = hasMovies && hasShows;
 
-  // Handle publishing list with enhanced sharing
+  // Handle publishing the list
   const handlePublishList = () => {
+    const listType = activeTab === "movies" ? "movie" : "tv";
+    return publishList(listType);
+  };
+
+  // Handle standard list sharing with clipboard
+  const handleShareToClipboard = () => {
     const currentList = activeTab === "movies" ? movieList : tvList;
 
     if (currentList.length === 0) {
       // Use better notification UI in a production app
-      alert("Your list is empty! Add some items before publishing.");
+      alert("Your list is empty! Add some items before sharing.");
       return;
     }
 
@@ -115,7 +124,7 @@ export default function TempListsSidebar() {
     const listType = activeTab === "movies" ? "Movie" : "TV Show";
     const shareText = `My Top ${listType} List:\n\n${listItems}`;
 
-    // Basic clipboard sharing, in production would connect to backend
+    // Basic clipboard sharing
     try {
       navigator.clipboard.writeText(shareText);
       setPublishSuccess(true);
@@ -477,22 +486,26 @@ export default function TempListsSidebar() {
           {activeList.length > 0 && (
             <>
               <div className="flex gap-2">
+                {/* Use the new PublishButton component */}
+                <PublishButton
+                  itemType={activeTab === "movies" ? "movie" : "tv"}
+                  onPublish={handlePublishList}
+                />
+
                 <button
-                  onClick={handlePublishList}
-                  className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center justify-center gap-2 shadow-sm"
-                  aria-label={`Publish your ${
-                    activeTab === "movies" ? "movie" : "TV show"
-                  } list`}
+                  onClick={handleShareToClipboard}
+                  className="px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
+                  aria-label="Copy list text to clipboard"
                 >
                   {publishSuccess ? (
                     <>
                       <CheckCircleIcon className="h-5 w-5" />
-                      <span>Copied to Clipboard!</span>
+                      <span>Copied!</span>
                     </>
                   ) : (
                     <>
                       <ShareIcon className="h-5 w-5" />
-                      <span>Share List</span>
+                      <span>Text</span>
                     </>
                   )}
                 </button>
@@ -506,7 +519,7 @@ export default function TempListsSidebar() {
                   } to your list`}
                 >
                   <PlusIcon className="h-5 w-5 mr-1" />
-                  <span>Add More</span>
+                  <span>Add</span>
                 </Link>
               </div>
 
