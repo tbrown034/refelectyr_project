@@ -13,13 +13,23 @@ export function generateListId() {
 
 /**
  * Format list share URL for a published list
+ * @param {string} type - The list type ("movies" or "tv")
  * @param {string} listId - The unique list ID
  * @returns {string} Formatted URL for sharing
  */
-export function formatShareUrl(listId) {
-  // In a real app, this would use the actual domain
-  // For now we use relative URL
-  return `/shared/${listId}`;
+export function formatShareUrl(type, listId) {
+  return `/lists/${type}/publish/${listId}`;
+}
+
+/**
+ * Get a shareable URL for a published list
+ * @param {string} type - The list type ("movies" or "tv")
+ * @param {string} listId - The unique list ID
+ * @returns {string} Shareable URL for the list
+ */
+export function getShareableUrl(type, listId) {
+  // Use the current domain with the list path
+  return `${window.location.origin}/lists/${type}/publish/${listId}`;
 }
 
 /**

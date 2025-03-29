@@ -87,10 +87,11 @@ export default function TempListsSidebar() {
   const hasShows = tvList.length > 0;
   const hasMixedContent = hasMovies && hasShows;
 
-  // Handle publishing the list
+  // In TempListsSidebar.jsx
   const handlePublishList = () => {
     const listType = activeTab === "movies" ? "movie" : "tv";
     return publishList(listType);
+    // No need to navigate here since the PublishButton component will handle it
   };
 
   // Handle standard list sharing with clipboard
