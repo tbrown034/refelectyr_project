@@ -1,6 +1,7 @@
-// components/layout/lists/published/PublishedListItems.jsx
+// app/lists/[type]/publish/[listId]/PublishedListItems.jsx
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -9,7 +10,6 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/solid";
 
-// RENAME THE FUNCTION HERE
 export default function PublishedListItems({
   items, // The array of items
   listIsMovieType, // Boolean: true if items are movies
@@ -17,6 +17,29 @@ export default function PublishedListItems({
   onMoveDown, // Function to move item down (itemId) => void
   onRemove, // Function to remove item (itemId) => void
 }) {
+  const [removedItemId, setRemovedItemId] = useState(null);
+  const [itemAnimation, setItemAnimation] = useState({ id: null, type: null });
+
+  const handleMoveUp = (itemId) => {
+    setItemAnimation({ id: itemId, type: "up" });
+    onMoveUp(itemId);
+    setTimeout(() => setItemAnimation({ id: null, type: null }), 300);
+  };
+
+  const handleMoveDown = (itemId) => {
+    setItemAnimation({ id: itemId, type: "down" });
+    onMoveDown(itemId);
+    setTimeout(() => setItemAnimation({ id: null, type: null }), 300);
+  };
+
+  const handleRemove = (itemId) => {
+    setRemovedItemId(itemId);
+    setTimeout(() => {
+      onRemove(itemId);
+      setRemovedItemId(null);
+    }, 300);
+  };
+
   if (!items || items.length === 0) {
     return (
       <p className="text-center text-gray-500 dark:text-gray-400 py-8">
@@ -47,7 +70,24 @@ export default function PublishedListItems({
         return (
           <li
             key={item.id}
-            className="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm"
+            className={`flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg shadow-sm
+              transition-all duration-300
+              ${
+                removedItemId === item.id
+                  ? "opacity-0 transform translate-x-full"
+                  : "opacity-100"
+              }
+              ${
+                itemAnimation.id === item.id && itemAnimation.type === "up"
+                  ? "transform -translate-y-2"
+                  : ""
+              }
+              ${
+                itemAnimation.id === item.id && itemAnimation.type === "down"
+                  ? "transform translate-y-2"
+                  : ""
+              }
+            `}
           >
             {/* Rank */}
             <div className="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3 font-semibold text-blue-800 dark:text-blue-100">
@@ -89,7 +129,7 @@ export default function PublishedListItems({
               <div className="flex flex-col">
                 {!isFirstItem && (
                   <button
-                    onClick={() => onMoveUp(item.id)}
+                    onClick={() => handleMoveUp(item.id)}
                     className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
                     title="Move up"
                   >
@@ -98,7 +138,7 @@ export default function PublishedListItems({
                 )}
                 {!isLastItem && (
                   <button
-                    onClick={() => onMoveDown(item.id)}
+                    onClick={() => handleMoveDown(item.id)}
                     className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
                     title="Move down"
                   >
@@ -108,7 +148,7 @@ export default function PublishedListItems({
               </div>
               {/* Delete Button */}
               <button
-                onClick={() => onRemove(item.id)}
+                onClick={() => handleRemove(item.id)}
                 className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
                 title="Remove from list"
               >

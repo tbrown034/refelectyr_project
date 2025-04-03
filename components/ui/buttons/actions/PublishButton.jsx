@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation";
 import { ShareIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 import { ListContext } from "@/library/contexts/ListContext";
 
-export default function PublishButton({ itemType, onPublish }) {
+export default function PublishButton({
+  itemType,
+  onPublish,
+  onSuccess = null, // Add callback for when publish succeeds
+  disableIfPublished = false, // Control whether button should disable after publish
+  alternateText = null, // Alternate text to show instead of "Published!"
+}) {
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishSuccess, setPublishSuccess] = useState(false);
   const { publishList } = useContext(ListContext);
@@ -24,13 +30,18 @@ export default function PublishButton({ itemType, onPublish }) {
       if (listId) {
         setPublishSuccess(true);
 
+        // Call onSuccess callback if provided (e.g., to close sidebar)
+        if (onSuccess) {
+          onSuccess(listId);
+        }
+
         // Convert "movie" to "movies" for the URL
         const urlType = itemType === "movie" ? "movies" : "tv";
 
         // Navigate after a short delay to show success state
         setTimeout(() => {
           router.push(`/lists/${urlType}/publish/${listId}`);
-        }, 1000);
+        }, 700); // Shortened from 1000ms for better UX
       }
     } catch (error) {
       console.error("Error publishing list:", error);
@@ -41,22 +52,32 @@ export default function PublishButton({ itemType, onPublish }) {
     }
   };
 
+  // Button states
+  const isDisabled = (disableIfPublished && publishSuccess) || isPublishing;
+
+  // Button text based on state
+  let buttonText = "Publish";
+  if (isPublishing) buttonText = "Publishing...";
+  else if (publishSuccess) {
+    buttonText = alternateText || "Published!";
+  }
+
   return (
     <button
       onClick={handlePublish}
-      disabled={isPublishing || publishSuccess}
+      disabled={isDisabled}
       className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70"
       aria-label={`Publish your ${itemType} list`}
     >
       {publishSuccess ? (
         <>
           <CheckCircleIcon className="h-5 w-5" />
-          <span>Published!</span>
+          <span>{buttonText}</span>
         </>
       ) : (
         <>
           <ShareIcon className="h-5 w-5" />
-          <span>{isPublishing ? "Publishing..." : "Publish"}</span>
+          <span>{buttonText}</span>
         </>
       )}
     </button>
