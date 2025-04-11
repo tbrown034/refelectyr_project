@@ -1,4 +1,3 @@
-// app/lists/[type]/publish/[listId]/PublishedListActions.jsx
 "use client";
 
 import Link from "next/link";
@@ -11,16 +10,15 @@ export default function PublishedListActions({
 }) {
   return (
     // Container for non-sharing actions
-    // Removed outer div and space-y-4 as it's now handled by the parent's footer layout
     <div className="flex flex-wrap items-center gap-3">
       {/* Start New List Button */}
       <button
         onClick={onCreateNew}
         disabled={!isValidType} // Prevent if URL type invalid
-        className={`inline-flex items-center gap-2 px-4 py-3 text-black rounded-lg transition-colors text-sm sm:text-base ${
+        className={`inline-flex items-center gap-2 px-4 py-3 rounded-lg transition-colors text-sm sm:text-base ${
           !isValidType
             ? "bg-gray-400 cursor-not-allowed"
-            : "bg-yellow-500 hover:bg-yellow-600 active:bg-yellow-700"
+            : "bg-yellow-500 text-black hover:bg-yellow-600 active:bg-yellow-700"
         }`}
         title={
           !isValidType
@@ -31,6 +29,7 @@ export default function PublishedListActions({
         <PlusIcon className="h-5 w-5 flex-shrink-0" />
         <span>Start New {pageTypeLabel} List</span>
       </button>
+
       {/* Back to Home Link */}
       <Link
         href="/"

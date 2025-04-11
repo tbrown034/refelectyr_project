@@ -1,4 +1,3 @@
-// components/layout/lists/published/PublishedListHeader.jsx
 "use client";
 
 import { PencilIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
@@ -6,6 +5,7 @@ import { PencilIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
 // Helper function to format date/time
 function formatDate(dateString) {
   if (!dateString) return "Unknown Date";
+
   try {
     // Format to include date and time, using locale settings
     return new Date(dateString).toLocaleDateString(undefined, {
@@ -33,6 +33,7 @@ export default function PublishedListHeader({
 }) {
   // Determine the default title if none is set in listData
   const defaultTitle = `My Top ${listIsMovieType ? "Movies" : "TV Shows"}`;
+
   // Use the title from listData or fall back to the default
   const displayTitle = listData?.title || defaultTitle;
 
@@ -46,10 +47,10 @@ export default function PublishedListHeader({
           <input
             type="text"
             value={editableTitle}
-            onChange={onTitleChange} // Pass event handler from parent
-            className="flex-grow text-3xl font-bold p-2 border rounded dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full min-w-0" // Ensure input takes space
-            autoFocus // Focus input when it appears
-            aria-label="List title input" // Accessibility label
+            onChange={onTitleChange}
+            className="flex-grow text-3xl font-bold p-2 border rounded dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full min-w-0"
+            autoFocus
+            aria-label="List title input"
           />
         ) : (
           // Display the list title, allowing word breaks
@@ -57,6 +58,7 @@ export default function PublishedListHeader({
             {displayTitle}
           </h1>
         )}
+
         {/* Container for edit/confirm/cancel buttons */}
         <div className="flex-shrink-0 flex items-center gap-1 sm:gap-2 mt-1 sm:mt-0">
           {/* Conditional rendering: Confirm/Cancel or Edit button */}
@@ -88,6 +90,7 @@ export default function PublishedListHeader({
           )}
         </div>
       </div>
+
       {/* Display the last updated timestamp */}
       <p className="text-sm text-gray-500 dark:text-gray-400">
         Last Updated: {formatDate(listData?.publishedAt)}

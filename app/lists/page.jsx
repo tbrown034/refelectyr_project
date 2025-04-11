@@ -1,4 +1,3 @@
-// app/lists/page.jsx
 "use client";
 
 import { useContext, useEffect, useState } from "react";
@@ -18,12 +17,14 @@ export default function MyListsPage() {
 
   // Convert the lists object to an array for rendering
   useEffect(() => {
+    // Get all lists and sort by publish date (newest first)
     const lists = Object.values(publishedLists).sort((a, b) => {
       return new Date(b.publishedAt) - new Date(a.publishedAt);
     });
     setListsArray(lists);
   }, [publishedLists]);
 
+  // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return "Unknown Date";
     try {
@@ -121,6 +122,7 @@ export default function MyListsPage() {
                       src={posterPath}
                       alt="List preview"
                       fill
+                      sizes="48px"
                       className="object-cover"
                     />
                   </div>

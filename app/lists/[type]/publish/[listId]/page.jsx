@@ -1,26 +1,27 @@
-// app/lists/[type]/publish/[listId]/page.jsx
 "use client";
 
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { PlusIcon, ArrowLeftIcon } from "@heroicons/react/24/solid";
 
-// Import the updated/refactored components
+// Import components
 import PublishedListHeader from "./PublishedListHeader";
 import PublishedListItems from "./PublishedListItems";
-import PublishedListShare from "./PublishedListShare"; // <-- Import the new share component
-import PublishedListActions from "./PublishedListActions"; // <-- This one is now simplified
+import PublishedListShare from "./PublishedListShare";
+import PublishedListActions from "./PublishedListActions";
 
 import { ListContext } from "@/library/contexts/ListContext";
 import { getShareableUrl, formatListText } from "@/library/utils/listUtils";
 
 export default function PublishedListPage() {
-  // ... (Keep ALL state, context hooks, derived values, useEffect, and handlers exactly the same) ...
+  // Get route parameters
   const params = useParams();
   const type = params?.type;
   const listId = params?.listId;
   const router = useRouter();
+
+  // Get context functions
   const {
     getPublishedList,
     updatePublishedListItems,
@@ -29,6 +30,7 @@ export default function PublishedListPage() {
     clearList,
   } = useContext(ListContext);
 
+  // Component state
   const [listData, setListData] = useState(null);
   const [currentItems, setCurrentItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,24 +40,30 @@ export default function PublishedListPage() {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editableTitle, setEditableTitle] = useState("");
 
+  // Derived values
   const isValidType = type === "movies" || type === "tv";
   const pageTypeLabel = type === "movies" ? "Movie" : "TV Show";
   const listIsMovieType = listData?.type === "movie";
 
-  // Data Loading useEffect... (keep as is)
+  // Load list data on component mount and when params change
   useEffect(() => {
     if (!isValidType || !listId) {
       setListNotFound(true);
       setIsLoading(false);
       return;
     }
+
     setIsLoading(true);
     setListNotFound(false);
+
     const fetchedList = getPublishedList(listId);
+
     if (!fetchedList) {
       setListNotFound(true);
     } else {
       const fetchedListIsMovie = fetchedList.type === "movie";
+
+      // Check if URL type matches list type
       if (
         (fetchedListIsMovie && type !== "movies") ||
         (!fetchedListIsMovie && type !== "tv")
@@ -67,113 +75,115 @@ export default function PublishedListPage() {
         setEditableTitle(fetchedList.title || "");
       }
     }
+
     setIsLoading(false);
   }, [listId, type, getPublishedList, isValidType]);
 
-  // syncLocalStateFromContext useCallback... (keep as is)
-  const syncLocalStateFromContext = useCallback(() => {
+  // Function to refresh state from context
+  function syncLocalStateFromContext() {
     if (!listId) return;
+
     const freshListData = getPublishedList(listId);
+
     if (freshListData) {
       setListData(freshListData);
       setCurrentItems(freshListData.items ? [...freshListData.items] : []);
+
       if (!isEditingTitle) {
         setEditableTitle(freshListData.title || "");
       }
     } else {
       setListNotFound(true);
     }
-  }, [listId, getPublishedList, isEditingTitle]);
+  }
 
-  // updateAndSync useCallback... (keep as is)
-  const updateAndSync = useCallback(
-    (newItems, metadata = {}) => {
-      if (!listId) return;
-      if (newItems) {
-        updatePublishedListItems(listId, newItems);
-      }
-      if (Object.keys(metadata).length > 0) {
-        updatePublishedListMetadata(listId, metadata);
-      }
+  // Function to update items and/or metadata
+  function updateAndSync(newItems, metadata = {}) {
+    if (!listId) return;
+
+    if (newItems) {
+      updatePublishedListItems(listId, newItems);
+    }
+
+    if (Object.keys(metadata).length > 0) {
+      updatePublishedListMetadata(listId, metadata);
+    }
+
+    // Give a moment for context to update
+    setTimeout(syncLocalStateFromContext, 50);
+  }
+
+  // Item movement handlers
+  function handleMoveItemUp(itemId) {
+    const index = currentItems.findIndex((item) => item.id === itemId);
+
+    if (index <= 0) return;
+
+    const newItems = [...currentItems];
+    [newItems[index - 1], newItems[index]] = [
+      newItems[index],
+      newItems[index - 1],
+    ];
+
+    setCurrentItems(newItems);
+    updateAndSync(newItems);
+  }
+
+  function handleMoveItemDown(itemId) {
+    const index = currentItems.findIndex((item) => item.id === itemId);
+
+    if (index === -1 || index >= currentItems.length - 1) return;
+
+    const newItems = [...currentItems];
+    [newItems[index], newItems[index + 1]] = [
+      newItems[index + 1],
+      newItems[index],
+    ];
+
+    setCurrentItems(newItems);
+    updateAndSync(newItems);
+  }
+
+  // Item removal handler
+  function handleRemoveItem(itemId) {
+    if (window.confirm("Are you sure you want to remove this item?")) {
+      const newItems = currentItems.filter((item) => item.id !== itemId);
+      setCurrentItems(newItems);
+      removePublishedListItem(listId, itemId);
       setTimeout(syncLocalStateFromContext, 50);
-    },
-    [
-      listId,
-      updatePublishedListItems,
-      updatePublishedListMetadata,
-      syncLocalStateFromContext,
-    ]
-  );
+    }
+  }
 
-  // handleMoveItemUp useCallback... (keep as is)
-  const handleMoveItemUp = useCallback(
-    (itemId) => {
-      const index = currentItems.findIndex((item) => item.id === itemId);
-      if (index <= 0) return;
-      const newItems = [...currentItems];
-      [newItems[index - 1], newItems[index]] = [
-        newItems[index],
-        newItems[index - 1],
-      ];
-      setCurrentItems(newItems);
-      updateAndSync(newItems);
-    },
-    [currentItems, updateAndSync]
-  );
-
-  // handleMoveItemDown useCallback... (keep as is)
-  const handleMoveItemDown = useCallback(
-    (itemId) => {
-      const index = currentItems.findIndex((item) => item.id === itemId);
-      if (index === -1 || index >= currentItems.length - 1) return;
-      const newItems = [...currentItems];
-      [newItems[index], newItems[index + 1]] = [
-        newItems[index + 1],
-        newItems[index],
-      ];
-      setCurrentItems(newItems);
-      updateAndSync(newItems);
-    },
-    [currentItems, updateAndSync]
-  );
-
-  // handleRemoveItem useCallback... (keep as is)
-  const handleRemoveItem = useCallback(
-    (itemId) => {
-      if (window.confirm("Are you sure you want to remove this item?")) {
-        const newItems = currentItems.filter((item) => item.id !== itemId);
-        setCurrentItems(newItems);
-        removePublishedListItem(listId, itemId);
-        setTimeout(syncLocalStateFromContext, 50);
-      }
-    },
-    [currentItems, listId, removePublishedListItem, syncLocalStateFromContext]
-  );
-
-  // Title Editing Handlers... (keep as is)
-  const handleEditTitleClick = useCallback(() => {
+  // Title editing handlers
+  function handleEditTitleClick() {
     setEditableTitle(listData?.title || "");
     setIsEditingTitle(true);
-  }, [listData]);
-  const handleCancelEditTitle = useCallback(() => {
+  }
+
+  function handleCancelEditTitle() {
     setIsEditingTitle(false);
     setEditableTitle(listData?.title || "");
-  }, [listData]);
-  const handleConfirmEditTitle = useCallback(() => {
+  }
+
+  function handleConfirmEditTitle() {
     const newTitle =
       editableTitle.trim() ||
       `My Top ${listIsMovieType ? "Movies" : "TV Shows"}`;
+
     setIsEditingTitle(false);
     updateAndSync(null, { title: newTitle });
-  }, [editableTitle, listIsMovieType, updateAndSync]);
-  const handleTitleInputChange = useCallback((event) => {
-    setEditableTitle(event.target.value);
-  }, []);
+  }
 
-  // Sharing Handlers... (keep as is)
-  const handleCopyLink = useCallback(() => {
+  function handleTitleInputChange(event) {
+    setEditableTitle(event.target.value);
+  }
+
+  // Sharing handlers
+  function handleCopyLink() {
     if (!type || !listId || !isValidType) return;
+
     const shareUrl = getShareableUrl(type, listId);
+
     navigator.clipboard
       .writeText(shareUrl)
       .then(() => {
@@ -181,13 +191,16 @@ export default function PublishedListPage() {
         setTimeout(() => setCopiedLinkSuccess(false), 3000);
       })
       .catch((err) => console.error("Failed to copy link:", err));
-  }, [type, listId, isValidType]);
-  const handleCopyText = useCallback(() => {
+  }
+
+  function handleCopyText() {
     if (!currentItems || currentItems.length === 0 || !listData) return;
+
     const textToCopy = formatListText(currentItems, listData.type);
     const listTitle =
       listData.title || `My Top ${listIsMovieType ? "Movies" : "TV Shows"}`;
     const fullText = `${listTitle}\n\n${textToCopy}`;
+
     navigator.clipboard
       .writeText(fullText)
       .then(() => {
@@ -195,40 +208,42 @@ export default function PublishedListPage() {
         setTimeout(() => setCopiedTextSuccess(false), 3000);
       })
       .catch((err) => console.error("Failed to copy text:", err));
-  }, [currentItems, listData, listIsMovieType]);
-  const handleSocialShare = useCallback(
-    (platform) => {
-      if (!type || !listId || !isValidType || !listData) return;
-      const shareUrl = encodeURIComponent(getShareableUrl(type, listId));
-      const listTitle =
-        listData.title || `My Top ${listIsMovieType ? "Movies" : "TV Shows"}`;
-      const text = encodeURIComponent(`Check out my list: ${listTitle}`);
-      let platformUrl = "";
-      switch (platform) {
-        case "twitter":
-          platformUrl = `https://twitter.com/intent/tweet?url=${shareUrl}&text=${text}`;
-          break;
-        case "facebook":
-          platformUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
-          break;
-        case "bluesky":
-          platformUrl = `https://bsky.app/intent/compose?text=${text}%0A${shareUrl}`;
-          break;
-        case "instagram":
-          handleCopyLink();
-          alert("Instagram sharing isn't directly supported. Link copied!");
-          return;
-        default:
-          return;
-      }
-      window.open(platformUrl, "_blank", "noopener,noreferrer");
-    },
-    [type, listId, isValidType, listData, listIsMovieType, handleCopyLink]
-  );
+  }
 
-  // Other Actions Handler... (keep as is)
-  const handleCreateNew = useCallback(() => {
+  function handleSocialShare(platform) {
+    if (!type || !listId || !isValidType || !listData) return;
+
+    const shareUrl = encodeURIComponent(getShareableUrl(type, listId));
+    const listTitle =
+      listData.title || `My Top ${listIsMovieType ? "Movies" : "TV Shows"}`;
+    const text = encodeURIComponent(`Check out my list: ${listTitle}`);
+    let platformUrl = "";
+
+    switch (platform) {
+      case "twitter":
+        platformUrl = `https://twitter.com/intent/tweet?url=${shareUrl}&text=${text}`;
+        break;
+      case "facebook":
+        platformUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
+        break;
+      case "bluesky":
+        platformUrl = `https://bsky.app/intent/compose?text=${text}%0A${shareUrl}`;
+        break;
+      case "instagram":
+        handleCopyLink();
+        alert("Instagram sharing isn't directly supported. Link copied!");
+        return;
+      default:
+        return;
+    }
+
+    window.open(platformUrl, "_blank", "noopener,noreferrer");
+  }
+
+  // Other action handlers
+  function handleCreateNew() {
     const typeToClear = listData?.type || (type === "movies" ? "movie" : "tv");
+
     if (
       window.confirm(
         `Are you sure? This will clear your *temporary* ${pageTypeLabel} list and take you to the browse page.`
@@ -237,12 +252,10 @@ export default function PublishedListPage() {
       clearList(typeToClear);
       router.push(type === "movies" ? "/movies" : "/tv");
     }
-  }, [clearList, router, type, listData, pageTypeLabel]);
+  }
 
-  // --- Render Logic ---
-
+  // Render loading state
   if (isLoading) {
-    /* ... loading state ... */
     return (
       <div className="container mx-auto px-4 py-12 max-w-4xl text-center">
         <p className="text-lg animate-pulse text-gray-600 dark:text-gray-400">
@@ -251,8 +264,9 @@ export default function PublishedListPage() {
       </div>
     );
   }
+
+  // Render not found state
   if (listNotFound) {
-    /* ... not found state ... */
     return (
       <div className="container mx-auto px-4 py-12 max-w-4xl text-center">
         <h1 className="text-2xl font-bold mb-4">List Not Found</h1>
@@ -271,10 +285,11 @@ export default function PublishedListPage() {
     );
   }
 
-  // Render the main structure using child components
+  // Render main content
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        {/* Header with title and edit functionality */}
         <PublishedListHeader
           listData={listData}
           listIsMovieType={listIsMovieType}
@@ -286,6 +301,7 @@ export default function PublishedListPage() {
           onCancelEditTitle={handleCancelEditTitle}
         />
 
+        {/* Main content - list items */}
         <div className="p-6">
           <PublishedListItems
             items={currentItems}
@@ -294,7 +310,8 @@ export default function PublishedListPage() {
             onMoveDown={handleMoveItemDown}
             onRemove={handleRemoveItem}
           />
-          {/* Button to Add More Items */}
+
+          {/* Button to add more items */}
           <div className="mt-6">
             <Link
               href={`/${type}`}
@@ -307,7 +324,7 @@ export default function PublishedListPage() {
           </div>
         </div>
 
-        {/* --- RENDER UPDATED FOOTER AREA --- */}
+        {/* Footer area with sharing and actions */}
         <div className="p-6 border-t dark:border-gray-700 space-y-4 bg-gray-50 dark:bg-gray-800">
           <PublishedListShare
             type={type}
@@ -326,7 +343,6 @@ export default function PublishedListPage() {
             onCreateNew={handleCreateNew}
           />
         </div>
-        {/* ------------------------------------ */}
       </div>
     </div>
   );

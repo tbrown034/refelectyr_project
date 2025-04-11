@@ -1,4 +1,6 @@
-// library/utils/listUtils.js
+/**
+ * Utility functions for working with lists in the application
+ */
 
 /**
  * Generates a unique ID for published lists
@@ -22,18 +24,19 @@ export function formatShareUrl(type, listId) {
 }
 
 /**
- * Get a shareable URL for a published list
+ * Get a shareable URL for a published list (includes domain)
  * @param {string} type - The list type ("movies" or "tv")
  * @param {string} listId - The unique list ID
  * @returns {string} Shareable URL for the list
  */
 export function getShareableUrl(type, listId) {
   // Use the current domain with the list path
-  return `${window.location.origin}/lists/${type}/publish/${listId}`;
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  return `${baseUrl}/lists/${type}/publish/${listId}`;
 }
 
 /**
- * Format list items for display or sharing
+ * Format list items for display or sharing as text
  * @param {Array} items - List of items to format
  * @param {string} itemType - Type of items ("movie" or "tv")
  * @returns {string} Formatted text representation of the list
@@ -56,4 +59,32 @@ export function formatListText(items, itemType) {
       return `${index + 1}. ${title} (${year})`;
     })
     .join("\n");
+}
+
+/**
+ * Format date for display in lists
+ * @param {string} dateString - ISO date string
+ * @param {string} format - Format type ('short' or 'long')
+ * @returns {string} Formatted date string
+ */
+export function formatListDate(dateString, format = "short") {
+  if (!dateString) return "Unknown Date";
+
+  try {
+    const options =
+      format === "short"
+        ? { year: "numeric", month: "short", day: "numeric" }
+        : {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          };
+
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  } catch (e) {
+    console.error("Error formatting date:", e);
+    return "Invalid Date";
+  }
 }

@@ -1,10 +1,13 @@
 // app/page.js
 import Hero from "@/components/layout/hero/Hero";
 
-export default function Home({ searchParams }) {
+export default async function Home({ searchParams }) {
+  // This needs to be awaited
+  const params = await searchParams;
+
   return (
     <div className="w-full">
-      <Hero searchParams={searchParams} />
+      <Hero searchParams={params} />
     </div>
   );
 }

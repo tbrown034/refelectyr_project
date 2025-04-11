@@ -7,11 +7,7 @@ import ScrollingTV from "./scrollingMedia/ScrollingTV";
 import { DEFAULT_YEAR } from "@/library/utils/defaults";
 
 export default async function Hero({ searchParams }) {
-  // Next.js 15: searchParams is now a Promise, must await it
-  const params = await searchParams;
-
-  // Read the year from the URL query parameters if provided; use DEFAULT_YEAR from constants
-  const year = params?.year || DEFAULT_YEAR;
+  const year = searchParams?.year || DEFAULT_YEAR;
 
   return (
     <div className="flex flex-col items-center">

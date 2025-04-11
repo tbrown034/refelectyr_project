@@ -1,10 +1,18 @@
 // library/contexts/ListContext.js
 "use client";
 
-import { createContext, useState, useEffect, useCallback } from "react"; // Added useCallback
+import { createContext, useState, useEffect } from "react";
 import { MAX_LIST_SIZE } from "@/library/utils/defaults";
 import { generateListId } from "@/library/utils/listUtils";
 
+// Define constants for localStorage keys
+const STORAGE_KEYS = {
+  MOVIE_LIST: "userMovieList",
+  TV_LIST: "userTvList",
+  PUBLISHED_LISTS: "publishedLists",
+};
+
+// Create the context with default values
 export const ListContext = createContext({
   movieList: [],
   tvList: [],
@@ -17,14 +25,13 @@ export const ListContext = createContext({
   publishList: () => null,
   getPublishedList: () => null,
   publishedLists: {},
-  // --- NEW Functions for Published Lists ---
   updatePublishedListItems: (listId, newItems) => {},
-  updatePublishedListMetadata: (listId, metadata) => {}, // For title and timestamp
+  updatePublishedListMetadata: (listId, metadata) => {},
   removePublishedListItem: (listId, itemId) => {},
-  // -----------------------------------------
 });
 
 export function ListProvider({ children }) {
+  // State for lists
   const [movieList, setMovieList] = useState([]);
   const [tvList, setTvList] = useState([]);
   const [publishedLists, setPublishedLists] = useState({});
@@ -33,9 +40,11 @@ export function ListProvider({ children }) {
   // Initialize lists from localStorage
   useEffect(() => {
     try {
-      const storedMovieList = localStorage.getItem("userMovieList");
-      const storedTvList = localStorage.getItem("userTvList");
-      const storedPublishedLists = localStorage.getItem("publishedLists");
+      const storedMovieList = localStorage.getItem(STORAGE_KEYS.MOVIE_LIST);
+      const storedTvList = localStorage.getItem(STORAGE_KEYS.TV_LIST);
+      const storedPublishedLists = localStorage.getItem(
+        STORAGE_KEYS.PUBLISHED_LISTS
+      );
 
       if (storedMovieList) setMovieList(JSON.parse(storedMovieList));
       if (storedTvList) setTvList(JSON.parse(storedTvList));
@@ -49,99 +58,114 @@ export function ListProvider({ children }) {
     }
   }, []);
 
-  // --- Persistence Effects ---
+  // Save movie list to localStorage
   useEffect(() => {
     if (!isInitialized) return;
     try {
-      localStorage.setItem("userMovieList", JSON.stringify(movieList));
+      localStorage.setItem(STORAGE_KEYS.MOVIE_LIST, JSON.stringify(movieList));
     } catch (error) {
       console.error("Error saving movie list:", error);
     }
   }, [movieList, isInitialized]);
 
+  // Save TV list to localStorage
   useEffect(() => {
     if (!isInitialized) return;
     try {
-      localStorage.setItem("userTvList", JSON.stringify(tvList));
+      localStorage.setItem(STORAGE_KEYS.TV_LIST, JSON.stringify(tvList));
     } catch (error) {
       console.error("Error saving TV list:", error);
     }
   }, [tvList, isInitialized]);
 
-  // NEW: Persist publishedLists changes
+  // Save published lists to localStorage
   useEffect(() => {
     if (!isInitialized) return;
     try {
-      localStorage.setItem("publishedLists", JSON.stringify(publishedLists));
+      localStorage.setItem(
+        STORAGE_KEYS.PUBLISHED_LISTS,
+        JSON.stringify(publishedLists)
+      );
     } catch (error) {
       console.error("Error saving published lists:", error);
     }
   }, [publishedLists, isInitialized]);
-  // ---------------------------
 
-  // Check if item is in temporary list
-  const isInList = (itemType, itemId) => {
+  // Check if item is in list
+  function isInList(itemType, itemId) {
     const list = itemType === "movie" ? movieList : tvList;
     return list.some((item) => item.id === itemId);
-  };
+  }
 
-  // Add item to temporary list
-  const addToList = (itemType, item) => {
+  // Add item to list
+  function addToList(itemType, item) {
     if (!item || !item.id) return false;
+
     const list = itemType === "movie" ? movieList : tvList;
     const setList = itemType === "movie" ? setMovieList : setTvList;
 
+    // Don't add duplicates
     if (list.some((listItem) => listItem.id === item.id)) return false;
+
+    // Check list size limit
     if (list.length >= MAX_LIST_SIZE) {
       alert(`Your ${itemType} list is full (max ${MAX_LIST_SIZE} items).`);
       return false;
     }
+
+    // Add with timestamp
     setList([...list, { ...item, addedAt: new Date().toISOString() }]);
     return true;
-  };
+  }
 
-  // Remove item from temporary list
-  const removeFromList = (itemType, itemId) => {
+  // Remove item from list
+  function removeFromList(itemType, itemId) {
     const list = itemType === "movie" ? movieList : tvList;
     const setList = itemType === "movie" ? setMovieList : setTvList;
     setList(list.filter((item) => item.id !== itemId));
-  };
+  }
 
-  // Move item up in temporary list
-  const moveItemUp = (itemType, itemId) => {
+  // Move item up in list
+  function moveItemUp(itemType, itemId) {
     const list = itemType === "movie" ? movieList : tvList;
     const setList = itemType === "movie" ? setMovieList : setTvList;
     const index = list.findIndex((item) => item.id === itemId);
+
     if (index <= 0) return;
+
     const newList = [...list];
     [newList[index - 1], newList[index]] = [newList[index], newList[index - 1]];
     setList(newList);
-  };
+  }
 
-  // Move item down in temporary list
-  const moveItemDown = (itemType, itemId) => {
+  // Move item down in list
+  function moveItemDown(itemType, itemId) {
     const list = itemType === "movie" ? movieList : tvList;
     const setList = itemType === "movie" ? setMovieList : setTvList;
     const index = list.findIndex((item) => item.id === itemId);
+
     if (index === -1 || index >= list.length - 1) return;
+
     const newList = [...list];
     [newList[index], newList[index + 1]] = [newList[index + 1], newList[index]];
     setList(newList);
-  };
+  }
 
-  // Clear temporary list
-  const clearList = (itemType) => {
+  // Clear list
+  function clearList(itemType) {
     const setList = itemType === "movie" ? setMovieList : setTvList;
     setList([]);
-  };
+  }
 
-  // Publish a temporary list
-  const publishList = (itemType) => {
+  // Publish a list
+  function publishList(itemType) {
     const list = itemType === "movie" ? movieList : tvList;
+
     if (list.length === 0) {
       alert("Cannot publish an empty list.");
       return null;
     }
+
     const listId = generateListId();
     const newPublishedList = {
       id: listId,
@@ -149,27 +173,23 @@ export function ListProvider({ children }) {
       items: [...list], // Create a copy
       title: `My Top ${itemType === "movie" ? "Movies" : "TV Shows"}`, // Default title
       publishedAt: new Date().toISOString(), // Timestamp
-      // updatedAt: null, // Could add this later
     };
+
     setPublishedLists((prev) => ({ ...prev, [listId]: newPublishedList }));
     return listId;
-  };
+  }
 
-  // Get a specific published list
-  const getPublishedList = useCallback(
-    (listId) => {
-      if (!isInitialized) return null; // Don't return until loaded
-      return publishedLists[listId] || null;
-    },
-    [publishedLists, isInitialized]
-  ); // Add dependencies
+  // Get a published list
+  function getPublishedList(listId) {
+    if (!isInitialized) return null; // Don't return until loaded
+    return publishedLists[listId] || null;
+  }
 
-  // --- NEW: Functions to Modify Published Lists ---
-
-  // Update the items array of a published list (for reorder/delete)
-  const updatePublishedListItems = useCallback((listId, newItems) => {
+  // Update items in a published list
+  function updatePublishedListItems(listId, newItems) {
     setPublishedLists((prev) => {
       if (!prev[listId]) return prev; // List not found
+
       return {
         ...prev,
         [listId]: {
@@ -179,14 +199,16 @@ export function ListProvider({ children }) {
         },
       };
     });
-  }, []); // No dependency needed if only using setPublishedLists's functional update
+  }
 
-  // Remove a single item from a published list
-  const removePublishedListItem = useCallback((listId, itemId) => {
+  // Remove an item from a published list
+  function removePublishedListItem(listId, itemId) {
     setPublishedLists((prev) => {
       if (!prev[listId]) return prev;
+
       const currentItems = prev[listId].items || [];
       const newItems = currentItems.filter((item) => item.id !== itemId);
+
       // Only update if items actually changed
       if (newItems.length !== currentItems.length) {
         return {
@@ -200,12 +222,13 @@ export function ListProvider({ children }) {
       }
       return prev; // No change needed
     });
-  }, []);
+  }
 
-  // Update metadata (like title) of a published list
-  const updatePublishedListMetadata = useCallback((listId, metadataUpdate) => {
+  // Update metadata of a published list
+  function updatePublishedListMetadata(listId, metadataUpdate) {
     setPublishedLists((prev) => {
       if (!prev[listId]) return prev;
+
       return {
         ...prev,
         [listId]: {
@@ -215,29 +238,31 @@ export function ListProvider({ children }) {
         },
       };
     });
-  }, []);
+  }
 
-  // -----------------------------------------------
-
+  // Provide context values
   return (
     <ListContext.Provider
       value={{
+        // State
         movieList,
         tvList,
+        publishedLists,
+
+        // Temporary list operations
         addToList,
         removeFromList,
         moveItemUp,
         moveItemDown,
         clearList,
         isInList,
+
+        // Published list operations
         publishList,
         getPublishedList,
-        publishedLists,
-        // --- Provide new functions ---
         updatePublishedListItems,
         updatePublishedListMetadata,
         removePublishedListItem,
-        // ---------------------------
       }}
     >
       {children}
