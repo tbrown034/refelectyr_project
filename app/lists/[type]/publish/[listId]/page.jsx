@@ -340,6 +340,7 @@ export default function PublishedListPage() {
           <PublishedListActions
             isValidType={isValidType}
             pageTypeLabel={pageTypeLabel}
+            listId={listId} // Add this new prop
             onCreateNew={handleCreateNew}
           />
         </div>

@@ -12,6 +12,10 @@ const STORAGE_KEYS = {
   PUBLISHED_LISTS: "publishedLists",
 };
 
+// Add new constants for list limits
+const MAX_PUBLISHED_LISTS_ANONYMOUS = 5; // Max lists for non-logged users
+const TEMP_LIST_CLEANUP_AFTER_PUBLISH = true; // Clean temp lists after publishing
+
 // Create the context with default values
 export const ListContext = createContext({
   movieList: [],
@@ -28,6 +32,10 @@ export const ListContext = createContext({
   updatePublishedListItems: (listId, newItems) => {},
   updatePublishedListMetadata: (listId, metadata) => {},
   removePublishedListItem: (listId, itemId) => {},
+  // Add new functions to context definition
+  hasReachedPublishedListLimit: () => false,
+  deletePublishedList: (listId) => {},
+  ANONYMOUS_LIST_LIMIT: MAX_PUBLISHED_LISTS_ANONYMOUS,
 });
 
 export function ListProvider({ children }) {
@@ -125,6 +133,10 @@ export function ListProvider({ children }) {
     setList(list.filter((item) => item.id !== itemId));
   }
 
+  function deleteAllPublishedLists() {
+    setPublishedLists({});
+  }
+
   // Move item up in list
   function moveItemUp(itemType, itemId) {
     const list = itemType === "movie" ? movieList : tvList;
@@ -157,12 +169,32 @@ export function ListProvider({ children }) {
     setList([]);
   }
 
-  // Publish a list
+  // NEW FUNCTION: Check if user has reached published list limit
+  function hasReachedPublishedListLimit() {
+    // In the future, this will check auth status
+    const isLoggedIn = false; // For now, assume not logged in
+
+    if (isLoggedIn) return false; // No limit for logged in users
+
+    // Count current published lists
+    const publishedListCount = Object.keys(publishedLists).length;
+    return publishedListCount >= MAX_PUBLISHED_LISTS_ANONYMOUS;
+  }
+
+  // MODIFIED: Publish a list with limit check and cleanup
   function publishList(itemType) {
     const list = itemType === "movie" ? movieList : tvList;
 
     if (list.length === 0) {
       alert("Cannot publish an empty list.");
+      return null;
+    }
+
+    // Check if user has reached limit
+    if (hasReachedPublishedListLimit()) {
+      alert(
+        `You've reached the maximum of ${MAX_PUBLISHED_LISTS_ANONYMOUS} published lists. Sign in to create more!`
+      );
       return null;
     }
 
@@ -176,6 +208,12 @@ export function ListProvider({ children }) {
     };
 
     setPublishedLists((prev) => ({ ...prev, [listId]: newPublishedList }));
+
+    // Clean up temporary list after publishing if enabled
+    if (TEMP_LIST_CLEANUP_AFTER_PUBLISH) {
+      clearList(itemType);
+    }
+
     return listId;
   }
 
@@ -240,6 +278,15 @@ export function ListProvider({ children }) {
     });
   }
 
+  // NEW FUNCTION: Delete a published list
+  function deletePublishedList(listId) {
+    setPublishedLists((prev) => {
+      const newPublishedLists = { ...prev };
+      delete newPublishedLists[listId];
+      return newPublishedLists;
+    });
+  }
+
   // Provide context values
   return (
     <ListContext.Provider
@@ -263,6 +310,12 @@ export function ListProvider({ children }) {
         updatePublishedListItems,
         updatePublishedListMetadata,
         removePublishedListItem,
+        deleteAllPublishedLists,
+
+        // New functions
+        hasReachedPublishedListLimit,
+        deletePublishedList,
+        ANONYMOUS_LIST_LIMIT: MAX_PUBLISHED_LISTS_ANONYMOUS,
       }}
     >
       {children}

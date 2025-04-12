@@ -10,9 +10,7 @@ import { ListBulletIcon } from "@heroicons/react/24/solid";
 const HeaderNavBar = () => {
   // Replace use() with useContext()
   const { selectedYear } = useContext(YearContext);
-  const { movieList, tvList } = useContext(ListContext);
-  const hasLists = movieList.length > 0 || tvList.length > 0;
-  const totalItems = movieList.length + tvList.length;
+  const { publishedLists } = useContext(ListContext);
 
   // Static routes that don't need year param
   const staticRoutes = [
@@ -48,18 +46,13 @@ const HeaderNavBar = () => {
         </Link>
       ))}
 
-      {/* My Lists Link with Count Indicator */}
+      {/* My Lists Link without Count Indicator */}
       <Link
         href="/lists"
-        className="text-gray-900 dark:text-white hover:underline transition-colors flex items-center relative"
+        className="text-gray-900 dark:text-white hover:underline transition-colors flex items-center"
       >
         <ListBulletIcon className="h-5 w-5 mr-1" />
         My Lists
-        {totalItems > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-            {totalItems}
-          </span>
-        )}
       </Link>
     </nav>
   );

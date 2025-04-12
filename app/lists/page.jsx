@@ -1,3 +1,4 @@
+// app/lists/page.jsx
 "use client";
 
 import { useContext, useEffect, useState } from "react";
@@ -6,14 +7,24 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   FilmIcon,
+  TrashIcon,
   TvIcon,
   ListBulletIcon,
   ArrowRightIcon,
+  ExclamationCircleIcon,
 } from "@heroicons/react/24/solid";
 
 export default function MyListsPage() {
-  const { publishedLists } = useContext(ListContext);
+  const {
+    publishedLists,
+    hasReachedPublishedListLimit,
+    ANONYMOUS_LIST_LIMIT,
+    deleteAllPublishedLists,
+  } = useContext(ListContext);
   const [listsArray, setListsArray] = useState([]);
+  // Add new state for tracking limit status
+  const [isNearLimit, setIsNearLimit] = useState(false);
+  const [isAtLimit, setIsAtLimit] = useState(false);
 
   // Convert the lists object to an array for rendering
   useEffect(() => {
@@ -22,7 +33,12 @@ export default function MyListsPage() {
       return new Date(b.publishedAt) - new Date(a.publishedAt);
     });
     setListsArray(lists);
-  }, [publishedLists]);
+
+    // Check if we're near or at the limit
+    const listCount = lists.length;
+    setIsNearLimit(listCount >= ANONYMOUS_LIST_LIMIT - 1);
+    setIsAtLimit(hasReachedPublishedListLimit());
+  }, [publishedLists, hasReachedPublishedListLimit, ANONYMOUS_LIST_LIMIT]);
 
   // Format date for display
   const formatDate = (dateString) => {
@@ -39,9 +55,81 @@ export default function MyListsPage() {
     }
   };
 
+  // NEW FUNCTION: Handle delete all lists with confirmation
+  const handleDeleteAllLists = () => {
+    // Check if there are any lists to delete
+    if (listsArray.length === 0) {
+      alert("You don't have any lists to delete.");
+      return;
+    }
+
+    // Show confirmation dialog with count
+    if (
+      window.confirm(
+        `Are you sure you want to delete all ${listsArray.length} of your lists? This cannot be undone.`
+      )
+    ) {
+      deleteAllPublishedLists();
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <h1 className="text-3xl font-bold mb-6">My Lists</h1>
+      <h1 className="text-3xl font-bold mb-2">My Lists</h1>
+      {/* NEW: Only show Delete All button if there are lists */}
+      {listsArray.length > 0 && (
+        <button
+          onClick={handleDeleteAllLists}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors"
+          title="Delete all your lists permanently"
+        >
+          <TrashIcon className="h-5 w-5" />
+          <span>Delete All Lists</span>
+        </button>
+      )}
+
+      {/* Add limit warning banner */}
+      {isNearLimit && (
+        <div
+          className={`mb-6 p-4 rounded-lg ${
+            isAtLimit
+              ? "bg-red-100 dark:bg-red-900/30"
+              : "bg-yellow-100 dark:bg-yellow-900/30"
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <ExclamationCircleIcon
+              className={`h-5 w-5 ${
+                isAtLimit
+                  ? "text-red-600 dark:text-red-400"
+                  : "text-yellow-600 dark:text-yellow-400"
+              }`}
+            />
+            <p
+              className={`font-medium ${
+                isAtLimit
+                  ? "text-red-800 dark:text-red-200"
+                  : "text-yellow-800 dark:text-yellow-200"
+              }`}
+            >
+              {isAtLimit
+                ? `You've reached the limit of ${ANONYMOUS_LIST_LIMIT} lists for non-registered users.`
+                : `You have ${ANONYMOUS_LIST_LIMIT - listsArray.length} list${
+                    ANONYMOUS_LIST_LIMIT - listsArray.length !== 1 ? "s" : ""
+                  } remaining.`}
+            </p>
+          </div>
+          <div className="mt-2">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Sign up for a free account to create unlimited lists and access
+              them from any device.
+            </p>
+            <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              Sign Up Now
+            </button>
+          </div>
+        </div>
+      )}
 
       {listsArray.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-xl p-8 text-center shadow-lg">

@@ -1,34 +1,36 @@
 // app/lists/[type]/publish/[listId]/PublishedListShare.jsx
+
 "use client";
 
 import { ShareIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
-// Uncomment if you install and use react-icons
-// import { FaTwitter, FaFacebook, FaInstagram, FaBluesky } from 'react-icons/fa';
+// Install these icons with: npm install react-icons
+import { FaTwitter, FaFacebook, FaInstagram } from "react-icons/fa";
+import { SiBluesky } from "react-icons/si";
 
 export default function PublishedListShare({
-  type, // URL type ('movies' or 'tv')
-  listId, // The ID of the current list
-  isValidType, // Boolean: true if URL type is valid
-  currentItems, // Array of items (needed for copy text length check)
-  copiedLinkSuccess, // Boolean: true if link copy was recent
-  copiedTextSuccess, // Boolean: true if text copy was recent
-  onCopyLink, // Function: () => void - Handles copy link action
-  onCopyText, // Function: () => void - Handles copy text action
-  onSocialShare, // Function: (platform: string) => void - Handles social shares
+  type,
+  listId,
+  isValidType,
+  currentItems,
+  copiedLinkSuccess,
+  copiedTextSuccess,
+  onCopyLink,
+  onCopyText,
+  onSocialShare,
 }) {
   return (
     // Share Buttons Row Container
     <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-      {/* "Share:" label */}
-      <span className="text-sm font-medium mr-1 sm:mr-2 shrink-0">Share:</span>
       {/* Copy Link Button */}
       <button
         onClick={onCopyLink}
-        disabled={!isValidType} // Disable if URL type is bad
-        className={`inline-flex items-center gap-2 px-3 py-2 text-sm text-white rounded-lg transition-colors ${
+        disabled={!isValidType}
+        className={`inline-flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors ${
           !isValidType
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
+            ? "bg-gray-400 cursor-not-allowed text-white"
+            : copiedLinkSuccess
+            ? "bg-green-600 text-white"
+            : "bg-blue-600 text-white hover:bg-blue-700"
         }`}
         title={
           !isValidType
@@ -46,12 +48,18 @@ export default function PublishedListShare({
           </>
         )}
       </button>
+
       {/* Copy Text Button */}
       <button
         onClick={onCopyText}
-        // Disable if the list is empty
         disabled={!currentItems || currentItems.length === 0}
-        className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 active:bg-gray-800 transition-colors disabled:opacity-50"
+        className={`inline-flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors ${
+          !currentItems || currentItems.length === 0
+            ? "bg-gray-400 cursor-not-allowed text-white"
+            : copiedTextSuccess
+            ? "bg-green-600 text-white"
+            : "bg-gray-600 text-white hover:bg-gray-700"
+        }`}
         title={
           !currentItems || currentItems.length === 0
             ? "Cannot copy empty list text"
@@ -68,34 +76,42 @@ export default function PublishedListShare({
           </>
         )}
       </button>
-      {/* Social Media Share Buttons */}
+
+      {/* Social Share Buttons - with full names and consistent design */}
       <button
         onClick={() => onSocialShare("twitter")}
-        title="Share on X / Twitter"
-        className="inline-flex items-center gap-1 px-3 py-2 text-sm bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"
+        className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        title="Share on Twitter"
       >
-        {/* <FaTwitter className="h-4 w-4"/> */} X/Twitter
+        <FaTwitter className="h-4 w-4 text-[#1DA1F2]" />
+        Twitter
       </button>
+
       <button
         onClick={() => onSocialShare("facebook")}
+        className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
         title="Share on Facebook"
-        className="inline-flex items-center gap-1 px-3 py-2 text-sm bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors"
       >
-        {/* <FaFacebook className="h-4 w-4"/> */} Facebook
+        <FaFacebook className="h-4 w-4 text-[#1877F2]" />
+        Facebook
       </button>
+
       <button
         onClick={() => onSocialShare("bluesky")}
+        className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
         title="Share on Bluesky"
-        className="inline-flex items-center gap-1 px-3 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
       >
-        {/* <FaBluesky className="h-4 w-4"/> */} Bluesky
+        <SiBluesky className="h-4 w-4 text-[#0085FF]" />
+        Bluesky
       </button>
+
       <button
         onClick={() => onSocialShare("instagram")}
+        className="inline-flex items-center gap-2 px-3 py-2 text-sm bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
         title="Copy link for Instagram"
-        className="inline-flex items-center gap-1 px-3 py-2 text-sm bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
       >
-        {/* <FaInstagram className="h-4 w-4"/> */} Instagram
+        <FaInstagram className="h-4 w-4 text-[#E4405F]" />
+        Instagram
       </button>
     </div>
   );
