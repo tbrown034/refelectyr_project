@@ -38,19 +38,19 @@ export default function MovieCard({ movie }) {
             alt={`${movie.title} poster`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover"
+            className="object-cover cursor-pointer"
             priority={false}
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-800 text-white">
+          <div className="w-full h-full flex items-center justify-center bg-gray-800 text-white cursor-pointer">
             <span className="text-center p-4">No poster available</span>
           </div>
         )}
       </div>
 
       {/* Movie Details */}
-      <div className="p-4">
+      <div className="p-4 cursor-pointer">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
           {movie.title}
         </h2>

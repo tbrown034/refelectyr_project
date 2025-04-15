@@ -63,15 +63,15 @@ export default async function ScrollingMovies({ year = "2025" }) {
         </Link>
       </div>
 
-      {/* Container with overflow hidden - IMPORTANT: added group class here */}
+      {/* Container with overflow hidden - Add pause-on-hover functionality */}
       <div className="relative w-full overflow-hidden rounded-xl group">
-        {/* Inner content that scrolls */}
-        <div className="flex animate-scrollLeft gap-6 w-max py-4">
+        {/* Inner content that scrolls - pauses on hover */}
+        <div className="flex animate-scrollLeft gap-6 w-max py-4 group-hover:pause">
           {doubledMovies.map((movie, index) => (
             <Link
               key={`${movie.id}-${index}`}
               href={`/movies/${movie.id}`}
-              className="flex-shrink-0 w-28 sm:w-36 transition-transform hover:scale-105"
+              className="flex-shrink-0 w-28 sm:w-36 transition-transform hover:scale-105 cursor-pointer"
             >
               <div className="relative w-full aspect-[2/3] rounded-lg overflow-hidden shadow-md">
                 <Image

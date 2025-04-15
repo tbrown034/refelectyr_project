@@ -2,14 +2,15 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useContext, useEffect } from "react";
+import { use, useEffect } from "react";
 import YearSelector from "@/components/ui/inputs/YearSelector";
 import { YearContext } from "@/library/contexts/YearContext";
 
 export default function HeroYearSelector({ initialYear }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { setSelectedYear } = useContext(YearContext);
+  // Replace useContext with use()
+  const { setSelectedYear } = use(YearContext);
 
   // When initialYear changes (from URL params), update context
   useEffect(() => {

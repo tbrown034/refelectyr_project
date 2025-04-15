@@ -91,7 +91,12 @@ export default function TempListsSidebar() {
   const handlePublishList = () => {
     const listType = activeTab === "movies" ? "movie" : "tv";
     return publishList(listType);
-    // No need to navigate here since the PublishButton component will handle it
+  };
+
+  // Handle success callback to close sidebar after publishing
+  const handlePublishSuccess = (listId) => {
+    // Close the sidebar after successful publish
+    setIsOpen(false);
   };
 
   // Handle standard list sharing with clipboard
@@ -491,6 +496,7 @@ export default function TempListsSidebar() {
                 <PublishButton
                   itemType={activeTab === "movies" ? "movie" : "tv"}
                   onPublish={handlePublishList}
+                  onSuccess={handlePublishSuccess} // Add this callback to close sidebar
                 />
 
                 <button

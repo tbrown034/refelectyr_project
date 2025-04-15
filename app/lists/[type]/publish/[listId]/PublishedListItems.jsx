@@ -97,7 +97,7 @@ export default function PublishedListItems({
             {/* Item Info Link */}
             <Link
               href={detailPath}
-              className="flex items-center flex-grow min-w-0 group mr-2"
+              className="flex items-center flex-grow min-w-0 group mr-2 cursor-pointer"
               title={`View details for ${title}`}
             >
               <div className="flex-shrink-0 w-10 h-14 relative mr-3 bg-gray-200 dark:bg-gray-600 rounded">
@@ -106,7 +106,7 @@ export default function PublishedListItems({
                   alt={`${title} poster`}
                   fill
                   sizes="40px"
-                  className="object-cover rounded"
+                  className="object-cover rounded cursor-pointer"
                   unoptimized={posterPath === "/placeholder-movie.jpg"}
                   onError={(e) => {
                     e.target.src = "/placeholder-movie.jpg";
@@ -130,7 +130,7 @@ export default function PublishedListItems({
                 {!isFirstItem && (
                   <button
                     onClick={() => handleMoveUp(item.id)}
-                    className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
+                    className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer"
                     title="Move up"
                   >
                     <ChevronUpIcon className="h-5 w-5" />
@@ -139,7 +139,7 @@ export default function PublishedListItems({
                 {!isLastItem && (
                   <button
                     onClick={() => handleMoveDown(item.id)}
-                    className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 rounded"
+                    className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 rounded cursor-pointer"
                     title="Move down"
                   >
                     <ChevronDownIcon className="h-5 w-5" />
@@ -149,7 +149,7 @@ export default function PublishedListItems({
               {/* Delete Button */}
               <button
                 onClick={() => handleRemove(item.id)}
-                className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded cursor-pointer"
                 title="Remove from list"
               >
                 <TrashIcon className="h-5 w-5" />

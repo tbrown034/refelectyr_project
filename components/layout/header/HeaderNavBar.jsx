@@ -2,15 +2,15 @@
 "use client";
 
 import Link from "next/link";
-import { useContext } from "react";
+import { use } from "react";
 import { YearContext } from "@/library/contexts/YearContext";
 import { ListContext } from "@/library/contexts/ListContext";
 import { ListBulletIcon } from "@heroicons/react/24/solid";
 
 const HeaderNavBar = () => {
-  // Replace use() with useContext()
-  const { selectedYear } = useContext(YearContext);
-  const { publishedLists } = useContext(ListContext);
+  // Replace useContext with use()
+  const { selectedYear } = use(YearContext);
+  const { publishedLists } = use(ListContext);
 
   // Static routes that don't need year param
   const staticRoutes = [

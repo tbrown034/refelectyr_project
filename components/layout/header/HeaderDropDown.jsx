@@ -2,14 +2,14 @@
 "use client";
 
 import Link from "next/link";
-import { useContext } from "react";
+import { use } from "react";
 import { YearContext } from "@/library/contexts/YearContext";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
 const HeaderDropDown = () => {
-  // Replace use() with useContext()
-  const { selectedYear } = useContext(YearContext);
+  // Replace useContext with use()
+  const { selectedYear } = use(YearContext);
 
   const navItems = [
     { text: "Home", href: "/" },
@@ -41,7 +41,7 @@ const HeaderDropDown = () => {
               key={index}
               as={Link}
               href={item.href}
-              className="block w-full px-4 py-2 text-left rounded-md hover:bg-gray-200 transition"
+              className="block w-full px-4 py-2 text-left rounded-md hover:bg-gray-200 transition cursor-pointer"
             >
               {item.text}
             </MenuItem>

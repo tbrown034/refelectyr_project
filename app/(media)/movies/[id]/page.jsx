@@ -9,10 +9,10 @@ import {
 import { getMovieById } from "@/library/api/tmdb";
 import ActionButtons from "@/components/ui/buttons/actions/DetailPageActions";
 
-export async function generateMetadata({ params: paramsPromise }) {
+export async function generateMetadata({ params }) {
   // Await the params first to get the id
-  const params = await paramsPromise;
-  const movie = await getMovieById(params.id);
+  const resolvedParams = await params;
+  const movie = await getMovieById(resolvedParams.id);
 
   if (!movie) return { title: "Movie Not Found" };
 
@@ -24,10 +24,10 @@ export async function generateMetadata({ params: paramsPromise }) {
   };
 }
 
-export default async function MovieDetailPage({ params: paramsPromise }) {
+export default async function MovieDetailPage({ params }) {
   // Await the params first to get the id
-  const params = await paramsPromise;
-  const movie = await getMovieById(params.id);
+  const resolvedParams = await params;
+  const movie = await getMovieById(resolvedParams.id);
 
   if (!movie) {
     notFound();

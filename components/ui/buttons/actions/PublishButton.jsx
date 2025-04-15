@@ -1,7 +1,7 @@
 // components/ui/buttons/actions/PublishButton.jsx
 "use client";
 
-import { useState, useContext } from "react";
+import { useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { ShareIcon, CheckCircleIcon } from "@heroicons/react/24/solid";
 import { ListContext } from "@/library/contexts/ListContext";
@@ -15,7 +15,7 @@ export default function PublishButton({
 }) {
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishSuccess, setPublishSuccess] = useState(false);
-  const { publishList } = useContext(ListContext);
+  const { publishList } = use(ListContext);
   const router = useRouter();
 
   const handlePublish = async () => {
@@ -66,7 +66,7 @@ export default function PublishButton({
     <button
       onClick={handlePublish}
       disabled={isDisabled}
-      className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70"
+      className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 cursor-pointer disabled:cursor-default"
       aria-label={`Publish your ${itemType} list`}
     >
       {publishSuccess ? (

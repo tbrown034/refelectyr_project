@@ -28,3 +28,13 @@
   animation: scrollRight 60s linear infinite; /* Slowed from 30s to 60s */
   width: max-content;
 }
+
+/* Add pause-on-hover functionality */
+.group:hover .group-hover\:pause {
+  animation-play-state: paused;
+}
+
+/* Add cursor pointer class */
+.cursor-pointer {
+  cursor: pointer;
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useContext, useEffect, useRef } from "react";
+import { use, useEffect, useRef } from "react";
 import { YearContext } from "@/library/contexts/YearContext";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
@@ -16,8 +16,8 @@ export default function YearSelector({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { selectedYear, setSelectedYear, isInitialized } =
-    useContext(YearContext);
+  // Replace useContext with use()
+  const { selectedYear, setSelectedYear, isInitialized } = use(YearContext);
 
   const hasInitialized = useRef(false);
 

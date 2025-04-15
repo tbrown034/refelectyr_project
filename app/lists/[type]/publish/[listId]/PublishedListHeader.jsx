@@ -1,6 +1,7 @@
 "use client";
 
 import { PencilIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { useEffect, useRef } from "react";
 
 // Helper function to format date/time
 function formatDate(dateString) {
@@ -37,6 +38,31 @@ export default function PublishedListHeader({
   // Use the title from listData or fall back to the default
   const displayTitle = listData?.title || defaultTitle;
 
+  // Reference to input element for keyboard events
+  const inputRef = useRef(null);
+
+  // Handle keydown events for input field - capture Enter key
+  useEffect(() => {
+    if (isEditingTitle && inputRef.current) {
+      const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          onConfirmEditTitle();
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          onCancelEditTitle();
+        }
+      };
+
+      const inputElement = inputRef.current;
+      inputElement.addEventListener("keydown", handleKeyDown);
+
+      return () => {
+        inputElement.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [isEditingTitle, onConfirmEditTitle, onCancelEditTitle]);
+
   return (
     // Header section container
     <div className="p-6 border-b dark:border-gray-700">
@@ -45,6 +71,7 @@ export default function PublishedListHeader({
         {/* Conditional rendering: Input field or Displayed Title */}
         {isEditingTitle ? (
           <input
+            ref={inputRef}
             type="text"
             value={editableTitle}
             onChange={onTitleChange}
@@ -66,14 +93,14 @@ export default function PublishedListHeader({
             <>
               <button
                 onClick={onConfirmEditTitle}
-                className="p-2 text-green-600 hover:text-green-800 dark:hover:text-green-300 transition-colors"
+                className="p-2 text-green-600 hover:text-green-800 dark:hover:text-green-300 transition-colors cursor-pointer"
                 title="Confirm title"
               >
                 <CheckIcon className="h-6 w-6" />
               </button>
               <button
                 onClick={onCancelEditTitle}
-                className="p-2 text-red-600 hover:text-red-800 dark:hover:text-red-300 transition-colors"
+                className="p-2 text-red-600 hover:text-red-800 dark:hover:text-red-300 transition-colors cursor-pointer"
                 title="Cancel edit"
               >
                 <XMarkIcon className="h-6 w-6" />
@@ -82,7 +109,7 @@ export default function PublishedListHeader({
           ) : (
             <button
               onClick={onEditTitleClick}
-              className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+              className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors cursor-pointer"
               title="Edit list title"
             >
               <PencilIcon className="h-5 w-5" />

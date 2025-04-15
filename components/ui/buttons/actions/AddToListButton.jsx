@@ -1,13 +1,13 @@
 // Components/UI/Buttons/Actions/AddToListButton.jsx
 "use client";
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, use } from "react";
 import { PlusIcon, CheckIcon } from "@heroicons/react/24/solid";
 import { ListContext } from "@/library/contexts/ListContext";
 
 export default function AddToListButton({ itemType, item }) {
-  // Replace use() with useContext()
-  const { isInList, addToList } = useContext(ListContext);
+  // Replace useContext with use()
+  const { isInList, addToList } = use(ListContext);
   const [isInListState, setIsInListState] = useState(false);
 
   // Check if this item is in the list on mount and when item changes
@@ -41,7 +41,7 @@ export default function AddToListButton({ itemType, item }) {
       className={`absolute top-2 right-2 p-2 rounded-full z-10 opacity-90 hover:opacity-100 transition-colors ${
         isInListState
           ? "bg-green-600 text-white cursor-default"
-          : "bg-blue-600 text-white hover:bg-blue-700"
+          : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
       }`}
     >
       {isInListState ? (
