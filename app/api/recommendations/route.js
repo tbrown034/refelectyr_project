@@ -1,6 +1,7 @@
 // app/api/recommendations/route.js
 import { NextResponse } from "next/server";
 import { formatRecommendationPrompt } from "@/library/utils/recommendationsUtils";
+import { searchTmdbByTitle } from "@/library/api/tmdb";
 
 // Replace with your actual API key (use environment variables)
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
@@ -51,13 +52,41 @@ export async function POST(request) {
 
     const data = await response.json();
 
-    // Extract and process the recommendations from the LLM response
+    // Extract recommendations from the LLM response
     const recommendationsText = data.content[0].text;
-
-    // Parse the recommendations (assuming they're in a structured format)
     const recommendations = parseRecommendations(recommendationsText, type);
 
-    return NextResponse.json({ recommendations });
+    // Enrich recommendations with TMDB data
+    const enrichedRecommendations = await Promise.all(
+      recommendations.map(async (rec) => {
+        // Get the title to search for
+        const searchTitle = rec.title || rec.name;
+        const searchYear = rec.year;
+
+        // Search TMDB for this title
+        const mediaType = type === "movie" ? "movie" : "tv";
+        const tmdbResults = await searchTmdbByTitle(
+          searchTitle,
+          searchYear,
+          mediaType
+        );
+
+        // If we found a match, combine it with our recommendation reason
+        if (tmdbResults && tmdbResults.length > 0) {
+          const bestMatch = tmdbResults[0]; // Use the first (best) match
+          return {
+            ...bestMatch,
+            reason: rec.reason, // Keep the recommendation reason
+            fromRecommendation: true, // Flag to identify as a recommendation
+          };
+        }
+
+        // If no match, return the original recommendation
+        return rec;
+      })
+    );
+
+    return NextResponse.json({ recommendations: enrichedRecommendations });
   } catch (error) {
     console.error("Recommendation error:", error);
     return NextResponse.json(
@@ -69,8 +98,7 @@ export async function POST(request) {
 
 // Helper function to parse recommendations from LLM text response
 function parseRecommendations(text, type) {
-  // This is a simplified version - you might need more sophisticated parsing
-  // depending on the structure of the LLM response
+  // [existing parseRecommendations function]
   try {
     // Check if the response contains a JSON array
     if (text.includes("[") && text.includes("]")) {

@@ -7,7 +7,7 @@ import { ListContext } from "@/library/contexts/ListContext";
 import RecommendationsDisplay from "./RecommendationsDisplay";
 import RecommendationsHeader from "./RecommendationsHeader";
 import RecommendationsActions from "./RecommendationsActions";
-import LoadingSpinner from "@/components/ui/feedback/LoadingSpinner"; // You'll need to create this
+import LoadingSpinner from "@/components/ui/feedback/LoadingSpinner";
 
 export default function RecommendationsPage() {
   const params = useParams();
@@ -43,7 +43,7 @@ export default function RecommendationsPage() {
 
         setOriginalList(list);
 
-        // Fetch recommendations from API
+        // Fetch recommendations from API (now with TMDB enrichment)
         const apiResponse = await fetch("/api/recommendations", {
           method: "POST",
           headers: {

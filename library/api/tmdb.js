@@ -159,3 +159,59 @@ export const getTvShowById = async (id) => {
     return null;
   }
 };
+
+// Add this function to library/api/tmdb.js
+
+// Search TMDB for a movie or TV show by title
+export async function searchTmdbByTitle(
+  title,
+  year = null,
+  mediaType = "movie"
+) {
+  if (!title) return [];
+
+  const token =
+    process.env.NEXT_PUBLIC_TMDB_API_TOKEN || process.env.TMDB_API_TOKEN;
+
+  const queryParams = new URLSearchParams({
+    query: title,
+    include_adult: false,
+    language: "en-US",
+    page: 1,
+  });
+
+  if (year) {
+    // For filtering by year
+    queryParams.append(
+      mediaType === "movie" ? "primary_release_year" : "first_air_date_year",
+      year
+    );
+  }
+
+  const url = `https://api.themoviedb.org/3/search/${
+    mediaType === "movie" ? "movie" : "tv"
+  }?${queryParams.toString()}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      // Don't cache these searches
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      console.error(`TMDB search failed: ${response.statusText}`);
+      return [];
+    }
+
+    const data = await response.json();
+    return data.results.slice(0, 5); // Return top 5 matches
+  } catch (error) {
+    console.error(`Error searching TMDB for ${title}:`, error);
+    return [];
+  }
+}
