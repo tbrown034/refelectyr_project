@@ -2,21 +2,25 @@
 "use client";
 
 import Link from "next/link";
-import { useContext } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeftIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowLeftIcon,
+  PlusIcon,
+  TrashIcon,
+  SparklesIcon,
+} from "@heroicons/react/24/solid";
+import { useContext } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 
 export default function PublishedListActions({
-  isValidType, // Boolean: true if URL type is valid
-  pageTypeLabel, // String: 'Movie' or 'TV Show'
-  listId, // The ID of the current list (NEW PROP)
-  onCreateNew, // Function: () => void - Handles starting a new temp list
+  isValidType,
+  pageTypeLabel,
+  listId,
+  onCreateNew,
 }) {
   const router = useRouter();
   const { deletePublishedList } = useContext(ListContext);
 
-  // NEW FUNCTION: Handle delete list with confirmation
   const handleDeleteList = () => {
     if (
       window.confirm(
@@ -28,13 +32,19 @@ export default function PublishedListActions({
     }
   };
 
+  // Added new function to navigate to recommendations
+  const handleGetRecommendations = () => {
+    // Navigate to the recommendations page
+    const type = pageTypeLabel === "Movie" ? "movies" : "tv";
+    router.push(`/lists/${type}/recommendations/${listId}`);
+  };
+
   return (
-    // Container for non-sharing actions
     <div className="flex flex-wrap items-center gap-3">
       {/* Start New List Button */}
       <button
         onClick={onCreateNew}
-        disabled={!isValidType} // Prevent if URL type invalid
+        disabled={!isValidType}
         className={`inline-flex items-center gap-2 px-4 py-3 rounded-lg transition-colors text-sm sm:text-base ${
           !isValidType
             ? "bg-gray-400 cursor-not-allowed"
@@ -50,6 +60,21 @@ export default function PublishedListActions({
         <span>Start New {pageTypeLabel} List</span>
       </button>
 
+      {/* NEW: Get Recommendations Button */}
+      <button
+        onClick={handleGetRecommendations}
+        disabled={!isValidType}
+        className={`inline-flex items-center gap-2 px-4 py-3 rounded-lg text-sm sm:text-base transition-colors ${
+          !isValidType
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800"
+        }`}
+        title={`Get personalized ${pageTypeLabel.toLowerCase()} recommendations based on your list`}
+      >
+        <SparklesIcon className="h-5 w-5 flex-shrink-0" />
+        <span>Get Recommendations</span>
+      </button>
+
       {/* Back to Home Link */}
       <Link
         href="/"
@@ -59,7 +84,7 @@ export default function PublishedListActions({
         <span>Back to Home</span>
       </Link>
 
-      {/* NEW: Delete List Button */}
+      {/* Delete List Button */}
       <button
         onClick={handleDeleteList}
         className="inline-flex items-center gap-2 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors text-sm sm:text-base ml-auto"
