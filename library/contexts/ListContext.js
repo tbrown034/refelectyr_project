@@ -10,10 +10,12 @@ const STORAGE_KEYS = {
   MOVIE_LIST: "userMovieList",
   TV_LIST: "userTvList",
   PUBLISHED_LISTS: "publishedLists",
+  RECOMMENDATION_LISTS: "recommendationLists", // New storage key
 };
 
 // Add new constants for list limits
 const MAX_PUBLISHED_LISTS_ANONYMOUS = 5; // Max lists for non-logged users
+const MAX_RECOMMENDATION_LISTS_ANONYMOUS = 5; // Max recommendation lists
 const TEMP_LIST_CLEANUP_AFTER_PUBLISH = true; // Clean temp lists after publishing
 
 // Create the context with default values
@@ -36,6 +38,13 @@ export const ListContext = createContext({
   hasReachedPublishedListLimit: () => false,
   deletePublishedList: (listId) => {},
   ANONYMOUS_LIST_LIMIT: MAX_PUBLISHED_LISTS_ANONYMOUS,
+  // New recommendation-related functions
+  recommendationLists: {},
+  saveRecommendationList: (sourceListId, type, items, title) => null,
+  getRecommendationList: (listId) => null,
+  deleteRecommendationList: (listId) => {},
+  updateRecommendationList: (listId, newItems) => {},
+  removeRecommendationItem: (listId, itemId) => {},
 });
 
 export function ListProvider({ children }) {
@@ -43,6 +52,7 @@ export function ListProvider({ children }) {
   const [movieList, setMovieList] = useState([]);
   const [tvList, setTvList] = useState([]);
   const [publishedLists, setPublishedLists] = useState({});
+  const [recommendationLists, setRecommendationLists] = useState({}); // New state
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize lists from localStorage
@@ -53,11 +63,16 @@ export function ListProvider({ children }) {
       const storedPublishedLists = localStorage.getItem(
         STORAGE_KEYS.PUBLISHED_LISTS
       );
+      const storedRecommendationLists = localStorage.getItem(
+        STORAGE_KEYS.RECOMMENDATION_LISTS
+      );
 
       if (storedMovieList) setMovieList(JSON.parse(storedMovieList));
       if (storedTvList) setTvList(JSON.parse(storedTvList));
       if (storedPublishedLists)
         setPublishedLists(JSON.parse(storedPublishedLists));
+      if (storedRecommendationLists)
+        setRecommendationLists(JSON.parse(storedRecommendationLists));
 
       setIsInitialized(true);
     } catch (error) {
@@ -99,6 +114,19 @@ export function ListProvider({ children }) {
     }
   }, [publishedLists, isInitialized]);
 
+  // Save recommendation lists to localStorage
+  useEffect(() => {
+    if (!isInitialized) return;
+    try {
+      localStorage.setItem(
+        STORAGE_KEYS.RECOMMENDATION_LISTS,
+        JSON.stringify(recommendationLists)
+      );
+    } catch (error) {
+      console.error("Error saving recommendation lists:", error);
+    }
+  }, [recommendationLists, isInitialized]);
+
   // Check if item is in list
   function isInList(itemType, itemId) {
     const list = itemType === "movie" ? movieList : tvList;
@@ -137,6 +165,11 @@ export function ListProvider({ children }) {
     setPublishedLists({});
   }
 
+  // Delete all recommendation lists
+  function deleteAllRecommendationLists() {
+    setRecommendationLists({});
+  }
+
   // Move item up in list
   function moveItemUp(itemType, itemId) {
     const list = itemType === "movie" ? movieList : tvList;
@@ -169,7 +202,7 @@ export function ListProvider({ children }) {
     setList([]);
   }
 
-  // NEW FUNCTION: Check if user has reached published list limit
+  // Check if user has reached published list limit
   function hasReachedPublishedListLimit() {
     // In the future, this will check auth status
     const isLoggedIn = false; // For now, assume not logged in
@@ -181,7 +214,19 @@ export function ListProvider({ children }) {
     return publishedListCount >= MAX_PUBLISHED_LISTS_ANONYMOUS;
   }
 
-  // MODIFIED: Publish a list with limit check and cleanup
+  // Check if user has reached recommendation list limit
+  function hasReachedRecommendationListLimit() {
+    // In the future, this will check auth status
+    const isLoggedIn = false; // For now, assume not logged in
+
+    if (isLoggedIn) return false; // No limit for logged in users
+
+    // Count current recommendation lists
+    const recommendationListCount = Object.keys(recommendationLists).length;
+    return recommendationListCount >= MAX_RECOMMENDATION_LISTS_ANONYMOUS;
+  }
+
+  // Publish a list
   function publishList(itemType) {
     const list = itemType === "movie" ? movieList : tvList;
 
@@ -217,10 +262,53 @@ export function ListProvider({ children }) {
     return listId;
   }
 
+  // Save a recommendation list
+  function saveRecommendationList(sourceListId, type, items, title) {
+    if (!items || items.length === 0) {
+      alert("Cannot save an empty recommendation list.");
+      return null;
+    }
+
+    // Check if user has reached limit
+    if (hasReachedRecommendationListLimit()) {
+      alert(
+        `You've reached the maximum of ${MAX_RECOMMENDATION_LISTS_ANONYMOUS} recommendation lists. Sign in to save more!`
+      );
+      return null;
+    }
+
+    const listId = generateListId();
+    const newRecommendationList = {
+      id: listId,
+      type,
+      sourceListId, // Link to the original list
+      items: [...items], // Create a copy
+      title:
+        title ||
+        `Recommendations based on My ${
+          type === "movie" ? "Movies" : "TV Shows"
+        }`,
+      savedAt: new Date().toISOString(), // Timestamp
+    };
+
+    setRecommendationLists((prev) => ({
+      ...prev,
+      [listId]: newRecommendationList,
+    }));
+
+    return listId;
+  }
+
   // Get a published list
   function getPublishedList(listId) {
     if (!isInitialized) return null; // Don't return until loaded
     return publishedLists[listId] || null;
+  }
+
+  // Get a recommendation list
+  function getRecommendationList(listId) {
+    if (!isInitialized) return null; // Don't return until loaded
+    return recommendationLists[listId] || null;
   }
 
   // Update items in a published list
@@ -234,6 +322,22 @@ export function ListProvider({ children }) {
           ...prev[listId],
           items: newItems,
           publishedAt: new Date().toISOString(), // Update timestamp on modification
+        },
+      };
+    });
+  }
+
+  // Update items in a recommendation list
+  function updateRecommendationList(listId, newItems) {
+    setRecommendationLists((prev) => {
+      if (!prev[listId]) return prev; // List not found
+
+      return {
+        ...prev,
+        [listId]: {
+          ...prev[listId],
+          items: newItems,
+          savedAt: new Date().toISOString(), // Update timestamp on modification
         },
       };
     });
@@ -262,6 +366,29 @@ export function ListProvider({ children }) {
     });
   }
 
+  // Remove an item from a recommendation list
+  function removeRecommendationItem(listId, itemId) {
+    setRecommendationLists((prev) => {
+      if (!prev[listId]) return prev;
+
+      const currentItems = prev[listId].items || [];
+      const newItems = currentItems.filter((item) => item.id !== itemId);
+
+      // Only update if items actually changed
+      if (newItems.length !== currentItems.length) {
+        return {
+          ...prev,
+          [listId]: {
+            ...prev[listId],
+            items: newItems,
+            savedAt: new Date().toISOString(), // Update timestamp
+          },
+        };
+      }
+      return prev; // No change needed
+    });
+  }
+
   // Update metadata of a published list
   function updatePublishedListMetadata(listId, metadataUpdate) {
     setPublishedLists((prev) => {
@@ -278,12 +405,37 @@ export function ListProvider({ children }) {
     });
   }
 
-  // NEW FUNCTION: Delete a published list
+  // Update metadata of a recommendation list
+  function updateRecommendationListMetadata(listId, metadataUpdate) {
+    setRecommendationLists((prev) => {
+      if (!prev[listId]) return prev;
+
+      return {
+        ...prev,
+        [listId]: {
+          ...prev[listId],
+          ...metadataUpdate, // Merge updates
+          savedAt: new Date().toISOString(), // Update timestamp
+        },
+      };
+    });
+  }
+
+  // Delete a published list
   function deletePublishedList(listId) {
     setPublishedLists((prev) => {
       const newPublishedLists = { ...prev };
       delete newPublishedLists[listId];
       return newPublishedLists;
+    });
+  }
+
+  // Delete a recommendation list
+  function deleteRecommendationList(listId) {
+    setRecommendationLists((prev) => {
+      const newRecommendationLists = { ...prev };
+      delete newRecommendationLists[listId];
+      return newRecommendationLists;
     });
   }
 
@@ -295,6 +447,7 @@ export function ListProvider({ children }) {
         movieList,
         tvList,
         publishedLists,
+        recommendationLists,
 
         // Temporary list operations
         addToList,
@@ -312,10 +465,21 @@ export function ListProvider({ children }) {
         removePublishedListItem,
         deleteAllPublishedLists,
 
-        // New functions
+        // Recommendation list operations
+        saveRecommendationList,
+        getRecommendationList,
+        updateRecommendationList,
+        updateRecommendationListMetadata,
+        removeRecommendationItem,
+        deleteRecommendationList,
+        deleteAllRecommendationLists,
+
+        // Limit functions
         hasReachedPublishedListLimit,
+        hasReachedRecommendationListLimit,
         deletePublishedList,
         ANONYMOUS_LIST_LIMIT: MAX_PUBLISHED_LISTS_ANONYMOUS,
+        RECOMMENDATION_LIST_LIMIT: MAX_RECOMMENDATION_LISTS_ANONYMOUS,
       }}
     >
       {children}

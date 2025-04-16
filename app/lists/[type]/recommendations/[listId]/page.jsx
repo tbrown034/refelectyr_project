@@ -18,6 +18,7 @@ export default function RecommendationsPage() {
   const [error, setError] = useState(null);
   const [originalList, setOriginalList] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
+  const [filteredRecommendations, setFilteredRecommendations] = useState([]);
 
   // Extract and validate route parameters
   const type = params?.type;
@@ -63,6 +64,7 @@ export default function RecommendationsPage() {
 
         const { recommendations } = await apiResponse.json();
         setRecommendations(recommendations);
+        setFilteredRecommendations(recommendations); // Initialize filtered list
       } catch (err) {
         console.error("Error fetching recommendations:", err);
         setError(err.message || "Failed to get recommendations");
@@ -78,6 +80,13 @@ export default function RecommendationsPage() {
       setIsLoading(false);
     }
   }, [type, listId, isValidType, getPublishedList]);
+
+  // Handler to remove an item from recommendations
+  const handleRemoveItem = (itemId) => {
+    setFilteredRecommendations((current) =>
+      current.filter((item) => item.id !== itemId)
+    );
+  };
 
   // Check if URL type matches list type
   const listIsMovieType = originalList?.type === "movie";
@@ -134,8 +143,9 @@ export default function RecommendationsPage() {
         <div className="p-6">
           {recommendations.length > 0 ? (
             <RecommendationsDisplay
-              recommendations={recommendations}
+              recommendations={filteredRecommendations}
               listIsMovieType={listIsMovieType}
+              onRemoveItem={handleRemoveItem}
             />
           ) : (
             <p className="text-center text-gray-500 dark:text-gray-400 py-8">
@@ -151,6 +161,8 @@ export default function RecommendationsPage() {
             listId={listId}
             type={type}
             pageTypeLabel={pageTypeLabel}
+            recommendations={filteredRecommendations}
+            originalList={originalList}
           />
         </div>
       </div>
