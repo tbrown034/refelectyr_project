@@ -13,7 +13,10 @@ import {
   ArrowRightIcon,
   ExclamationCircleIcon,
   SparklesIcon,
+  PlusIcon,
+  UserIcon,
 } from "@heroicons/react/24/solid";
+import { motion } from "framer-motion";
 
 export default function MyListsPage() {
   const {
@@ -30,10 +33,10 @@ export default function MyListsPage() {
   const [tvLists, setTvLists] = useState([]);
   const [movieRecommendations, setMovieRecommendations] = useState([]);
   const [tvRecommendations, setTvRecommendations] = useState([]);
-
-  // Add new state for tracking limit status
   const [isNearLimit, setIsNearLimit] = useState(false);
   const [isAtLimit, setIsAtLimit] = useState(false);
+  const [activeTab, setActiveTab] = useState("all"); // all, movies, tv, recs
+  const [deleteAnimation, setDeleteAnimation] = useState(null);
 
   // Convert the lists object to arrays for rendering, grouped by type
   useEffect(() => {
@@ -73,6 +76,15 @@ export default function MyListsPage() {
     const regularListCount = allRegularLists.length;
     setIsNearLimit(regularListCount >= ANONYMOUS_LIST_LIMIT - 1);
     setIsAtLimit(hasReachedPublishedListLimit());
+
+    // Auto-select tab based on what's available
+    if (allRegularLists.length === 0 && allRecommendationLists.length > 0) {
+      setActiveTab("recs");
+    } else if (movieListsArray.length > 0 && tvListsArray.length === 0) {
+      setActiveTab("movies");
+    } else if (movieListsArray.length === 0 && tvListsArray.length > 0) {
+      setActiveTab("tv");
+    }
   }, [
     publishedLists,
     recommendationLists,
@@ -95,176 +107,333 @@ export default function MyListsPage() {
     }
   };
 
-  // Handle delete all lists with confirmation
+  // Handle delete all lists with animation and confirmation
   const handleDeleteAllLists = () => {
-    // Check if there are any lists to delete
     if (regularLists.length === 0) {
       alert("You don't have any lists to delete.");
       return;
     }
 
-    // Show confirmation dialog with count
     if (
       window.confirm(
         `Are you sure you want to delete all ${regularLists.length} of your lists? This cannot be undone.`
       )
     ) {
-      deleteAllPublishedLists();
+      setDeleteAnimation("lists");
+      setTimeout(() => {
+        deleteAllPublishedLists();
+        setDeleteAnimation(null);
+      }, 500);
     }
   };
 
-  // Handle delete all recommendation lists with confirmation
+  // Handle delete all recommendation lists with animation and confirmation
   const handleDeleteAllRecommendations = () => {
     const totalRecs = movieRecommendations.length + tvRecommendations.length;
 
-    // Check if there are any recommendation lists to delete
     if (totalRecs === 0) {
       alert("You don't have any recommendation lists to delete.");
       return;
     }
 
-    // Show confirmation dialog with count
     if (
       window.confirm(
         `Are you sure you want to delete all ${totalRecs} of your recommendation lists? This cannot be undone.`
       )
     ) {
-      deleteAllRecommendationLists();
+      setDeleteAnimation("recs");
+      setTimeout(() => {
+        deleteAllRecommendationLists();
+        setDeleteAnimation(null);
+      }, 500);
     }
   };
 
-  // Helper function to render a list of items
-  const renderListGrid = (items, type, isRecommendation = false) => {
-    if (items.length === 0) {
-      return (
-        <p className="text-center text-gray-500 dark:text-gray-400 p-4">
-          No {isRecommendation ? "recommendation " : ""}lists available.
-        </p>
-      );
+  // Get lists for current tab
+  const getVisibleLists = () => {
+    switch (activeTab) {
+      case "movies":
+        return { lists: movieLists, type: "movie", isRec: false };
+      case "tv":
+        return { lists: tvLists, type: "tv", isRec: false };
+      case "recs":
+        return {
+          lists: [...movieRecommendations, ...tvRecommendations],
+          type: "mixed",
+          isRec: true,
+        };
+      default:
+        return {
+          lists: [
+            ...regularLists,
+            ...movieRecommendations,
+            ...tvRecommendations,
+          ],
+          type: "mixed",
+          isRec: false,
+        };
     }
+  };
+
+  // Calculate counts for tabs
+  const regularCount = regularLists.length;
+  const movieCount = movieLists.length;
+  const tvCount = tvLists.length;
+  const recsCount = movieRecommendations.length + tvRecommendations.length;
+  const totalCount = regularCount + recsCount;
+
+  // Helper function to render a list card
+  const renderListCard = (list, isRecommendation = false) => {
+    const type = list.type;
+    const urlType = type === "movie" ? "movies" : "tv";
+    const itemCount = list.items?.length || 0;
+
+    // Get first item poster for display
+    const firstItem = list.items?.[0];
+    const posterPath = firstItem?.poster_path
+      ? `https://image.tmdb.org/t/p/w300${firstItem.poster_path}`
+      : type === "movie"
+      ? "/placeholder-movie.jpg"
+      : "/placeholder-tv.jpg";
+
+    const path = isRecommendation
+      ? `/lists/${urlType}/saved-recommendations/${list.id}`
+      : `/lists/${urlType}/publish/${list.id}`;
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {items.map((list) => {
-          const urlType = type === "movie" ? "movies" : "tv";
-          const itemCount = list.items?.length || 0;
-
-          // Get first item poster for display
-          const firstItem = list.items?.[0];
-          const posterPath = firstItem?.poster_path
-            ? `https://image.tmdb.org/t/p/w92${firstItem.poster_path}`
+      <motion.div
+        key={list.id}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className={`group relative bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
+          isRecommendation
+            ? "border-l-4 border-purple-500 dark:border-purple-400"
             : type === "movie"
-            ? "/placeholder-movie.jpg"
-            : "/placeholder-tv.jpg";
+            ? "border-l-4 border-blue-500 dark:border-blue-400"
+            : "border-l-4 border-purple-600 dark:border-purple-500"
+        }`}
+      >
+        {/* Background poster with gradient overlay */}
+        <div className="absolute inset-0 opacity-10 group-hover:opacity-15 transition-opacity duration-300">
+          <Image
+            src={posterPath}
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover blur-sm"
+            priority={false}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent"></div>
+        </div>
 
-          const path = isRecommendation
-            ? `/lists/${urlType}/recommendations/${list.id}` // This would need a view page for saved recommendations
-            : `/lists/${urlType}/publish/${list.id}`;
-
-          return (
-            <Link
-              key={list.id}
-              href={path}
-              className={`bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 ${
-                isRecommendation
-                  ? "border-2 border-purple-300 dark:border-purple-700"
-                  : ""
-              }`}
-            >
-              <div className="p-4 border-b dark:border-gray-700 flex items-center">
-                <div className="flex-shrink-0 mr-3">
-                  {isRecommendation ? (
-                    <SparklesIcon
-                      className={`h-8 w-8 ${
-                        type === "movie" ? "text-blue-500" : "text-purple-500"
-                      }`}
-                    />
-                  ) : type === "movie" ? (
-                    <FilmIcon className="h-8 w-8 text-blue-500" />
-                  ) : (
-                    <TvIcon className="h-8 w-8 text-purple-500" />
-                  )}
-                </div>
-                <div className="flex-grow min-w-0">
-                  <h2 className="text-lg font-semibold truncate">
-                    {list.title}
-                  </h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {formatDate(list.publishedAt || list.savedAt)}
-                  </p>
-                </div>
-                <div className="flex-shrink-0 ml-2">
-                  <span className="inline-flex items-center px-2 py-1 rounded-full bg-gray-200 dark:bg-gray-700 text-sm font-medium">
-                    {itemCount} {itemCount === 1 ? "item" : "items"}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-center p-4">
-                <div className="relative w-12 h-16 rounded overflow-hidden mr-3">
+        <Link href={path} className="block h-full">
+          <div className="relative z-10 p-4 flex items-center">
+            <div className="flex-shrink-0 mr-4">
+              {isRecommendation ? (
+                <div className="relative w-16 h-20 rounded overflow-hidden bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
+                  <SparklesIcon className="h-8 w-8 text-purple-500 dark:text-purple-300" />
                   <Image
                     src={posterPath}
                     alt="List preview"
                     fill
-                    sizes="48px"
+                    sizes="64px"
+                    className="object-cover opacity-40"
+                  />
+                </div>
+              ) : (
+                <div className="relative w-16 h-20 rounded overflow-hidden">
+                  <Image
+                    src={posterPath}
+                    alt="List preview"
+                    fill
+                    sizes="64px"
                     className="object-cover"
                   />
                 </div>
-                <div className="flex-grow">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {itemCount > 0
-                      ? `View your ${
-                          isRecommendation ? "recommended" : "ranked"
-                        } ${type === "movie" ? "movies" : "TV shows"}`
-                      : `Empty ${type === "movie" ? "movie" : "TV show"} list`}
-                  </p>
-                </div>
-                <div className="flex-shrink-0">
-                  <ArrowRightIcon className="h-5 w-5 text-gray-400" />
-                </div>
+              )}
+            </div>
+
+            <div className="flex-grow min-w-0">
+              <div className="flex items-center">
+                {isRecommendation ? (
+                  <SparklesIcon className="flex-shrink-0 h-5 w-5 text-purple-500 mr-1.5" />
+                ) : type === "movie" ? (
+                  <FilmIcon className="flex-shrink-0 h-5 w-5 text-blue-500 mr-1.5" />
+                ) : (
+                  <TvIcon className="flex-shrink-0 h-5 w-5 text-purple-500 mr-1.5" />
+                )}
+                <h2 className="text-lg font-semibold truncate">{list.title}</h2>
               </div>
-            </Link>
-          );
-        })}
-      </div>
+
+              <div className="mt-1 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                <time dateTime={list.publishedAt || list.savedAt}>
+                  {formatDate(list.publishedAt || list.savedAt)}
+                </time>
+                <span className="mx-2">•</span>
+                <span className="flex items-center">
+                  <ListBulletIcon className="h-4 w-4 mr-1" />
+                  {itemCount} {itemCount === 1 ? "item" : "items"}
+                </span>
+              </div>
+
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                {itemCount > 0
+                  ? `View your ${isRecommendation ? "recommended" : "ranked"} ${
+                      type === "movie" ? "movies" : "TV shows"
+                    }`
+                  : `Empty ${type === "movie" ? "movie" : "TV show"} list`}
+              </p>
+            </div>
+
+            <div className="flex-shrink-0 ml-4">
+              <div className="h-8 w-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900 transition-colors">
+                <ArrowRightIcon className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              </div>
+            </div>
+          </div>
+        </Link>
+      </motion.div>
+    );
+  };
+
+  // Render the lists grid
+  const renderListsGrid = () => {
+    const { lists, type, isRec } = getVisibleLists();
+
+    if (lists.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center p-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl text-center">
+          <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+            {activeTab === "movies" ? (
+              <FilmIcon className="h-12 w-12 text-blue-500 dark:text-blue-400" />
+            ) : activeTab === "tv" ? (
+              <TvIcon className="h-12 w-12 text-purple-500 dark:text-purple-400" />
+            ) : activeTab === "recs" ? (
+              <SparklesIcon className="h-12 w-12 text-purple-500 dark:text-purple-400" />
+            ) : (
+              <ListBulletIcon className="h-12 w-12 text-gray-500 dark:text-gray-400" />
+            )}
+          </div>
+          <h3 className="text-xl font-semibold mb-2">
+            {activeTab === "movies"
+              ? "No Movie Lists Yet"
+              : activeTab === "tv"
+              ? "No TV Show Lists Yet"
+              : activeTab === "recs"
+              ? "No Recommendations Yet"
+              : "No Lists Yet"}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 max-w-md mb-4">
+            {activeTab === "recs"
+              ? "Get personalized recommendations based on your lists."
+              : "Start by browsing and creating lists of your favorite content."}
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            {activeTab === "movies" || activeTab === "all" ? (
+              <Link
+                href="/movies"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+              >
+                <FilmIcon className="h-5 w-5 mr-2" />
+                Browse Movies
+              </Link>
+            ) : null}
+            {activeTab === "tv" || activeTab === "all" ? (
+              <Link
+                href="/tv"
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center"
+              >
+                <TvIcon className="h-5 w-5 mr-2" />
+                Browse TV Shows
+              </Link>
+            ) : null}
+            {activeTab === "recs" && regularCount > 0 ? (
+              <Link
+                href={
+                  regularLists[0]
+                    ? `/lists/${
+                        regularLists[0].type === "movie" ? "movies" : "tv"
+                      }/publish/${regularLists[0].id}`
+                    : "/"
+                }
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center"
+              >
+                <SparklesIcon className="h-5 w-5 mr-2" />
+                Get Recommendations
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <motion.div
+        initial={false}
+        animate={{
+          opacity: deleteAnimation ? 0 : 1,
+          scale: deleteAnimation ? 0.95 : 1,
+        }}
+        transition={{ duration: 0.4 }}
+        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+      >
+        {lists.map((list) =>
+          renderListCard(list, isRec || list.type === "recommendation")
+        )}
+      </motion.div>
     );
   };
 
   // Empty state when no lists exist
-  if (
-    regularLists.length === 0 &&
-    movieRecommendations.length === 0 &&
-    tvRecommendations.length === 0
-  ) {
+  if (totalCount === 0) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <h1 className="text-3xl font-bold mb-2">My Lists</h1>
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-8 text-center shadow-lg">
-          <div className="flex justify-center mb-6">
-            <div className="p-4 bg-blue-100 dark:bg-blue-900 rounded-full">
-              <ListBulletIcon className="h-16 w-16 text-blue-600 dark:text-blue-400" />
-            </div>
-          </div>
-          <h2 className="text-2xl font-semibold mb-4">No Lists Yet</h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-6">
-            Start by browsing movies and TV shows to build your lists. Once you
-            publish a list, it will appear here.
+      <div className="container mx-auto px-4 py-12 max-w-6xl">
+        <div className="flex flex-col items-center justify-center bg-white dark:bg-gray-800 rounded-2xl p-10 text-center shadow-xl">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="p-6 bg-blue-100 dark:bg-blue-900/40 rounded-full mb-6"
+          >
+            <ListBulletIcon className="h-20 w-20 text-blue-600 dark:text-blue-400" />
+          </motion.div>
+
+          <h1 className="text-3xl font-bold mb-4">Your Lists Journey Begins</h1>
+
+          <p className="text-gray-600 dark:text-gray-300 max-w-lg mb-8 text-lg">
+            Discover, rank, and save your favorite entertainment. Create lists
+            to keep track of what you love and get personalized recommendations.
           </p>
-          <div className="flex justify-center gap-4">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg">
             <Link
               href="/movies"
-              className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+              className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
             >
-              <FilmIcon className="h-5 w-5 mr-2" />
-              Browse Movies
+              <FilmIcon className="h-6 w-6" />
+              <span className="font-medium">Browse Movies</span>
             </Link>
+
             <Link
               href="/tv"
-              className="px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center"
+              className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all shadow-md hover:shadow-lg"
             >
-              <TvIcon className="h-5 w-5 mr-2" />
-              Browse TV Shows
+              <TvIcon className="h-6 w-6" />
+              <span className="font-medium">Browse TV Shows</span>
             </Link>
+          </div>
+
+          <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 w-full max-w-xl">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <UserIcon className="h-5 w-5 text-blue-500" />
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Sign up to unlock all features
+              </p>
+            </div>
+            <button className="px-6 py-3 bg-gray-800 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-900 dark:hover:bg-gray-600 transition-colors flex items-center justify-center mx-auto">
+              <span className="font-medium">Create Account</span>
+            </button>
           </div>
         </div>
       </div>
@@ -273,27 +442,35 @@ export default function MyListsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">My Lists</h1>
+      {/* Header with title and actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">My Lists</h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            {totalCount} {totalCount === 1 ? "list" : "lists"} in your
+            collection
+          </p>
+        </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {regularLists.length > 0 && (
-            <button
+            <motion.button
+              whileTap={{ scale: 0.95 }}
               onClick={handleDeleteAllLists}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors"
               title="Delete all your lists permanently"
             >
               <TrashIcon className="h-5 w-5" />
               <span className="hidden sm:inline">Delete All Lists</span>
               <span className="sm:hidden">Delete Lists</span>
-            </button>
+            </motion.button>
           )}
 
-          {(movieRecommendations.length > 0 ||
-            tvRecommendations.length > 0) && (
-            <button
+          {recsCount > 0 && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
               onClick={handleDeleteAllRecommendations}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors"
               title="Delete all your recommendation lists permanently"
             >
               <TrashIcon className="h-5 w-5" />
@@ -301,114 +478,180 @@ export default function MyListsPage() {
                 Delete All Recommendations
               </span>
               <span className="sm:hidden">Delete Recs</span>
+            </motion.button>
+          )}
+        </div>
+      </div>
+
+      {/* Limit warning banner */}
+      {isNearLimit && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className={`mb-6 p-4 rounded-xl shadow-md ${
+            isAtLimit
+              ? "bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/30 dark:to-red-800/30 border border-red-200 dark:border-red-800/50"
+              : "bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-900/30 dark:to-amber-800/30 border border-amber-200 dark:border-amber-800/50"
+          }`}
+        >
+          <div className="flex items-start gap-3">
+            <ExclamationCircleIcon
+              className={`h-6 w-6 flex-shrink-0 mt-0.5 ${
+                isAtLimit
+                  ? "text-red-500 dark:text-red-400"
+                  : "text-amber-500 dark:text-amber-400"
+              }`}
+            />
+            <div>
+              <p
+                className={`font-medium text-lg ${
+                  isAtLimit
+                    ? "text-red-800 dark:text-red-300"
+                    : "text-amber-800 dark:text-amber-300"
+                }`}
+              >
+                {isAtLimit
+                  ? `You've reached the limit of ${ANONYMOUS_LIST_LIMIT} lists`
+                  : `${ANONYMOUS_LIST_LIMIT - regularLists.length} list${
+                      ANONYMOUS_LIST_LIMIT - regularLists.length !== 1
+                        ? "s"
+                        : ""
+                    } remaining before you reach the limit`}
+              </p>
+              <p className="text-gray-700 dark:text-gray-300 mt-1">
+                Create an account to unlock unlimited lists and sync across
+                devices
+              </p>
+              <div className="mt-3">
+                <button className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2">
+                  <UserIcon className="h-5 w-5" />
+                  <span className="font-medium">Sign Up</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* List filtering tabs */}
+      <div className="mb-6">
+        <div className="flex flex-wrap gap-2 px-1 border-b border-gray-200 dark:border-gray-700">
+          <button
+            onClick={() => setActiveTab("all")}
+            className={`relative pb-3 px-2 text-sm font-medium ${
+              activeTab === "all"
+                ? "text-blue-600 dark:text-blue-400"
+                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+            }`}
+          >
+            All Lists
+            <span className="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-gray-100 dark:bg-gray-800">
+              {totalCount}
+            </span>
+            {activeTab === "all" && (
+              <motion.span
+                layoutId="activeTab"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400"
+              />
+            )}
+          </button>
+
+          {movieCount > 0 && (
+            <button
+              onClick={() => setActiveTab("movies")}
+              className={`relative pb-3 px-2 text-sm font-medium ${
+                activeTab === "movies"
+                  ? "text-blue-600 dark:text-blue-400"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+              }`}
+            >
+              <span className="flex items-center">
+                <FilmIcon className="h-4 w-4 mr-1.5" />
+                Movies
+                <span className="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-gray-100 dark:bg-gray-800">
+                  {movieCount}
+                </span>
+              </span>
+              {activeTab === "movies" && (
+                <motion.span
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400"
+                />
+              )}
+            </button>
+          )}
+
+          {tvCount > 0 && (
+            <button
+              onClick={() => setActiveTab("tv")}
+              className={`relative pb-3 px-2 text-sm font-medium ${
+                activeTab === "tv"
+                  ? "text-blue-600 dark:text-blue-400"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+              }`}
+            >
+              <span className="flex items-center">
+                <TvIcon className="h-4 w-4 mr-1.5" />
+                TV Shows
+                <span className="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-gray-100 dark:bg-gray-800">
+                  {tvCount}
+                </span>
+              </span>
+              {activeTab === "tv" && (
+                <motion.span
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400"
+                />
+              )}
+            </button>
+          )}
+
+          {recsCount > 0 && (
+            <button
+              onClick={() => setActiveTab("recs")}
+              className={`relative pb-3 px-2 text-sm font-medium ${
+                activeTab === "recs"
+                  ? "text-purple-600 dark:text-purple-400"
+                  : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+              }`}
+            >
+              <span className="flex items-center">
+                <SparklesIcon className="h-4 w-4 mr-1.5" />
+                Recommendations
+                <span className="ml-1.5 px-2 py-0.5 text-xs rounded-full bg-gray-100 dark:bg-gray-800">
+                  {recsCount}
+                </span>
+              </span>
+              {activeTab === "recs" && (
+                <motion.span
+                  layoutId="activeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600 dark:bg-purple-400"
+                />
+              )}
             </button>
           )}
         </div>
       </div>
 
-      {/* Add limit warning banner */}
-      {isNearLimit && (
-        <div
-          className={`mb-6 p-4 rounded-lg ${
-            isAtLimit
-              ? "bg-red-100 dark:bg-red-900/30"
-              : "bg-yellow-100 dark:bg-yellow-900/30"
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            <ExclamationCircleIcon
-              className={`h-5 w-5 ${
-                isAtLimit
-                  ? "text-red-600 dark:text-red-400"
-                  : "text-yellow-600 dark:text-yellow-400"
-              }`}
-            />
-            <p
-              className={`font-medium ${
-                isAtLimit
-                  ? "text-red-800 dark:text-red-200"
-                  : "text-yellow-800 dark:text-yellow-200"
-              }`}
-            >
-              {isAtLimit
-                ? `You've reached the limit of ${ANONYMOUS_LIST_LIMIT} lists for non-registered users.`
-                : `You have ${ANONYMOUS_LIST_LIMIT - regularLists.length} list${
-                    ANONYMOUS_LIST_LIMIT - regularLists.length !== 1 ? "s" : ""
-                  } remaining.`}
-            </p>
-          </div>
-          <div className="mt-2">
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Sign up for a free account to create unlimited lists and access
-              them from any device.
-            </p>
-            <button className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              Sign Up Now
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Main content - lists grid */}
+      <motion.div
+        key={activeTab}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        {renderListsGrid()}
+      </motion.div>
 
-      {/* Regular Lists Section */}
-      {regularLists.length > 0 && (
-        <section className="mb-10">
-          <h2 className="text-2xl font-bold mb-4">My Lists</h2>
-
-          {/* Movie Lists */}
-          {movieLists.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-4 flex items-center">
-                <FilmIcon className="h-6 w-6 text-blue-500 mr-2" />
-                Movie Lists
-              </h3>
-              {renderListGrid(movieLists, "movie")}
-            </div>
-          )}
-
-          {/* TV Lists */}
-          {tvLists.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-4 flex items-center">
-                <TvIcon className="h-6 w-6 text-purple-500 mr-2" />
-                TV Show Lists
-              </h3>
-              {renderListGrid(tvLists, "tv")}
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* Recommendation Lists Section */}
-      {(movieRecommendations.length > 0 || tvRecommendations.length > 0) && (
-        <section>
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
-            <SparklesIcon className="h-6 w-6 text-purple-500 mr-2" />
-            My Recommendations
-          </h2>
-
-          {/* Movie Recommendations */}
-          {movieRecommendations.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-4 flex items-center">
-                <FilmIcon className="h-6 w-6 text-blue-500 mr-2" />
-                Movie Recommendations
-              </h3>
-              {renderListGrid(movieRecommendations, "movie", true)}
-            </div>
-          )}
-
-          {/* TV Recommendations */}
-          {tvRecommendations.length > 0 && (
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold mb-4 flex items-center">
-                <TvIcon className="h-6 w-6 text-purple-500 mr-2" />
-                TV Show Recommendations
-              </h3>
-              {renderListGrid(tvRecommendations, "tv", true)}
-            </div>
-          )}
-        </section>
-      )}
+      {/* Add new list button (floating) */}
+      <Link
+        href="/movies"
+        className="fixed bottom-6 right-6 p-4 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all hover:scale-105 flex items-center justify-center z-10"
+      >
+        <PlusIcon className="h-6 w-6" />
+      </Link>
     </div>
   );
 }

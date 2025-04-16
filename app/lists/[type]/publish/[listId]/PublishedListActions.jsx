@@ -34,7 +34,7 @@ export default function PublishedListActions({
 
   // Added new function to navigate to recommendations
   const handleGetRecommendations = () => {
-    // Navigate to the recommendations page
+    // Navigate to the recommendations page - this path is correct
     const type = pageTypeLabel === "Movie" ? "movies" : "tv";
     router.push(`/lists/${type}/recommendations/${listId}`);
   };

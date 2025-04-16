@@ -63,8 +63,8 @@ export default function RecommendationsActions({
       if (savedListId) {
         setSaveSuccess(true);
         setTimeout(() => {
-          // Navigate to the lists page
-          router.push("/lists");
+          // Navigate to the saved recommendations page (FIXED URL PATH)
+          router.push(`/lists/${type}/saved-recommendations/${savedListId}`);
         }, 1500);
       } else {
         alert("Failed to save recommendation list. Please try again.");
