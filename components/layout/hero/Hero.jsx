@@ -10,7 +10,7 @@ export default async function Hero({ searchParams }) {
   const year = searchParams?.year || DEFAULT_YEAR;
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center ">
       {/* Hero text section with fixed width */}
       <div className="w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center">
         <HeroText />

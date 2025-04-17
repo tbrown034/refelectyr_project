@@ -22,8 +22,8 @@ const HeaderDropDown = () => {
     <div className="relative">
       <Menu>
         <MenuButton
-          className="inline-flex items-center gap-2 p-2 rounded-lg border-1 dark:hover:bg-slate-700 dark:active:bg-slate-500
-          cursor-pointer hover:bg-slate-300 active:bg-slate-500
+          className="inline-flex items-center gap-2 p-2 rounded-lg border border-slate-300 dark:border-slate-600
+          hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600
           transition duration-200 ease-in-out"
         >
           Menu
@@ -32,16 +32,16 @@ const HeaderDropDown = () => {
 
         <MenuItems
           transition
-          className="absolute right-0 w-56 mt-2 origin-top-right rounded-lg border border-gray-300
-            bg-white dark:bg-gray-100 p-2 text-gray-900 shadow-lg transition-all ease-in-out duration-150 scale-95 opacity-0
-            data-[open]:scale-100 data-[open]:opacity-100 z-50" // Added z-50 to fix z-index issue
+          className="absolute right-0 w-56 mt-2 origin-top-right rounded-lg border border-slate-300 dark:border-slate-600
+            bg-white dark:bg-slate-800 p-2 text-slate-900 dark:text-slate-100 shadow-lg transition-all ease-in-out duration-150 scale-95 opacity-0
+            data-[open]:scale-100 data-[open]:opacity-100 z-50"
         >
           {navItems.map((item, index) => (
             <MenuItem
               key={index}
               as={Link}
               href={item.href}
-              className="block w-full px-4 py-2 text-left rounded-md hover:bg-gray-200 transition cursor-pointer"
+              className="block w-full px-4 py-2 text-left rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
             >
               {item.text}
             </MenuItem>

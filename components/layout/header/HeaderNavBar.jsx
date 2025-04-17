@@ -30,7 +30,7 @@ const HeaderNavBar = () => {
         <Link
           key={index}
           href={item.href}
-          className="text-gray-900 dark:text-white hover:underline transition-colors"
+          className="text-slate-900 dark:text-slate-100 hover:underline transition-colors"
         >
           {item.text}
         </Link>
@@ -40,7 +40,7 @@ const HeaderNavBar = () => {
         <Link
           key={`media-${index}`}
           href={item.href}
-          className="text-gray-900 dark:text-white hover:underline transition-colors"
+          className="text-slate-900 dark:text-slate-100 hover:underline transition-colors"
         >
           {item.text}
         </Link>
@@ -49,7 +49,7 @@ const HeaderNavBar = () => {
       {/* My Lists Link without Count Indicator */}
       <Link
         href="/lists"
-        className="text-gray-900 dark:text-white hover:underline transition-colors flex items-center"
+        className="text-slate-900 dark:text-slate-100 hover:underline transition-colors flex items-center"
       >
         <ListBulletIcon className="h-5 w-5 mr-1" />
         My Lists

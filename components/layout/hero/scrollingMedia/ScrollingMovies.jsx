@@ -35,8 +35,8 @@ export default async function ScrollingMovies({ year = "2025" }) {
             <ArrowRightIcon className="h-4 w-4" />
           </Link>
         </div>
-        <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-xl text-center">
-          <p className="text-gray-600 dark:text-gray-400">
+        <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-xl text-center">
+          <p className="text-slate-600 dark:text-slate-400">
             No movies available for {year}
           </p>
         </div>
