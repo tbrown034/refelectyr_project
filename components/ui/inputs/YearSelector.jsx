@@ -16,7 +16,6 @@ export default function YearSelector({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  // Replace useContext with use()
   const { selectedYear, setSelectedYear, isInitialized } = use(YearContext);
 
   const hasInitialized = useRef(false);
@@ -68,12 +67,20 @@ export default function YearSelector({
   ).reverse();
 
   return (
-    <div className={`relative w-full max-w-xs ${className}`}>
+    <div className={`relative w-full max-w-md ${className}`}>
       <label
         htmlFor="year-selector"
-        className="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200"
+        className="
+          block
+          mb-3
+          text-base
+          font-semibold
+          text-slate-700
+          dark:text-slate-200
+          text-center
+        "
       >
-        Select Year
+        Select Your Reflection Year
       </label>
       <div className="relative">
         <select
@@ -86,15 +93,16 @@ export default function YearSelector({
             rounded-xl
             border-2 border-blue-600 dark:border-blue-500
             bg-white dark:bg-white
-            px-4 py-2.5 pr-10
+            px-5 py-3
             text-blue-600 dark:text-blue-600
-            font-medium
+            font-semibold
+            text-lg
             hover:bg-blue-50
             focus:outline-none
-            focus:ring-2 focus:ring-blue-200
+            focus:ring-4 focus:ring-blue-200/50
             cursor-pointer
-            shadow-sm
-            transition-all duration-200 ease-in-out
+            shadow-md
+            transition-all duration-300 ease-in-out
           `}
           aria-label="Select content year"
         >
@@ -104,7 +112,18 @@ export default function YearSelector({
             </option>
           ))}
         </select>
-        <ChevronDownIcon className="pointer-events-none absolute inset-y-0 right-3 my-auto h-5 w-5 text-blue-600 dark:text-blue-600" />
+        <ChevronDownIcon
+          className="
+          pointer-events-none
+          absolute
+          inset-y-0
+          right-4
+          my-auto
+          h-6 w-6
+          text-blue-600
+          dark:text-blue-600
+        "
+        />
       </div>
     </div>
   );
