@@ -10,9 +10,8 @@ import { getMovieById } from "@/library/api/tmdb";
 import ActionButtons from "@/components/ui/buttons/actions/DetailPageActions";
 
 export async function generateMetadata({ params }) {
-  // Await the params first to get the id
-  const resolvedParams = await params;
-  const movie = await getMovieById(resolvedParams.id);
+  // No need to await params in Next.js 15 with generateMetadata
+  const movie = await getMovieById(params.id);
 
   if (!movie) return { title: "Movie Not Found" };
 
@@ -25,9 +24,8 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function MovieDetailPage({ params }) {
-  // Await the params first to get the id
-  const resolvedParams = await params;
-  const movie = await getMovieById(resolvedParams.id);
+  // No need to await params in Next.js 15 page components
+  const movie = await getMovieById(params.id);
 
   if (!movie) {
     notFound();

@@ -1,72 +1,99 @@
+// components/ui/cards/MovieCard.jsx
 "use client";
 
-import Image from "next/image";
-import { StarIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import ListActionButton from "@/components/ui/buttons/actions/AddToListButton";
+import Image from "next/image";
+import Link from "next/link";
+import { PlusIcon, CheckIcon, StarIcon } from "@heroicons/react/24/solid";
+import { useContext } from "react";
+import { ListContext } from "@/library/contexts/ListContext";
 
 export default function MovieCard({ movie }) {
   const [imageError, setImageError] = useState(false);
-  const router = useRouter();
+  const { addToList, removeFromList, isInList } = useContext(ListContext);
+  const isInUserList = isInList("movie", movie.id.toString());
 
-  // Format release date to just show the year
-  const releaseYear = movie.release_date
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
+  const posterUrl = movie.poster_path
+    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+    : "/placeholder-movie.jpg";
+
+  const year = movie.release_date
     ? new Date(movie.release_date).getFullYear()
     : "Unknown";
 
-  // Check if poster path exists
-  const hasPoster = Boolean(movie.poster_path);
+  const handleListAction = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-  const handleClick = () => {
-    router.push(`/movies/${movie.id}`);
+    if (isInUserList) {
+      removeFromList("movie", movie.id.toString());
+    } else {
+      addToList("movie", movie);
+    }
   };
 
   return (
-    <li
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300 cursor-pointer relative"
-      onClick={handleClick}
-    >
-      {/* List Action Button (Add to list) */}
-      <ListActionButton itemType="movie" item={movie} />
+    <li className="h-full">
+      <Link href={`/movies/${movie.id}`} className="block h-full">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 h-full flex flex-col relative">
+          {/* Poster Image Container with Border */}
+          <div className="relative aspect-[2/3] w-full overflow-hidden">
+            <Image
+              src={imageError ? "/placeholder-movie.jpg" : posterUrl}
+              alt={`${movie.title} poster`}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              className="object-cover transition-transform duration-500 hover:scale-105"
+              onError={handleImageError}
+            />
 
-      {/* Movie Poster or Fallback */}
-      <div className="relative w-full aspect-[2/3]">
-        {hasPoster && !imageError ? (
-          <Image
-            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-            alt={`${movie.title} poster`}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover cursor-pointer"
-            priority={false}
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-800 text-white cursor-pointer">
-            <span className="text-center p-4">No poster available</span>
+            {/* Rating Badge */}
+            <div className="absolute top-3 left-3 flex items-center bg-black/80 text-white text-sm font-bold px-3 py-1.5 rounded-lg shadow-md">
+              <StarIcon className="h-4 w-4 text-yellow-400 mr-1.5" />
+              <span>
+                {movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}
+              </span>
+            </div>
+
+            {/* Add to List Button - MOVED TO TOP RIGHT OF POSTER */}
+            <button
+              onClick={handleListAction}
+              className={`absolute top-3 right-3 p-2.5 rounded-full ${
+                isInUserList
+                  ? "bg-green-600 hover:bg-green-700"
+                  : "bg-blue-600 hover:bg-blue-700"
+              } text-white shadow-lg transition-transform duration-200 hover:scale-110 z-10`}
+              aria-label={isInUserList ? "Remove from list" : "Add to list"}
+            >
+              {isInUserList ? (
+                <CheckIcon className="h-4 w-4" />
+              ) : (
+                <PlusIcon className="h-4 w-4" />
+              )}
+            </button>
           </div>
-        )}
-      </div>
 
-      {/* Movie Details */}
-      <div className="p-4 cursor-pointer">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
-          {movie.title}
-        </h2>
+          {/* Gradient Separator */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600"></div>
 
-        <div className="flex items-center justify-between mt-2">
-          <div className="flex items-center">
-            <StarIcon className="h-5 w-5 text-yellow-500 mr-1" />
-            <span className="text-gray-700 dark:text-gray-300">
-              {movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}
-            </span>
+          {/* Movie Details - With Background */}
+          <div className="p-5 flex-grow flex flex-col bg-white dark:bg-gray-800">
+            <h3 className="font-bold text-lg text-gray-900 dark:text-white line-clamp-2 mb-1">
+              {movie.title}
+            </h3>
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
+              {year}
+            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 flex-grow">
+              {movie.overview || "No overview available."}
+            </p>
           </div>
-          <span className="text-gray-600 dark:text-gray-400">
-            {releaseYear}
-          </span>
         </div>
-      </div>
+      </Link>
     </li>
   );
 }
