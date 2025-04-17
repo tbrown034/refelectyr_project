@@ -81,7 +81,21 @@ export default function YearSelector({
           name="year"
           value={selectedYear}
           onChange={handleChange}
-          className="block w-full appearance-none rounded-md border border-gray-300 bg-white px-4 py-2 pr-10 text-gray-900 shadow-sm transition duration-150 ease-in-out cursor-pointer hover:border-gray-400 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:border-gray-500"
+          className={`
+            block w-full appearance-none
+            rounded-xl
+            border-2 border-blue-600 dark:border-blue-500
+            bg-white dark:bg-white
+            px-4 py-2.5 pr-10
+            text-blue-600 dark:text-blue-600
+            font-medium
+            hover:bg-blue-50
+            focus:outline-none
+            focus:ring-2 focus:ring-blue-200
+            cursor-pointer
+            shadow-sm
+            transition-all duration-200 ease-in-out
+          `}
           aria-label="Select content year"
         >
           {years.map((year) => (
@@ -90,7 +104,7 @@ export default function YearSelector({
             </option>
           ))}
         </select>
-        <ChevronDownIcon className="pointer-events-none absolute inset-y-0 right-3 my-auto h-5 w-5 text-gray-400 dark:text-gray-300" />
+        <ChevronDownIcon className="pointer-events-none absolute inset-y-0 right-3 my-auto h-5 w-5 text-blue-600 dark:text-blue-600" />
       </div>
     </div>
   );
