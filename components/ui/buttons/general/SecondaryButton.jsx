@@ -1,8 +1,13 @@
-const SecondaryButton = ({ style, text, onClick }) => (
+const SecondaryButton = ({ style = "", text, onClick }) => (
   <button
     onClick={onClick}
-    className={`p-2 rounded-lg border-2 border-black dark:border-white
-      cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 dark:active:bg-slate-500 active:bg-slate-500 transition-colors duration-200 ease-in-out
+    className={`px-5 py-2.5 rounded-xl border-2 border-black dark:border-white
+      font-medium text-black dark:text-white
+      bg-transparent dark:bg-transparent
+      hover:bg-slate-200 dark:hover:bg-slate-700
+      active:bg-slate-400 dark:active:bg-slate-600
+      shadow-sm hover:shadow-md
+      transition-all duration-200 ease-in-out
       ${style}`}
   >
     {text}
