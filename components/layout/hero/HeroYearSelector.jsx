@@ -1,45 +1,32 @@
-// components/layout/hero/HeroYearSelector.jsx
 "use client";
 
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { use, useEffect } from "react";
-import YearSelector from "@/components/ui/inputs/YearSelector";
+import { use } from "react";
 import { YearContext } from "@/library/contexts/YearContext";
+import YearSelector from "@/components/ui/inputs/YearSelector";
 
-export default function HeroYearSelector({ initialYear }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  // Replace useContext with use()
-  const { setSelectedYear } = use(YearContext);
-
-  // When initialYear changes (from URL params), update context
-  useEffect(() => {
-    if (initialYear) {
-      setSelectedYear(initialYear);
-    }
-  }, [initialYear, setSelectedYear]);
+export default function HeroYearSelector({ initialYear = null }) {
+  const { selectedYear, setSelectedYear } = use(YearContext);
 
   const handleYearChange = (newYear) => {
-    // Update the URL with the new year
-    const params = new URLSearchParams(window.location.search);
-    params.set("year", newYear);
-
-    // Update the context
     setSelectedYear(newYear);
-
-    // Use router.refresh() to trigger a server re-render without a full page refresh
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-    router.refresh();
   };
 
   return (
-    <div className="my-6">
-      <YearSelector
-        initialYear={initialYear}
-        navigateOnChange={false} // We handle navigation separately
-        className="w-full max-w-xs"
-        onYearChange={handleYearChange}
-      />
+    <div className="flex flex-col items-center justify-center space-y-2  px-4">
+      <label
+        htmlFor="year-selector"
+        className="text-xl text-blue-950 dark:text-blue-200 font-bold "
+      >
+        Select Your Reflection Year
+      </label>
+      <div className="w-full max-w-xs">
+        <YearSelector
+          initialYear={initialYear}
+          navigateOnChange={true}
+          className="w-full"
+          onYearChange={handleYearChange}
+        />
+      </div>
     </div>
   );
 }
