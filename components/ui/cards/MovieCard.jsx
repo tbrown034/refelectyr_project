@@ -1,17 +1,13 @@
-// components/ui/cards/MovieCard.jsx
 "use client";
 
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PlusIcon, CheckIcon, StarIcon } from "@heroicons/react/24/solid";
-import { useContext } from "react";
-import { ListContext } from "@/library/contexts/ListContext";
+import { StarIcon } from "@heroicons/react/24/solid";
+import AddToListButton from "@/components/ui/buttons/actions/AddToListButton";
 
 export default function MovieCard({ movie }) {
   const [imageError, setImageError] = useState(false);
-  const { addToList, removeFromList, isInList } = useContext(ListContext);
-  const isInUserList = isInList("movie", movie.id.toString());
 
   const handleImageError = () => {
     setImageError(true);
@@ -24,17 +20,6 @@ export default function MovieCard({ movie }) {
   const year = movie.release_date
     ? new Date(movie.release_date).getFullYear()
     : "Unknown";
-
-  const handleListAction = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (isInUserList) {
-      removeFromList("movie", movie.id.toString());
-    } else {
-      addToList("movie", movie);
-    }
-  };
 
   return (
     <li className="h-full">
@@ -59,22 +44,10 @@ export default function MovieCard({ movie }) {
               </span>
             </div>
 
-            {/* Add to List Button - MOVED TO TOP RIGHT OF POSTER */}
-            <button
-              onClick={handleListAction}
-              className={`absolute top-3 right-3 p-2.5 rounded-full ${
-                isInUserList
-                  ? "bg-green-600 hover:bg-green-700"
-                  : "bg-blue-600 hover:bg-blue-700"
-              } text-white shadow-lg transition-transform duration-200 hover:scale-110 z-10`}
-              aria-label={isInUserList ? "Remove from list" : "Add to list"}
-            >
-              {isInUserList ? (
-                <CheckIcon className="h-4 w-4" />
-              ) : (
-                <PlusIcon className="h-4 w-4" />
-              )}
-            </button>
+            {/* Add to List Button - TOP RIGHT OF POSTER */}
+            <div className="absolute top-3 right-3 z-10">
+              <AddToListButton itemType="movie" item={movie} />
+            </div>
           </div>
 
           {/* Gradient Separator */}

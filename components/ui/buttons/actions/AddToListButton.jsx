@@ -1,28 +1,34 @@
-// Components/UI/Buttons/Actions/AddToListButton.jsx
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { PlusIcon, CheckIcon } from "@heroicons/react/24/solid";
+import { useContext } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 
-export default function AddToListButton({ itemType, item }) {
-  // Replace useContext with use()
-  const { isInList, addToList } = use(ListContext);
-  const [isInListState, setIsInListState] = useState(false);
+export default function AddToListButton({ itemType, item, className = "" }) {
+  const { isInList, addToList, removeFromList } = useContext(ListContext);
+  const [inList, setInList] = useState(false);
 
-  // Check if this item is in the list on mount and when item changes
+  // Check if this item is in the list whenever relevant dependencies change
   useEffect(() => {
     if (!item || !item.id) return;
-    setIsInListState(isInList(itemType, item.id));
+
+    // Use toString() since IDs might be stored as strings in some contexts
+    setInList(isInList(itemType, item.id.toString()));
   }, [item, itemType, isInList]);
 
   const handleAddToList = (e) => {
-    e.stopPropagation(); // Prevent navigating to detail page
+    e.preventDefault(); // Prevent default navigation
+    e.stopPropagation(); // Prevent event bubbling
+
     if (!item || !item.id) return;
 
-    const success = addToList(itemType, item);
-    if (success) {
-      setIsInListState(true);
+    if (inList) {
+      removeFromList(itemType, item.id.toString());
+      setInList(false); // Update state immediately for better UX
+    } else {
+      addToList(itemType, item);
+      setInList(true); // Update state immediately for better UX
     }
   };
 
@@ -32,22 +38,17 @@ export default function AddToListButton({ itemType, item }) {
   return (
     <button
       onClick={handleAddToList}
-      disabled={isInListState}
-      aria-label={
-        isInListState
-          ? "Already added to list"
-          : `Add ${itemType === "movie" ? "movie" : "TV show"} to my list`
-      }
-      className={`absolute top-2 right-2 p-2 rounded-full z-10 opacity-90 hover:opacity-100 transition-colors ${
-        isInListState
-          ? "bg-green-600 text-white cursor-default"
-          : "bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
-      }`}
+      aria-label={inList ? `Remove from list` : `Add to list`}
+      className={`p-2.5 rounded-full shadow-lg transition-transform duration-200 hover:scale-110 ${
+        inList
+          ? "bg-green-600 hover:bg-green-700"
+          : "bg-blue-600 hover:bg-blue-700"
+      } text-white ${className}`}
     >
-      {isInListState ? (
-        <CheckIcon className="h-5 w-5" />
+      {inList ? (
+        <CheckIcon className="h-4 w-4" />
       ) : (
-        <PlusIcon className="h-5 w-5" />
+        <PlusIcon className="h-4 w-4" />
       )}
     </button>
   );

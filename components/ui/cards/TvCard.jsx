@@ -1,94 +1,67 @@
-// components/ui/cards/TvCard.jsx
 "use client";
 
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PlusIcon, CheckIcon, StarIcon } from "@heroicons/react/24/solid";
-import { useContext } from "react";
-import { ListContext } from "@/library/contexts/ListContext";
+import { StarIcon } from "@heroicons/react/24/solid";
+import AddToListButton from "@/components/ui/buttons/actions/AddToListButton";
 
 export default function TvCard({ show }) {
   const [imageError, setImageError] = useState(false);
-  const { addToList, removeFromList, isInList } = useContext(ListContext);
-  const isInUserList = isInList("tv", show.id.toString());
 
-  // Handle image load error
   const handleImageError = () => {
     setImageError(true);
   };
 
-  // Get poster URL or fallback
   const posterUrl = show.poster_path
     ? `https://image.tmdb.org/t/p/w500${show.poster_path}`
     : "/placeholder-tv.jpg";
 
-  // Format year from first air date
   const year = show.first_air_date
     ? new Date(show.first_air_date).getFullYear()
     : "Unknown";
 
-  // Handle adding/removing from list
-  const handleListAction = (e) => {
-    e.preventDefault(); // Prevent navigation
-    e.stopPropagation(); // Prevent event bubbling
-
-    if (isInUserList) {
-      removeFromList("tv", show.id.toString());
-    } else {
-      addToList("tv", show);
-    }
-  };
-
   return (
-    <li className="group relative h-full">
+    <li className="h-full">
       <Link href={`/tv/${show.id}`} className="block h-full">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full flex flex-col">
-          {/* Poster Image */}
-          <div className="relative aspect-[2/3] w-full overflow-hidden bg-gray-200 dark:bg-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 h-full flex flex-col relative">
+          {/* Poster Image Container with Border */}
+          <div className="relative aspect-[2/3] w-full overflow-hidden">
             <Image
               src={imageError ? "/placeholder-tv.jpg" : posterUrl}
               alt={`${show.name} poster`}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover transition-transform duration-500 hover:scale-105"
               onError={handleImageError}
             />
 
             {/* Rating Badge */}
-            {show.vote_average > 0 && (
-              <div className="absolute top-2 left-2 flex items-center bg-black/70 text-white text-sm px-2 py-1 rounded-full">
-                <StarIcon className="h-3.5 w-3.5 text-yellow-400 mr-1" />
-                <span>{show.vote_average.toFixed(1)}</span>
-              </div>
-            )}
+            <div className="absolute top-3 left-3 flex items-center bg-black/80 text-white text-sm font-bold px-3 py-1.5 rounded-lg shadow-md">
+              <StarIcon className="h-4 w-4 text-yellow-400 mr-1.5" />
+              <span>
+                {show.vote_average ? show.vote_average.toFixed(1) : "N/A"}
+              </span>
+            </div>
 
-            {/* Add to List Button */}
-            <button
-              onClick={handleListAction}
-              className={`absolute bottom-2 right-2 p-2 rounded-full ${
-                isInUserList
-                  ? "bg-green-600 hover:bg-green-700"
-                  : "bg-purple-600 hover:bg-purple-700"
-              } text-white shadow-lg transition-transform duration-200 hover:scale-110`}
-            >
-              {isInUserList ? (
-                <CheckIcon className="h-5 w-5" />
-              ) : (
-                <PlusIcon className="h-5 w-5" />
-              )}
-            </button>
+            {/* Add to List Button - TOP RIGHT OF POSTER */}
+            <div className="absolute top-3 right-3 z-10">
+              <AddToListButton itemType="tv" item={show} />
+            </div>
           </div>
 
-          {/* Show Details */}
-          <div className="p-4 flex-grow flex flex-col">
-            <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-2 mb-1">
+          {/* Gradient Separator */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-purple-500 via-purple-600 to-blue-600"></div>
+
+          {/* TV Show Details - With Background */}
+          <div className="p-5 flex-grow flex flex-col bg-white dark:bg-gray-800">
+            <h3 className="font-bold text-lg text-gray-900 dark:text-white line-clamp-2 mb-1">
               {show.name}
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
               {year}
             </p>
-            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 flex-grow">
+            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 flex-grow">
               {show.overview || "No overview available."}
             </p>
           </div>
