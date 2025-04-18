@@ -5,9 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { StarIcon } from "@heroicons/react/24/solid";
 import AddToListButton from "@/components/ui/buttons/actions/AddToListButton";
+import { use } from "react";
+import { ListContext } from "@/library/contexts/ListContext";
 
 export default function MovieCard({ movie }) {
   const [imageError, setImageError] = useState(false);
+  const { isInList } = use(ListContext);
 
   const handleImageError = () => {
     setImageError(true);
@@ -25,7 +28,6 @@ export default function MovieCard({ movie }) {
     <li className="h-full">
       <Link href={`/movies/${movie.id}`} className="block h-full">
         <div className="bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 h-full flex flex-col relative">
-          {/* Poster Image Container with Border */}
           <div className="relative aspect-[2/3] w-full overflow-hidden">
             <Image
               src={imageError ? "/placeholder-movie.jpg" : posterUrl}
@@ -36,7 +38,6 @@ export default function MovieCard({ movie }) {
               onError={handleImageError}
             />
 
-            {/* Rating Badge */}
             <div className="absolute top-3 left-3 flex items-center bg-black/80 text-white text-sm font-bold px-3 py-1.5 rounded-lg shadow-md">
               <StarIcon className="h-4 w-4 text-yellow-400 mr-1.5" />
               <span>
@@ -44,16 +45,13 @@ export default function MovieCard({ movie }) {
               </span>
             </div>
 
-            {/* Add to List Button - TOP RIGHT OF POSTER */}
             <div className="absolute top-3 right-3 z-10">
               <AddToListButton itemType="movie" item={movie} />
             </div>
           </div>
 
-          {/* Gradient Separator */}
           <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600"></div>
 
-          {/* Movie Details - With Background */}
           <div className="p-5 flex-grow flex flex-col bg-white dark:bg-gray-800">
             <h3 className="font-bold text-lg text-gray-900 dark:text-white line-clamp-2 mb-1">
               {movie.title}

@@ -6,43 +6,92 @@ import { use } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 
 export default function AddToListButton({ itemType, item, className = "" }) {
+  console.log("AddToListButton RENDER", {
+    itemType,
+    itemId: item?.id,
+    itemTitle: item?.title || item?.name,
+  });
+
   const { isInList, addToList, removeFromList, movieList, tvList } =
     use(ListContext);
 
-  // Don't initialize with useState - compute it directly from the lists
-  // This is crucial to ensure the button always shows the correct state
-  const currentlyInList =
-    item && item.id ? isInList(itemType, String(item.id)) : false;
+  // Detailed logging function
+  const checkIfInList = useCallback(() => {
+    if (!item || !item.id) {
+      console.error("No item or no item.id to check");
+      return false;
+    }
 
-  const handleAddToList = (e) => {
-    e.preventDefault(); // Prevent default navigation
-    e.stopPropagation(); // Prevent event bubbling
+    const stringId = String(item.id);
+    const currentList = itemType === "movie" ? movieList : tvList;
 
-    if (!item || !item.id) return;
+    console.log("List Check Debug", {
+      itemType,
+      stringId,
+      currentList,
+      listItemIds: currentList.map((i) => String(i.id)),
+      isInList: currentList.some((i) => String(i.id) === stringId),
+    });
+
+    return currentList.some((i) => String(i.id) === stringId);
+  }, [item, itemType, movieList, tvList]);
+
+  const [isCurrentlyInList, setIsCurrentlyInList] = useState(checkIfInList());
+
+  // Recheck list status when relevant dependencies change
+  useEffect(() => {
+    const inListStatus = checkIfInList();
+    console.log("List Status Update", {
+      itemType,
+      itemId: item?.id,
+      inListStatus,
+    });
+    setIsCurrentlyInList(inListStatus);
+  }, [item, itemType, movieList, tvList, checkIfInList]);
+
+  const handleToggleList = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!item || !item.id) {
+      console.error("Cannot add/remove - no item or no item.id");
+      return;
+    }
+
     const itemId = String(item.id);
 
-    if (currentlyInList) {
+    console.log("Toggle List Action", {
+      action: isCurrentlyInList ? "REMOVE" : "ADD",
+      itemType,
+      itemId,
+      itemTitle: item.title || item.name,
+    });
+
+    if (isCurrentlyInList) {
       removeFromList(itemType, itemId);
+      setIsCurrentlyInList(false);
     } else {
-      addToList(itemType, item);
+      const success = addToList(itemType, item);
+      if (success) {
+        setIsCurrentlyInList(true);
+      }
     }
   };
 
-  // Don't show anything if there's no item
   if (!item) return null;
 
   return (
     <button
-      onClick={handleAddToList}
-      aria-label={currentlyInList ? `Remove from list` : `Add to list`}
+      onClick={handleToggleList}
+      aria-label={isCurrentlyInList ? `Remove from list` : `Add to list`}
       className={`p-2.5 rounded-full shadow-lg transition-transform duration-200 hover:scale-110 ${
-        currentlyInList
+        isCurrentlyInList
           ? "bg-green-600 hover:bg-green-700"
           : "bg-blue-600 hover:bg-blue-700"
       } text-white ${className}`}
-      data-in-list={currentlyInList}
+      data-in-list={isCurrentlyInList}
     >
-      {currentlyInList ? (
+      {isCurrentlyInList ? (
         <CheckIcon className="h-4 w-4" />
       ) : (
         <PlusIcon className="h-4 w-4" />
