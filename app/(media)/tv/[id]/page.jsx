@@ -11,8 +11,9 @@ import { getTvShowById } from "@/library/api/tmdb";
 import ActionButtons from "@/components/ui/buttons/actions/DetailPageActions";
 
 export async function generateMetadata({ params }) {
-  // No need to await params in Next.js 15 with generateMetadata
-  const show = await getTvShowById(params.id);
+  // In Next.js 15, params is a Promise that needs to be awaited
+  const resolvedParams = await params;
+  const show = await getTvShowById(resolvedParams.id);
 
   if (!show) return { title: "TV Show Not Found" };
 
@@ -25,8 +26,9 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function TvShowDetailPage({ params }) {
-  // No need to await params in Next.js 15 page components
-  const show = await getTvShowById(params.id);
+  // In Next.js 15, params is a Promise that needs to be awaited
+  const resolvedParams = await params;
+  const show = await getTvShowById(resolvedParams.id);
 
   if (!show) {
     notFound();

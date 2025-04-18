@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { PlusIcon, ArrowLeftIcon } from "@heroicons/react/24/solid";
-import { use } from "react"; // Add this import
+import { use } from "react";
+import { ListContext } from "@/library/contexts/ListContext";
 
 // Import components
 import PublishedListHeader from "./PublishedListHeader";
@@ -12,7 +13,6 @@ import PublishedListItems from "./PublishedListItems";
 import PublishedListShare from "./PublishedListShare";
 import PublishedListActions from "./PublishedListActions";
 
-import { ListContext } from "@/library/contexts/ListContext";
 import { getShareableUrl, formatListText } from "@/library/utils/listUtils";
 
 export default function PublishedListPage() {
@@ -40,8 +40,6 @@ export default function PublishedListPage() {
   const [copiedTextSuccess, setCopiedTextSuccess] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editableTitle, setEditableTitle] = useState("");
-
-  // Rest of the component remains the same...
 
   // Derived values
   const isValidType = type === "movies" || type === "tv";
