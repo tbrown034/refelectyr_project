@@ -1,7 +1,7 @@
 // components/layout/lists/TempListsSidebar.jsx
 "use client";
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -39,7 +39,7 @@ export default function TempListsSidebar() {
     clearList,
     publishList,
     isInList,
-  } = useContext(ListContext);
+  } = use(ListContext);
 
   // Auto-switch to non-empty tab if current tab is empty but other has items
   // Only apply this logic if the user hasn't manually selected a tab

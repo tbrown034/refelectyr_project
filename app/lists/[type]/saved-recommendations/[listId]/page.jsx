@@ -1,7 +1,7 @@
 // app/lists/[type]/saved-recommendations/[listId]/page.jsx
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,7 +17,7 @@ export default function SavedRecommendationsPage() {
   const params = useParams();
   const router = useRouter();
   const { getRecommendationList, deleteRecommendationList, getPublishedList } =
-    useContext(ListContext);
+    use(ListContext);
 
   const [list, setList] = useState(null);
   const [sourceList, setSourceList] = useState(null);

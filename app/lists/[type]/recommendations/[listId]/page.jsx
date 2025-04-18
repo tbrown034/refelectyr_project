@@ -1,7 +1,7 @@
 // app/lists/[type]/recommendations/[listId]/page.jsx
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ListContext } from "@/library/contexts/ListContext";
 import RecommendationsDisplay from "./RecommendationsDisplay";
@@ -12,7 +12,7 @@ import LoadingSpinner from "@/components/ui/feedback/LoadingSpinner";
 export default function RecommendationsPage() {
   const params = useParams();
   const router = useRouter();
-  const { getPublishedList } = useContext(ListContext);
+  const { getPublishedList } = use(ListContext);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);

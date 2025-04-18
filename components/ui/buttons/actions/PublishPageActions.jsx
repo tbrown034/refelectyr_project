@@ -18,7 +18,7 @@ export default function PublishPageActions({
   type,
 }) {
   const [showingRecommendations, setShowingRecommendations] = useState(false);
-  const { clearList } = useContext(ListContext);
+  const { clearList } = use(ListContext);
   const router = useRouter();
 
   const handleCreateNew = () => {

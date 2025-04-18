@@ -1,7 +1,7 @@
 // app/lists/page.jsx
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 import Link from "next/link";
 import Image from "next/image";
@@ -26,7 +26,7 @@ export default function MyListsPage() {
     ANONYMOUS_LIST_LIMIT,
     deleteAllPublishedLists,
     deleteAllRecommendationLists,
-  } = useContext(ListContext);
+  } = use(ListContext);
 
   const [regularLists, setRegularLists] = useState([]);
   const [movieLists, setMovieLists] = useState([]);

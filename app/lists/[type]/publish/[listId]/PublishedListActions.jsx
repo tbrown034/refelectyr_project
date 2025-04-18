@@ -9,7 +9,7 @@ import {
   TrashIcon,
   SparklesIcon,
 } from "@heroicons/react/24/solid";
-import { useContext } from "react";
+import { use } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 
 export default function PublishedListActions({
@@ -19,7 +19,7 @@ export default function PublishedListActions({
   onCreateNew,
 }) {
   const router = useRouter();
-  const { deletePublishedList } = useContext(ListContext);
+  const { deletePublishedList } = use(ListContext);
 
   const handleDeleteList = () => {
     if (

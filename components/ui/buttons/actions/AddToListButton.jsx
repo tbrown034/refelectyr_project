@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { PlusIcon, CheckIcon } from "@heroicons/react/24/solid";
-import { useContext } from "react";
+import { use } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 
 export default function AddToListButton({ itemType, item, className = "" }) {
-  const { isInList, addToList, removeFromList } = useContext(ListContext);
+  const { isInList, addToList, removeFromList } = use(ListContext);
   const [inList, setInList] = useState(false);
 
   // Check if this item is in the list whenever relevant dependencies change

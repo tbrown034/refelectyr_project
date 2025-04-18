@@ -9,12 +9,12 @@ import {
   PlusIcon,
   CheckIcon,
 } from "@heroicons/react/24/solid";
-import { useContext } from "react";
+import { use } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 
 export default function DetailPageActions({ itemType, item }) {
   const router = useRouter();
-  const { isInList, addToList, removeFromList } = useContext(ListContext);
+  const { isInList, addToList, removeFromList } = use(ListContext);
   const [inList, setInList] = useState(false);
 
   // Check list status on each render

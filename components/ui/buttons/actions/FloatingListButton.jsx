@@ -7,7 +7,7 @@ import {
   TvIcon,
   ListBulletIcon,
 } from "@heroicons/react/24/solid";
-import { useContext } from "react";
+import { use } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 
 export default function FloatingListButton({
@@ -15,7 +15,7 @@ export default function FloatingListButton({
   toggleSidebar,
   activeTab,
 }) {
-  const { movieList, tvList } = useContext(ListContext);
+  const { movieList, tvList } = use(ListContext);
 
   // Calculate total items and check for mixed content
   const totalItems = movieList.length + tvList.length;

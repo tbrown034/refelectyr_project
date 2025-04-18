@@ -1,7 +1,7 @@
 // app/lists/[type]/recommendations/[listId]/RecommendationsDisplay.jsx
 "use client";
 
-import { useState, useContext } from "react";
+import { useState, use } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { StarIcon, TrashIcon } from "@heroicons/react/24/solid";
@@ -12,7 +12,7 @@ export default function RecommendationsDisplay({
   listIsMovieType,
   onRemoveItem,
 }) {
-  const { isInList } = useContext(ListContext);
+  const { isInList } = use(ListContext);
   const [removedItems, setRemovedItems] = useState({});
 
   // Handle removing a recommendation from the list
