@@ -1,7 +1,8 @@
 // app/lists/[type]/recommendations/[listId]/RecommendationsActions.jsx
 "use client";
 
-import { useState, useContext } from "react";
+import { useState } from "react";
+import { use } from "react"; // Add this import
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -23,7 +24,7 @@ export default function RecommendationsActions({
   const [isSaving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const router = useRouter();
-  const { saveRecommendationList } = useContext(ListContext);
+  const { saveRecommendationList } = use(ListContext);
 
   // Determine the link to the original list
   const listLink = `/lists/${type}/publish/${listId}`;

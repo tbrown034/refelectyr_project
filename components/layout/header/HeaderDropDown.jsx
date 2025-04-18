@@ -8,7 +8,6 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
 const HeaderDropDown = () => {
-  // Replace useContext with use()
   const { selectedYear } = use(YearContext);
 
   const navItems = [

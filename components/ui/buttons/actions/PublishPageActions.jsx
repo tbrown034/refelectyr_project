@@ -1,7 +1,7 @@
 // components/ui/buttons/actions/PublishPageActions.jsx
 "use client";
 
-import { useState, useContext } from "react";
+import { useState, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -18,7 +18,7 @@ export default function PublishPageActions({
   type,
 }) {
   const [showingRecommendations, setShowingRecommendations] = useState(false);
-  const { clearList } = use(ListContext);
+  const { clearList } = use(ListContext); // This line is already correct
   const router = useRouter();
 
   const handleCreateNew = () => {

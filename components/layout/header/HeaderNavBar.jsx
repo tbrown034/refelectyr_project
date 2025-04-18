@@ -8,7 +8,6 @@ import { ListContext } from "@/library/contexts/ListContext";
 import { ListBulletIcon } from "@heroicons/react/24/solid";
 
 const HeaderNavBar = () => {
-  // Replace useContext with use()
   const { selectedYear } = use(YearContext);
   const { publishedLists } = use(ListContext);
 

@@ -1,9 +1,10 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { PlusIcon, ArrowLeftIcon } from "@heroicons/react/24/solid";
+import { use } from "react"; // Add this import
 
 // Import components
 import PublishedListHeader from "./PublishedListHeader";
@@ -21,14 +22,14 @@ export default function PublishedListPage() {
   const listId = params?.listId;
   const router = useRouter();
 
-  // Get context functions
+  // Get context functions - UPDATED to use()
   const {
     getPublishedList,
     updatePublishedListItems,
     updatePublishedListMetadata,
     removePublishedListItem,
     clearList,
-  } = useContext(ListContext);
+  } = use(ListContext);
 
   // Component state
   const [listData, setListData] = useState(null);
@@ -39,6 +40,8 @@ export default function PublishedListPage() {
   const [copiedTextSuccess, setCopiedTextSuccess] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editableTitle, setEditableTitle] = useState("");
+
+  // Rest of the component remains the same...
 
   // Derived values
   const isValidType = type === "movies" || type === "tv";
