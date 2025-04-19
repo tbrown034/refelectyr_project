@@ -1,4 +1,3 @@
-// app/lists/[type]/publish/[listId]/PublishedListActions.jsx
 "use client";
 
 import Link from "next/link";

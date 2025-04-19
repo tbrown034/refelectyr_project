@@ -22,7 +22,7 @@ export default function PublishedListPage() {
   const listId = params?.listId;
   const router = useRouter();
 
-  // Get context functions - UPDATED to use()
+  // Get context functions using use()
   const {
     getPublishedList,
     updatePublishedListItems,
@@ -171,8 +171,17 @@ export default function PublishedListPage() {
       editableTitle.trim() ||
       `My Top ${listIsMovieType ? "Movies" : "TV Shows"}`;
 
+    // First update the context
+    updatePublishedListMetadata(listId, { title: newTitle });
+
+    // Then immediately update local state to ensure UI consistency
     setIsEditingTitle(false);
-    updateAndSync(null, { title: newTitle });
+
+    // Directly update the local listData to avoid waiting for the sync
+    setListData((prev) => ({
+      ...prev,
+      title: newTitle,
+    }));
   }
 
   function handleTitleInputChange(event) {
@@ -341,7 +350,7 @@ export default function PublishedListPage() {
           <PublishedListActions
             isValidType={isValidType}
             pageTypeLabel={pageTypeLabel}
-            listId={listId} // Add this new prop
+            listId={listId}
             onCreateNew={handleCreateNew}
           />
         </div>

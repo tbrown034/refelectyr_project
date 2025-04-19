@@ -57,6 +57,9 @@ export default function PublishedListHeader({
       const inputElement = inputRef.current;
       inputElement.addEventListener("keydown", handleKeyDown);
 
+      // Focus the input when editing starts
+      inputElement.focus();
+
       return () => {
         inputElement.removeEventListener("keydown", handleKeyDown);
       };
