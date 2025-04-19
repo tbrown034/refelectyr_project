@@ -15,6 +15,7 @@ const HeaderDropDown = () => {
     { text: "Movies", href: `/movies?year=${selectedYear}` },
     { text: "TV Shows", href: `/tv?year=${selectedYear}` },
     { text: "About", href: "/about" },
+    { text: "Lists", href: "/lists" },
   ];
 
   return (
