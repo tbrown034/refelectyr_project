@@ -22,10 +22,12 @@ export default function MyListsPage() {
   const {
     publishedLists,
     recommendationLists,
-    hasReachedPublishedListLimit,
     ANONYMOUS_LIST_LIMIT,
     deleteAllPublishedLists,
     deleteAllRecommendationLists,
+    getTotalListCount,
+    getRemainingListCount,
+    hasReachedTotalListLimit,
   } = use(ListContext);
 
   const [regularLists, setRegularLists] = useState([]);
@@ -73,9 +75,9 @@ export default function MyListsPage() {
     setTvRecommendations(tvRecsArray);
 
     // Check if we're near or at the limit
-    const regularListCount = allRegularLists.length;
-    setIsNearLimit(regularListCount >= ANONYMOUS_LIST_LIMIT - 1);
-    setIsAtLimit(hasReachedPublishedListLimit());
+    const remainingLists = getRemainingListCount();
+    setIsNearLimit(remainingLists <= 1 && getTotalListCount() > 0);
+    setIsAtLimit(hasReachedTotalListLimit());
 
     // Auto-select tab based on what's available
     if (allRegularLists.length === 0 && allRecommendationLists.length > 0) {
@@ -88,7 +90,9 @@ export default function MyListsPage() {
   }, [
     publishedLists,
     recommendationLists,
-    hasReachedPublishedListLimit,
+    hasReachedTotalListLimit,
+    getTotalListCount,
+    getRemainingListCount,
     ANONYMOUS_LIST_LIMIT,
   ]);
 
@@ -512,11 +516,9 @@ export default function MyListsPage() {
                 }`}
               >
                 {isAtLimit
-                  ? `You've reached the limit of ${ANONYMOUS_LIST_LIMIT} lists`
-                  : `${ANONYMOUS_LIST_LIMIT - regularLists.length} list${
-                      ANONYMOUS_LIST_LIMIT - regularLists.length !== 1
-                        ? "s"
-                        : ""
+                  ? `You've reached the maximum of ${ANONYMOUS_LIST_LIMIT} total lists`
+                  : `${getRemainingListCount()} ${
+                      getRemainingListCount() !== 1 ? "lists" : "list"
                     } remaining before you reach the limit`}
               </p>
               <p className="text-gray-700 dark:text-gray-300 mt-1">

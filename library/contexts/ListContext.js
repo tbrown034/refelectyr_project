@@ -10,12 +10,11 @@ const STORAGE_KEYS = {
   MOVIE_LIST: "userMovieList",
   TV_LIST: "userTvList",
   PUBLISHED_LISTS: "publishedLists",
-  RECOMMENDATION_LISTS: "recommendationLists", // New storage key
+  RECOMMENDATION_LISTS: "recommendationLists",
 };
 
-// Add new constants for list limits
-const MAX_PUBLISHED_LISTS_ANONYMOUS = 5; // Max lists for non-logged users
-const MAX_RECOMMENDATION_LISTS_ANONYMOUS = 5; // Max recommendation lists
+// List limits for anonymous users
+const MAX_TOTAL_LISTS_ANONYMOUS = 5; // Max combined lists for non-logged users
 const TEMP_LIST_CLEANUP_AFTER_PUBLISH = true; // Clean temp lists after publishing
 
 // Create the context with default values
@@ -34,17 +33,20 @@ export const ListContext = createContext({
   updatePublishedListItems: (listId, newItems) => {},
   updatePublishedListMetadata: (listId, metadata) => {},
   removePublishedListItem: (listId, itemId) => {},
-  // Add new functions to context definition
-  hasReachedPublishedListLimit: () => false,
   deletePublishedList: (listId) => {},
-  ANONYMOUS_LIST_LIMIT: MAX_PUBLISHED_LISTS_ANONYMOUS,
-  // New recommendation-related functions
+  deleteAllPublishedLists: () => {},
   recommendationLists: {},
   saveRecommendationList: (sourceListId, type, items, title) => null,
   getRecommendationList: (listId) => null,
   deleteRecommendationList: (listId) => {},
+  deleteAllRecommendationLists: () => {},
   updateRecommendationList: (listId, newItems) => {},
   removeRecommendationItem: (listId, itemId) => {},
+  // Combined list limit functions
+  getTotalListCount: () => 0,
+  getRemainingListCount: () => 0,
+  hasReachedTotalListLimit: () => false,
+  ANONYMOUS_LIST_LIMIT: MAX_TOTAL_LISTS_ANONYMOUS,
 });
 
 export function ListProvider({ children }) {
@@ -52,7 +54,7 @@ export function ListProvider({ children }) {
   const [movieList, setMovieList] = useState([]);
   const [tvList, setTvList] = useState([]);
   const [publishedLists, setPublishedLists] = useState({});
-  const [recommendationLists, setRecommendationLists] = useState({}); // New state
+  const [recommendationLists, setRecommendationLists] = useState({});
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize lists from localStorage
@@ -127,6 +129,29 @@ export function ListProvider({ children }) {
     }
   }, [recommendationLists, isInitialized]);
 
+  // Get total number of saved lists
+  function getTotalListCount() {
+    const publishedCount = Object.keys(publishedLists).length;
+    const recommendationCount = Object.keys(recommendationLists).length;
+    return publishedCount + recommendationCount;
+  }
+
+  // Get remaining list capacity
+  function getRemainingListCount() {
+    const currentCount = getTotalListCount();
+    return Math.max(0, MAX_TOTAL_LISTS_ANONYMOUS - currentCount);
+  }
+
+  // Check if user has reached combined list limit
+  function hasReachedTotalListLimit() {
+    // In the future, this will check auth status
+    const isLoggedIn = false; // For now, assume not logged in
+
+    if (isLoggedIn) return false; // No limit for logged in users
+
+    return getTotalListCount() >= MAX_TOTAL_LISTS_ANONYMOUS;
+  }
+
   // Check if item is in list
   function isInList(itemType, itemId) {
     const list = itemType === "movie" ? movieList : tvList;
@@ -149,8 +174,20 @@ export function ListProvider({ children }) {
       return false;
     }
 
+    // Extract only essential data to minimize storage size
+    const essentialData = {
+      id: item.id,
+      title: itemType === "movie" ? item.title : undefined,
+      name: itemType === "tv" ? item.name : undefined,
+      poster_path: item.poster_path,
+      release_date: itemType === "movie" ? item.release_date : undefined,
+      first_air_date: itemType === "tv" ? item.first_air_date : undefined,
+      vote_average: item.vote_average,
+      overview: item.overview?.substring(0, 300), // Trim long overviews
+    };
+
     // Add with timestamp
-    setList([...list, { ...item, addedAt: new Date().toISOString() }]);
+    setList([...list, { ...essentialData, addedAt: new Date().toISOString() }]);
     return true;
   }
 
@@ -202,30 +239,6 @@ export function ListProvider({ children }) {
     setList([]);
   }
 
-  // Check if user has reached published list limit
-  function hasReachedPublishedListLimit() {
-    // In the future, this will check auth status
-    const isLoggedIn = false; // For now, assume not logged in
-
-    if (isLoggedIn) return false; // No limit for logged in users
-
-    // Count current published lists
-    const publishedListCount = Object.keys(publishedLists).length;
-    return publishedListCount >= MAX_PUBLISHED_LISTS_ANONYMOUS;
-  }
-
-  // Check if user has reached recommendation list limit
-  function hasReachedRecommendationListLimit() {
-    // In the future, this will check auth status
-    const isLoggedIn = false; // For now, assume not logged in
-
-    if (isLoggedIn) return false; // No limit for logged in users
-
-    // Count current recommendation lists
-    const recommendationListCount = Object.keys(recommendationLists).length;
-    return recommendationListCount >= MAX_RECOMMENDATION_LISTS_ANONYMOUS;
-  }
-
   // Publish a list
   function publishList(itemType) {
     const list = itemType === "movie" ? movieList : tvList;
@@ -236,9 +249,9 @@ export function ListProvider({ children }) {
     }
 
     // Check if user has reached limit
-    if (hasReachedPublishedListLimit()) {
+    if (hasReachedTotalListLimit()) {
       alert(
-        `You've reached the maximum of ${MAX_PUBLISHED_LISTS_ANONYMOUS} published lists. Sign in to create more!`
+        `You've reached the maximum of ${MAX_TOTAL_LISTS_ANONYMOUS} total lists. Sign in to create more!`
       );
       return null;
     }
@@ -270,9 +283,9 @@ export function ListProvider({ children }) {
     }
 
     // Check if user has reached limit
-    if (hasReachedRecommendationListLimit()) {
+    if (hasReachedTotalListLimit()) {
       alert(
-        `You've reached the maximum of ${MAX_RECOMMENDATION_LISTS_ANONYMOUS} recommendation lists. Sign in to save more!`
+        `You've reached the maximum of ${MAX_TOTAL_LISTS_ANONYMOUS} total lists. Sign in to create more!`
       );
       return null;
     }
@@ -464,6 +477,7 @@ export function ListProvider({ children }) {
         updatePublishedListMetadata,
         removePublishedListItem,
         deleteAllPublishedLists,
+        deletePublishedList,
 
         // Recommendation list operations
         saveRecommendationList,
@@ -474,12 +488,11 @@ export function ListProvider({ children }) {
         deleteRecommendationList,
         deleteAllRecommendationLists,
 
-        // Limit functions
-        hasReachedPublishedListLimit,
-        hasReachedRecommendationListLimit,
-        deletePublishedList,
-        ANONYMOUS_LIST_LIMIT: MAX_PUBLISHED_LISTS_ANONYMOUS,
-        RECOMMENDATION_LIST_LIMIT: MAX_RECOMMENDATION_LISTS_ANONYMOUS,
+        // List limit functions - fixed names
+        getTotalListCount,
+        getRemainingListCount,
+        hasReachedTotalListLimit,
+        ANONYMOUS_LIST_LIMIT: MAX_TOTAL_LISTS_ANONYMOUS,
       }}
     >
       {children}
