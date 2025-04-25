@@ -23,7 +23,7 @@ export default async function ScrollingMovies({ year = "2025" }) {
       <div className="w-full px-4 max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            Popular Movies{" "}
+            Popular Movies of{" "}
             <span className="text-yellow-500 dark:text-yellow-400">{year}</span>
           </h2>
           <Link

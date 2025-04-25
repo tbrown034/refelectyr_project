@@ -1,5 +1,5 @@
-import HeroAddButtons from "./HeroAddButtons";
-import HeroLogButtons from "./HeroLogButtons";
+import HeroAddButtons from "./HeroButtons/HeroAddButtons";
+import HeroLogButtons from "./HeroButtons/HeroLogButtons";
 
 export default function HeroCTA() {
   return (

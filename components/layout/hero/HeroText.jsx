@@ -4,8 +4,7 @@ const HeroText = () => (
       Welcome to ReflectYr
     </h1>
     <p className="text-lg md:text-xl lg:text-2xl font-semibold text-blue-950 dark:text-blue-200 max-w-2xl leading-relaxed">
-      Your journey to reflect starts here. Capture, rank, and share your
-      favorite entertainment moments of the year.
+      Make a list. Get custom recommendations. Find your next favorite movie.
     </p>
   </div>
 );

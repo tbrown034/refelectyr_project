@@ -15,7 +15,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="flex flex-col min-h-screen bg-slate-200 dark:bg-slate-800 gap-8 dark:text-white">
+      <body className="flex flex-col min-h-screen p-4 bg-slate-200 dark:bg-slate-800 gap-8 dark:text-white">
         <YearProvider>
           <ListProvider>
             <Header />

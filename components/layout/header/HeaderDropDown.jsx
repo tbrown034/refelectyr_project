@@ -1,4 +1,4 @@
-// Components/Layout/Header/HeaderDropDown.jsx
+// components/layout/header/HeaderDropDown.jsx
 "use client";
 
 import Link from "next/link";
@@ -22,26 +22,23 @@ const HeaderDropDown = () => {
     <div className="relative">
       <Menu>
         <MenuButton
-          className="inline-flex items-center gap-2 p-2 rounded-lg border border-slate-300 dark:border-slate-600
-          hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600
-          transition duration-200 ease-in-out"
+          className="flex items-center gap-2 p-2 rounded-lg border border-slate-300 dark:border-slate-600
+          hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 dark:active:bg-slate-600"
         >
           Menu
           <ChevronDownIcon className="w-4 h-4" />
         </MenuButton>
 
         <MenuItems
-          transition
-          className="absolute right-0 w-56 mt-2 origin-top-right rounded-lg border border-slate-300 dark:border-slate-600
-            bg-white dark:bg-slate-800 p-2 text-slate-900 dark:text-slate-100 shadow-lg transition-all ease-in-out duration-150 scale-95 opacity-0
-            data-[open]:scale-100 data-[open]:opacity-100 z-50"
+          className="absolute right-0 w-56 mt-2 p-2 bg-white dark:bg-slate-800 border border-slate-300
+          dark:border-slate-600 rounded-lg shadow-lg z-10"
         >
           {navItems.map((item, index) => (
             <MenuItem
               key={index}
               as={Link}
               href={item.href}
-              className="block w-full px-4 py-2 text-left rounded-md hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
+              className="block w-full p-2 text-left rounded-md hover:bg-slate-200 dark:hover:bg-slate-700"
             >
               {item.text}
             </MenuItem>
