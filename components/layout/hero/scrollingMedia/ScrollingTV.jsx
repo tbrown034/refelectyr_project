@@ -20,16 +20,15 @@ export default async function ScrollingTV({ year = "2025" }) {
 
   if (tvShows.length === 0) {
     return (
-      <div className="w-full px-4 lg:px-8 xl:px-16 max-w-screen-2xl mx-auto">
+      <div className="w-full px-4 max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2>
-            <span className="inline-block px-4 py-1 text-sm font-semibold text-black rounded-full bg-purple-500">
-              Popular TV Shows {year}
-            </span>
+          <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            Popular TV Shows{" "}
+            <span className="text-yellow-500 dark:text-yellow-400">{year}</span>
           </h2>
           <Link
             href={`/tv?year=${year}`}
-            className="px-3 py-1 text-sm flex items-center gap-1 text-purple-600 hover:text-purple-800 transition-colors cursor-pointer"
+            className="text-sm font-medium text-yellow-500 dark:text-yellow-400 hover:text-yellow-400 dark:hover:text-yellow-300 transition-colors flex items-center gap-1 cursor-pointer"
           >
             View All
             <ArrowRightIcon className="h-4 w-4" />
@@ -47,16 +46,15 @@ export default async function ScrollingTV({ year = "2025" }) {
   const doubledShows = [...tvShows, ...tvShows];
 
   return (
-    <div className="w-full px-4 lg:px-8 xl:px-16 max-w-screen-2xl mx-auto">
+    <div className="w-full px-4 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h2>
-          <span className="inline-block px-4 py-1 text-sm font-semibold text-black rounded-full bg-purple-500">
-            Popular TV Shows {year}
-          </span>
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+          Popular TV Shows{" "}
+          <span className="text-yellow-500 dark:text-yellow-400">{year}</span>
         </h2>
         <Link
           href={`/tv?year=${year}`}
-          className="px-3 py-1 text-sm flex items-center gap-1 text-purple-600 hover:text-purple-800 transition-colors cursor-pointer"
+          className="text-sm font-medium text-yellow-500 dark:text-yellow-400 hover:text-yellow-400 dark:hover:text-yellow-300 transition-colors flex items-center gap-1 cursor-pointer"
         >
           View All
           <ArrowRightIcon className="h-4 w-4" />

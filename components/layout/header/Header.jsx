@@ -6,7 +6,7 @@ import HeaderNavBar from "./HeaderNavBar";
 
 const Header = () => {
   return (
-    <div className="flex items-center justify-between p-4 bg-slate-200 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-700">
+    <div className="flex items-center justify-between p-4 border-b-2   border-white ">
       <HeaderBranding />
       <div className="hidden md:flex">
         <HeaderNavBar />

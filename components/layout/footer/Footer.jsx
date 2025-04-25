@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="w-full p-6 bg-slate-200 dark:bg-slate-700  border-t border-slate-200 dark:border-slate-700">
+    <footer className="w-full p-6 border-t">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
         {/* Branding */}
         <p className="text-sm">

@@ -1,5 +1,5 @@
 const HeroText = () => (
-  <div className="text-center flex flex-col items-center gap-6 px-4">
+  <div className="text-center flex flex-col items-center gap-2 px-4">
     <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-blue-600 dark:text-blue-400 tracking-tight leading-tight max-w-4xl">
       Welcome to ReflectYr
     </h1>

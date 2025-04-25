@@ -22,14 +22,13 @@ export default async function ScrollingMovies({ year = "2025" }) {
     return (
       <div className="w-full px-4 max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h2>
-            <span className="inline-block px-4 py-1 text-sm font-semibold text-black rounded-full bg-amber-500">
-              Popular Movies {year}
-            </span>
+          <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+            Popular Movies{" "}
+            <span className="text-yellow-500 dark:text-yellow-400">{year}</span>
           </h2>
           <Link
             href={`/movies?year=${year}`}
-            className="px-3 py-1 text-sm flex items-center gap-1 text-amber-600 hover:text-amber-800 transition-colors cursor-pointer"
+            className="text-sm font-medium text-yellow-500 dark:text-yellow-400 hover:text-yellow-400 dark:hover:text-yellow-300 transition-colors flex items-center gap-1 cursor-pointer"
           >
             View All
             <ArrowRightIcon className="h-4 w-4" />
@@ -49,14 +48,13 @@ export default async function ScrollingMovies({ year = "2025" }) {
   return (
     <div className="w-full px-4 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h2>
-          <span className="inline-block px-4 py-1 text-sm font-semibold text-black rounded-full bg-amber-500">
-            Popular Movies {year}
-          </span>
+        <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+          Popular Movies{" "}
+          <span className="text-yellow-500 dark:text-yellow-400">{year}</span>
         </h2>
         <Link
           href={`/movies?year=${year}`}
-          className="px-3 py-1 text-sm flex items-center gap-1 text-amber-600 hover:text-amber-800 transition-colors cursor-pointer"
+          className="text-sm font-medium text-yellow-500 dark:text-yellow-400 hover:text-yellow-400 dark:hover:text-yellow-300 transition-colors flex items-center gap-1 cursor-pointer"
         >
           View All
           <ArrowRightIcon className="h-4 w-4" />
