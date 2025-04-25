@@ -1,4 +1,4 @@
-// components/ui/buttons/FloatingListButton.jsx
+// components/ui/buttons/actions/FloatingListButton.jsx
 "use client";
 
 import {
@@ -25,7 +25,7 @@ export default function FloatingListButton({
 
   const toggleBtnClasses = `fixed bottom-6 right-6 z-40 p-4 rounded-full shadow-lg
       ${isOpen ? "bg-gray-700 text-white" : "bg-blue-600 text-white"}
-      transition-all duration-300 hover:scale-105`;
+      transition-all duration-300 hover:scale-105 cursor-pointer`;
 
   return (
     <button

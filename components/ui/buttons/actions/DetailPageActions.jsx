@@ -61,11 +61,10 @@ export default function DetailPageActions({ itemType, item }) {
 
       <button
         onClick={handleAddToList}
-        disabled={inList}
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors cursor-pointer ${
           inList
-            ? "bg-green-600 text-white cursor-default"
-            : "bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
+            ? "bg-green-600 text-white"
+            : "bg-blue-500 text-white hover:bg-blue-600"
         }`}
       >
         {inList ? (

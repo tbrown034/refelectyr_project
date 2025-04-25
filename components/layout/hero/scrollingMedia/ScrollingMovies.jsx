@@ -20,8 +20,8 @@ export default async function ScrollingMovies({ year = "2025" }) {
 
   if (movies.length === 0) {
     return (
-      <div className="w-full max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-4">
+      <div className="w-full px-4 max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
           <h2>
             <span className="inline-block px-4 py-1 text-sm font-semibold text-black rounded-full bg-amber-500">
               Popular Movies {year}
@@ -29,7 +29,7 @@ export default async function ScrollingMovies({ year = "2025" }) {
           </h2>
           <Link
             href={`/movies?year=${year}`}
-            className="px-3 py-1 text-sm flex items-center gap-1 text-amber-600 hover:text-amber-800 transition-colors"
+            className="px-3 py-1 text-sm flex items-center gap-1 text-amber-600 hover:text-amber-800 transition-colors cursor-pointer"
           >
             View All
             <ArrowRightIcon className="h-4 w-4" />
@@ -47,8 +47,8 @@ export default async function ScrollingMovies({ year = "2025" }) {
   const doubledMovies = [...movies, ...movies];
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-4">
+    <div className="w-full px-4 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
         <h2>
           <span className="inline-block px-4 py-1 text-sm font-semibold text-black rounded-full bg-amber-500">
             Popular Movies {year}
@@ -56,7 +56,7 @@ export default async function ScrollingMovies({ year = "2025" }) {
         </h2>
         <Link
           href={`/movies?year=${year}`}
-          className="px-3 py-1 text-sm flex items-center gap-1 text-amber-600 hover:text-amber-800 transition-colors"
+          className="px-3 py-1 text-sm flex items-center gap-1 text-amber-600 hover:text-amber-800 transition-colors cursor-pointer"
         >
           View All
           <ArrowRightIcon className="h-4 w-4" />
@@ -64,9 +64,9 @@ export default async function ScrollingMovies({ year = "2025" }) {
       </div>
 
       {/* Container with overflow hidden - Add pause-on-hover functionality */}
-      <div className="relative w-full overflow-hidden rounded-xl group">
+      <div className="relative overflow-hidden rounded-xl group">
         {/* Inner content that scrolls - pauses on hover */}
-        <div className="flex animate-scrollLeft gap-6 w-max py-4 group-hover:pause">
+        <div className="flex animate-scrollLeft gap-4 w-max py-4 group-hover:pause transition-all duration-300">
           {doubledMovies.map((movie, index) => (
             <Link
               key={`${movie.id}-${index}`}

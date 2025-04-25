@@ -38,3 +38,17 @@
 .cursor-pointer {
   cursor: pointer;
 }
+
+@keyframes subtleBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+.animate-subtle-bounce {
+  animation: subtleBounce 2s infinite ease-in-out;
+}
