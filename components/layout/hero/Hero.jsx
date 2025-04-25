@@ -17,7 +17,9 @@ export default async function Hero({ searchParams }) {
       <HeroYearSelector />
       <ScrollingMovies year={year} />
       <ScrollingTV year={year} />
-      <HeroList />
+      <div className="flex justify-center ">
+        <HeroList />
+      </div>
     </div>
   );
 }

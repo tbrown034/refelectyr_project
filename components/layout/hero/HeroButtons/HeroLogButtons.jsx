@@ -9,16 +9,16 @@ export default function HeroLogButtons() {
   };
 
   return (
-    <div className="flex flex-row justify-center items-center gap-3 px-4 mt-6 w-full">
+    <div className="flex flex-row justify-center items-center gap-3 px-4 mt-6 ">
       <button
         onClick={handleLogin}
-        className="px-5 py-3 bg-gray-800 text-white font-semibold rounded-lg border-4 border-gray-600 hover:bg-gray-700 active:scale-95 transition-all cursor-pointer shadow-sm"
+        className="rounded-xl p-2 px-6 border-4 border-gray-600 cursor-pointer hover:bg-gray-700 active:scale-95 transition-all"
       >
         Log In
       </button>
       <button
         onClick={handleSignUp}
-        className="px-5 py-3 bg-blue-600 text-white font-semibold rounded-lg border border-blue-500 hover:bg-blue-700 active:scale-95 transition-all cursor-pointer shadow-sm"
+        className="rounded-xl p-2 px-4 hover:bg-blue-700 active:scale-95 transition-all bg-blue-600 text-white font-medium cursor-pointer border-4 border-blue-600 "
       >
         Sign Up
       </button>
