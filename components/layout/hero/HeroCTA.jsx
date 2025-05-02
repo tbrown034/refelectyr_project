@@ -1,3 +1,4 @@
+import SignInButton from "@/components/ui/buttons/actions/SignInButton";
 import HeroAddButtons from "./HeroButtons/HeroAddButtons";
 import HeroLogButtons from "./HeroButtons/HeroLogButtons";
 
@@ -13,6 +14,12 @@ export default function HeroCTA() {
           Account Access
         </h2>
         <HeroLogButtons />
+      </div>
+      <div className="flex flex-col items-center gap-3">
+        <h2 className="text-white text-lg font-semibold opacity-80">
+          Real Account Access
+        </h2>
+        <SignInButton />
       </div>
     </div>
   );
