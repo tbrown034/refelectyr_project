@@ -21,7 +21,7 @@ const DarkModeToggle = () => {
       applyTheme(prefersDark ? "dark" : "light");
     }
 
-    // ✅ Listen for system theme changes
+    // Listen for system theme changes
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = (e) => {
       if (!localStorage.getItem("theme")) {
@@ -54,13 +54,17 @@ const DarkModeToggle = () => {
     <div className="flex items-center gap-2">
       <SunIcon
         className={`w-6 h-6 transition-colors duration-300 ${
-          !isDarkMode ? "text-yellow-500" : "text-gray-400"
+          // Use slate for inactive icon color for consistency
+          !isDarkMode ? "text-yellow-500" : "text-slate-400"
         }`}
       />
       <button
         onClick={toggleTheme}
-        className={`relative flex items-center justify-center cursor-pointer w-12 h-6 rounded-full transition-colors duration-300 ${
-          isDarkMode ? "bg-gray-600" : "bg-gray-200"
+        className={`relative flex items-center justify-center cursor-pointer w-12 h-6 rounded-full transition-colors duration-300 border ${
+          // Adjust background and border colors for better contrast in both modes
+          isDarkMode
+            ? "bg-slate-600 border-slate-500" // Dark mode: Slightly lighter bg, lighter border
+            : "bg-slate-300 border-slate-400" // Light mode: Slightly darker bg, darker border
         }`}
       >
         <span
@@ -71,7 +75,8 @@ const DarkModeToggle = () => {
       </button>
       <MoonIcon
         className={`w-6 h-6 transition-colors duration-300 ${
-          isDarkMode ? "text-blue-500" : "text-gray-400"
+          // Use slate for inactive icon color for consistency
+          isDarkMode ? "text-blue-500" : "text-slate-400"
         }`}
       />
     </div>

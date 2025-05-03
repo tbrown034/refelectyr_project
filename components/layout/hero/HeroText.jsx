@@ -1,10 +1,16 @@
 const HeroText = () => (
-  <div className="text-center flex flex-col items-center gap-2 px-4">
-    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-blue-600 dark:text-blue-400 tracking-tight leading-tight max-w-4xl">
+  <div className="flex flex-col items-center text-center p-8 gap-4">
+    <h1
+      className="text-5xl md:text-6xl font-bold tracking-tight max-w-3xl
+                 bg-gradient-to-r from-slate-700 to-slate-900
+                 dark:from-slate-300 dark:to-slate-100
+                 bg-clip-text text-transparent pb-1"
+    >
       Welcome to ReflectYr
     </h1>
-    <p className="text-lg md:text-xl lg:text-2xl font-semibold text-blue-950 dark:text-blue-200 max-w-2xl leading-relaxed">
-      Make a list. Get custom recommendations. Find your next favorite movie.
+    <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 max-w-2xl">
+      Make a list. Get custom recommendations. Find your next favorite movie or
+      TV show.
     </p>
   </div>
 );
