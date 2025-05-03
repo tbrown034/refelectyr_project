@@ -1,4 +1,6 @@
-// components/layout/header/Header.jsx
+import SignInStatusIcon from "@/components/ui/feedback/SignInStatusIcon";
+
+// Your other imports
 import ThemeToggle from "@/components/ui/toggles/DarkModeToggle";
 import HeaderBranding from "./HeaderBranding";
 import HeaderDropDown from "./HeaderDropDown";
@@ -11,7 +13,8 @@ const Header = () => {
       <div className="hidden md:flex">
         <HeaderNavBar />
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-4 items-center">
+        <SignInStatusIcon />
         <ThemeToggle />
         <HeaderDropDown />
       </div>
