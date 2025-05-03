@@ -6,12 +6,6 @@ import { use } from "react";
 import { ListContext } from "@/library/contexts/ListContext";
 
 export default function AddToListButton({ itemType, item, className = "" }) {
-  console.log("AddToListButton RENDER", {
-    itemType,
-    itemId: item?.id,
-    itemTitle: item?.title || item?.name,
-  });
-
   const { isInList, addToList, removeFromList, movieList, tvList } =
     use(ListContext);
 
@@ -25,14 +19,6 @@ export default function AddToListButton({ itemType, item, className = "" }) {
     const stringId = String(item.id);
     const currentList = itemType === "movie" ? movieList : tvList;
 
-    console.log("List Check Debug", {
-      itemType,
-      stringId,
-      currentList,
-      listItemIds: currentList.map((i) => String(i.id)),
-      isInList: currentList.some((i) => String(i.id) === stringId),
-    });
-
     return currentList.some((i) => String(i.id) === stringId);
   }, [item, itemType, movieList, tvList]);
 
@@ -41,11 +27,7 @@ export default function AddToListButton({ itemType, item, className = "" }) {
   // Recheck list status when relevant dependencies change
   useEffect(() => {
     const inListStatus = checkIfInList();
-    console.log("List Status Update", {
-      itemType,
-      itemId: item?.id,
-      inListStatus,
-    });
+
     setIsCurrentlyInList(inListStatus);
   }, [item, itemType, movieList, tvList, checkIfInList]);
 
@@ -59,13 +41,6 @@ export default function AddToListButton({ itemType, item, className = "" }) {
     }
 
     const itemId = String(item.id);
-
-    console.log("Toggle List Action", {
-      action: isCurrentlyInList ? "REMOVE" : "ADD",
-      itemType,
-      itemId,
-      itemTitle: item.title || item.name,
-    });
 
     if (isCurrentlyInList) {
       removeFromList(itemType, itemId);

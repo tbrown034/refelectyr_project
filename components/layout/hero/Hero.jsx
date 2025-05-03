@@ -1,4 +1,3 @@
-import Link from "next/link";
 import HeroText from "./HeroText";
 import HeroCTA from "./HeroCTA";
 import ScrollingMovies from "./scrollingMedia/ScrollingMovies";
@@ -11,15 +10,13 @@ export default async function Hero({ searchParams }) {
   const year = searchParams?.year || DEFAULT_YEAR;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 justify-center items-center">
       <HeroText />
       <HeroCTA />
       <HeroYearSelector />
       <ScrollingMovies year={year} />
       <ScrollingTV year={year} />
-      <div className="flex justify-center ">
-        <HeroList />
-      </div>
+      <HeroList />
     </div>
   );
 }

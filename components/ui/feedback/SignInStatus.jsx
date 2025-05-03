@@ -4,7 +4,7 @@ export default async function SignInStatus() {
   const session = await auth();
 
   return (
-    <p className="text-sm italic text-white">
+    <p className="text-sm italic ">
       {session?.user?.email
         ? `Signed in as ${session.user.email}`
         : "Not signed in"}

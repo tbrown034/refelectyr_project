@@ -23,7 +23,7 @@ export default function HeroAddButtons({
       </button>
       <button
         onClick={handleAddTvShows}
-        className="rounded-xl p-3 px-6 text-lg border-4 border-gray-600 text-gray-100 hover:bg-gray-700 active:scale-95 transition-all font-medium"
+        className="rounded-xl p-3 px-6 text-lg border-4 border-gray-600 hover:bg-gray-700 active:scale-95 transition-all font-medium"
       >
         Add TV Shows
       </button>
