@@ -10,13 +10,21 @@ export default async function Hero({ searchParams }) {
   const year = searchParams?.year || DEFAULT_YEAR;
 
   return (
-    <div className="flex flex-col gap-4 justify-center items-center">
-      <HeroText />
-      <HeroCTA />
-      <HeroYearSelector />
-      <ScrollingMovies year={year} />
-      <ScrollingTV year={year} />
-      <HeroList />
-    </div>
+    <>
+      <div className="flex flex-col gap-6 justify-center items-center p-2 mt-4">
+        <HeroText />
+        <HeroCTA />
+      </div>
+      <div className="flex flex-col gap-6 justify-center items-center p-2 mt-4">
+        <ScrollingMovies year={year} />
+        <ScrollingTV year={year} />
+        <div className="flex justify-center mt-4 mb-6">
+          <HeroYearSelector />
+        </div>
+        <div className="mb-16">
+          <HeroList />
+        </div>
+      </div>
+    </>
   );
 }

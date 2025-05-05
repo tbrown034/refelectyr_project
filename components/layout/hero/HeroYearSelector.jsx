@@ -12,32 +12,27 @@ export default function HeroYearSelector({ initialYear = null }) {
   };
 
   return (
-    <section className="w-full max-w-md mx-auto rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 p-6 shadow-lg text-white">
-      <header className="mb-4">
-        <h2 className="text-lg font-semibold tracking-wide">Select a Year</h2>
-        <p className="text-sm opacity-80">
-          Choose a year to explore and build your list.
+    <div className="flex flex-col gap-4 p-4 border border-slate-300 dark:border-slate-700 rounded-lg bg-transparent">
+      <header className="flex flex-col gap-2">
+        <h2 className="flex items-center gap-4 text-2xl font-semibold text-slate-800 dark:text-slate-100">
+          {/* CalendarDaysIcon is not imported, add it */}
+          <CalendarDaysIcon className="h-8 w-8 text-slate-500 dark:text-slate-300" />
+          Choose a Year
+        </h2>
+        <p className=" text-xl font-semibold text-slate-600 dark:text-slate-400 leading-snug">
+          Set your default year for browsing and adding movies or shows.
         </p>
       </header>
-      <YearSelector
-        initialYear={initialYear}
-        navigateOnChange={true}
-        onYearChange={handleYearChange}
-        className="w-full rounded-lg border border-white/40 bg-white/20 text-white px-5 py-3 pr-12 text-base shadow-md backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-white transition"
-      />
-      <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center">
-        <svg
-          className="h-6 w-6 text-white/80"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 20 20"
-          stroke="currentColor"
-          strokeWidth="2"
-          aria-hidden="true"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6 8l4 4 4-4" />
-        </svg>
+      <div className="flex justify-center">
+        <YearSelector
+          initialYear={initialYear}
+          navigateOnChange={true}
+          onYearChange={handleYearChange}
+          className="mt-1 rounded-md border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100 py-2 pl-3 pr-10 shadow-sm"
+        />
       </div>
-    </section>
+    </div>
   );
 }
+
+import { CalendarDaysIcon } from "@heroicons/react/24/solid";
