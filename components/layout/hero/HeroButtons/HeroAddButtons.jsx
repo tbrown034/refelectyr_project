@@ -1,32 +1,22 @@
 "use client";
 
-export default function HeroAddButtons({
-  year = "2025",
-  onAddMovies,
-  onAddTvShows,
-}) {
-  const handleAddMovies = () => {
-    window.location.href = `/movies?year=${year}`;
-  };
+import Link from "next/link";
 
-  const handleAddTvShows = () => {
-    window.location.href = `/tv?year=${year}`;
-  };
-
+export default function HeroAddButtons({ year = "2025" }) {
   return (
-    <div className="flex flex-row gap-4 px-4">
-      <button
-        onClick={handleAddMovies}
-        className="rounded-xl p-3 px-6 text-lg bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all text-white font-semibold border-4 border-blue-600 shadow-md"
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-4 mt-8">
+      <Link
+        href={`/movies?year=${year}`}
+        className="rounded-lg px-6 py-3 text-base font-semibold transition-all duration-150 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 active:scale-[0.98] cursor-pointer shadow-md transform bg-gradient-to-br from-blue-500 to-blue-700 text-white border border-transparent hover:from-blue-600 hover:to-blue-800 hover:shadow-lg focus-visible:ring-blue-500"
       >
         Add Movies
-      </button>
-      <button
-        onClick={handleAddTvShows}
-        className="rounded-xl p-3 px-6 text-lg border-4 border-gray-600 hover:bg-gray-700 active:scale-95 transition-all font-medium"
+      </Link>
+      <Link
+        href={`/tv?year=${year}`}
+        className="rounded-lg px-6 py-3 text-base font-semibold transition-all duration-150 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 active:scale-[0.98] cursor-pointer shadow-md transform bg-white dark:bg-slate-800 text-slate-700 border border-slate-400 hover:bg-slate-100 hover:border-slate-500 dark:text-slate-300 dark:border-slate-500 dark:hover:bg-slate-700 dark:hover:border-slate-400 hover:shadow-lg focus-visible:ring-slate-500"
       >
         Add TV Shows
-      </button>
+      </Link>
     </div>
   );
 }
