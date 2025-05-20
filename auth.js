@@ -8,8 +8,25 @@ import Google from "next-auth/providers/google";
 export const { handlers, auth, signIn, signOut } = NextAuth(() => {
   // Create a `Pool` inside the request handler.
   const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+  const googleClientId =
+    process.env.NODE_ENV === "production"
+      ? process.env.AUTH_GOOGLE_ID_PROD
+      : process.env.AUTH_GOOGLE_ID_DEV;
+
+  console.log("[AUTH] Running in:", process.env.NODE_ENV);
+  console.log("[AUTH] Using Google Client ID:", googleClientId);
+
   return {
     adapter: NeonAdapter(pool),
-    providers: [Google],
+    providers: [
+      Google({
+        clientId: googleClientId,
+        clientSecret:
+          process.env.NODE_ENV === "production"
+            ? process.env.AUTH_GOOGLE_SECRET_PROD
+            : process.env.AUTH_GOOGLE_SECRET_DEV,
+      }),
+    ],
   };
 });
