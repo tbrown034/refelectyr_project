@@ -5,7 +5,7 @@ import Link from "next/link";
 import { use } from "react";
 import { YearContext } from "@/library/contexts/YearContext";
 import { ListContext } from "@/library/contexts/ListContext";
-import { ListBulletIcon } from "@heroicons/react/24/solid";
+import { ListBulletIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
 
 const HeaderNavBar = () => {
   const { selectedYear } = use(YearContext);
@@ -14,13 +14,15 @@ const HeaderNavBar = () => {
   // Static routes that don't need year param
   const staticRoutes = [
     { text: "Home", href: "/" },
+    { text: "Year-End", href: "/year-end" },
     { text: "About", href: "/about" },
   ];
 
   // Media routes that should include year param
+  // NOTE: TV routes kept in code but hidden from UI for movie-focused MVP
   const mediaRoutes = [
     { text: "Movies", href: `/movies?year=${selectedYear}` },
-    { text: "TV Shows", href: `/tv?year=${selectedYear}` },
+    // { text: "TV Shows", href: `/tv?year=${selectedYear}` },
   ];
 
   return (
@@ -45,13 +47,22 @@ const HeaderNavBar = () => {
         </Link>
       ))}
 
-      {/* My Lists Link without Count Indicator */}
+      {/* My Lists Link */}
       <Link
         href="/lists"
         className="text-slate-900 dark:text-slate-100 hover:underline transition-colors flex items-center"
       >
         <ListBulletIcon className="h-5 w-5 mr-1" />
         My Lists
+      </Link>
+
+      {/* Create List Link */}
+      <Link
+        href="/create"
+        className="text-blue-600 dark:text-blue-400 hover:underline transition-colors flex items-center font-medium"
+      >
+        <PlusCircleIcon className="h-5 w-5 mr-1" />
+        Create
       </Link>
     </nav>
   );

@@ -20,7 +20,15 @@ export default function RootLayout({ children }) {
           <ListProvider>
             <Header />
             <main className="flex-grow">
-              <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+              <Suspense
+                fallback={
+                  <div className="flex items-center justify-center min-h-[50vh]">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+                  </div>
+                }
+              >
+                {children}
+              </Suspense>
             </main>
             <Footer />
             <TempListsSidebar />

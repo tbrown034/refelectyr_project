@@ -1,19 +1,19 @@
-import { NextResponse } from "next/server";
+"use server";
+
 import { formatRecommendationPrompt } from "@/library/utils/recommendationsUtils";
 import { searchTmdbByTitle } from "@/library/api/tmdb";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
-export async function POST(request) {
+/**
+ * Server Action to generate personalized recommendations
+ * This replaces the API route for better performance and type safety
+ */
+export async function generateRecommendations(listId, type, items) {
   try {
-    // No auth required - recommendations are available to all users
-    const { listId, type, items } = await request.json();
-
+    // Validate inputs
     if (!listId || !type || !Array.isArray(items) || items.length === 0) {
-      return NextResponse.json(
-        { error: "Missing or invalid data" },
-        { status: 400 }
-      );
+      return { error: "Missing or invalid data", recommendations: [] };
     }
 
     const prompt = formatRecommendationPrompt(type, items);
@@ -39,28 +39,26 @@ export async function POST(request) {
         ? JSON.stringify(await anthropicRes.json())
         : await anthropicRes.text();
 
-      console.error("Anthropic API error:", errorText);
-      return NextResponse.json(
-        { error: "Ruh-roh! Scooby couldn’t fetch recommendations." },
-        { status: anthropicRes.status }
-      );
+      console.error("[RecommendationsAction] Anthropic API error:", errorText);
+      return {
+        error: "Failed to get recommendations. Please try again.",
+        recommendations: [],
+      };
     }
 
     const data = contentType.includes("application/json")
       ? await anthropicRes.json()
-      : (() => {
-          console.warn("Non-JSON response from Anthropic.");
-          return {};
-        })();
+      : {};
 
     const recommendationsText = data?.content?.[0]?.text ?? "";
     const recommendations = parseRecommendations(recommendationsText, type);
 
     if (!recommendations.length) {
-      console.warn("No recommendations parsed from model response.");
-      return NextResponse.json({ recommendations: [] }, { status: 200 });
+      console.warn("[RecommendationsAction] No recommendations parsed");
+      return { recommendations: [] };
     }
 
+    // Enrich with TMDB data
     const enrichedRecommendations = await Promise.all(
       recommendations.map(async (rec) => {
         try {
@@ -81,10 +79,10 @@ export async function POST(request) {
             };
           }
 
-          return rec; // fallback to raw recommendation
+          return rec;
         } catch (tmdbErr) {
           console.error(
-            `TMDB lookup failed for "${rec.title || rec.name}":`,
+            `[RecommendationsAction] TMDB lookup failed for "${rec.title || rec.name}":`,
             tmdbErr
           );
           return rec;
@@ -92,20 +90,19 @@ export async function POST(request) {
       })
     );
 
-    return NextResponse.json({ recommendations: enrichedRecommendations });
+    return { recommendations: enrichedRecommendations };
   } catch (err) {
-    console.error("Recommendation route error:", err);
-    return NextResponse.json(
-      {
-        error:
-          "Ruh-roh! Something went wrong while processing recommendations.",
-      },
-      { status: 500 }
-    );
+    console.error("[RecommendationsAction] Error:", err);
+    return {
+      error: "Something went wrong while processing recommendations.",
+      recommendations: [],
+    };
   }
 }
 
-// Parses plain text or JSON-formatted model output into recommendation objects
+/**
+ * Parse LLM response into structured recommendations
+ */
 function parseRecommendations(text, type) {
   try {
     if (text.includes("[") && text.includes("]")) {
@@ -136,7 +133,7 @@ function parseRecommendations(text, type) {
       };
     });
   } catch (err) {
-    console.error("Failed to parse LLM recommendations:", err);
+    console.error("[RecommendationsAction] Parse error:", err);
     return [];
   }
 }

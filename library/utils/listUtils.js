@@ -2,6 +2,8 @@
  * Utility functions for working with lists in the application
  */
 
+const LOG_PREFIX = "[listUtils]";
+
 /**
  * Generates a unique ID for published lists
  * Combines timestamp with random string for uniqueness
@@ -11,6 +13,21 @@ export function generateListId() {
   const timestamp = Date.now().toString(36);
   const randomStr = Math.random().toString(36).substring(2, 8);
   return `list_${timestamp}_${randomStr}`;
+}
+
+/**
+ * Generates a short, shareable code for public lists
+ * 6 character alphanumeric code that's easy to share
+ * @returns {string} Share code (e.g., "X7Kp2m")
+ */
+export function generateShareCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  console.log(`${LOG_PREFIX} Generated share code: ${code}`);
+  return code;
 }
 
 /**

@@ -1,9 +1,11 @@
 // library/contexts/ListContext.js
 "use client";
 
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import { MAX_LIST_SIZE } from "@/library/utils/defaults";
-import { generateListId } from "@/library/utils/listUtils";
+import { generateListId, generateShareCode } from "@/library/utils/listUtils";
+
+const LOG_PREFIX = "[ListContext]";
 
 // Define constants for localStorage keys
 const STORAGE_KEYS = {
@@ -11,42 +13,99 @@ const STORAGE_KEYS = {
   TV_LIST: "userTvList",
   PUBLISHED_LISTS: "publishedLists",
   RECOMMENDATION_LISTS: "recommendationLists",
+  WATCHED_POOL: "watchedPool",
 };
 
 // List limits for anonymous users
-const MAX_TOTAL_LISTS_ANONYMOUS = 5; // Max combined lists for non-logged users
-const TEMP_LIST_CLEANUP_AFTER_PUBLISH = true; // Clean temp lists after publishing
+const MAX_TOTAL_LISTS_ANONYMOUS = 10; // Increased from 5
+const TEMP_LIST_CLEANUP_AFTER_PUBLISH = true;
+
+// Available list themes
+export const LIST_THEMES = {
+  classic: {
+    id: "classic",
+    name: "Classic",
+    description: "Clean numbered list with posters",
+  },
+  "poster-grid": {
+    id: "poster-grid",
+    name: "Poster Grid",
+    description: "Visual grid of movie posters",
+  },
+  "family-feud": {
+    id: "family-feud",
+    name: "Family Feud",
+    description: "Reveal one by one, game show style",
+  },
+  awards: {
+    id: "awards",
+    name: "Awards Show",
+    description: "Elegant awards ceremony style",
+  },
+  minimalist: {
+    id: "minimalist",
+    name: "Minimalist",
+    description: "Simple text-based list",
+  },
+};
 
 // Create the context with default values
 export const ListContext = createContext({
+  // State
   movieList: [],
   tvList: [],
+  publishedLists: {},
+  recommendationLists: {},
+  watchedPool: { movies: [], tv: [] },
+  isInitialized: false,
+
+  // Temporary list operations
   addToList: () => false,
   removeFromList: () => {},
   moveItemUp: () => {},
   moveItemDown: () => {},
+  moveItem: () => {},
   clearList: () => {},
   isInList: () => false,
+
+  // Published list operations
   publishList: () => null,
+  createEnhancedList: () => null,
   getPublishedList: () => null,
-  publishedLists: {},
-  updatePublishedListItems: (listId, newItems) => {},
-  updatePublishedListMetadata: (listId, metadata) => {},
-  removePublishedListItem: (listId, itemId) => {},
-  deletePublishedList: (listId) => {},
+  updatePublishedListItems: () => {},
+  updatePublishedListMetadata: () => {},
+  updateItemComment: () => {},
+  updateItemRating: () => {},
+  removePublishedListItem: () => {},
+  deletePublishedList: () => {},
   deleteAllPublishedLists: () => {},
+  getListByShareCode: () => null,
+
+  // Recommendation list operations
   recommendationLists: {},
-  saveRecommendationList: (sourceListId, type, items, title) => null,
-  getRecommendationList: (listId) => null,
-  deleteRecommendationList: (listId) => {},
+  saveRecommendationList: () => null,
+  getRecommendationList: () => null,
+  deleteRecommendationList: () => {},
   deleteAllRecommendationLists: () => {},
-  updateRecommendationList: (listId, newItems) => {},
-  removeRecommendationItem: (listId, itemId) => {},
-  // Combined list limit functions
+  updateRecommendationList: () => {},
+  removeRecommendationItem: () => {},
+
+  // Watched pool operations
+  addToWatchedPool: () => {},
+  removeFromWatchedPool: () => {},
+  importToWatchedPool: () => {},
+  clearWatchedPool: () => {},
+  isInWatchedPool: () => false,
+  getWatchedPoolByYear: () => [],
+
+  // List limit functions
   getTotalListCount: () => 0,
   getRemainingListCount: () => 0,
   hasReachedTotalListLimit: () => false,
   ANONYMOUS_LIST_LIMIT: MAX_TOTAL_LISTS_ANONYMOUS,
+
+  // Theme helpers
+  LIST_THEMES,
 });
 
 export function ListProvider({ children }) {
@@ -55,31 +114,36 @@ export function ListProvider({ children }) {
   const [tvList, setTvList] = useState([]);
   const [publishedLists, setPublishedLists] = useState({});
   const [recommendationLists, setRecommendationLists] = useState({});
+  const [watchedPool, setWatchedPool] = useState({ movies: [], tv: [] });
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize lists from localStorage
   useEffect(() => {
+    console.log(`${LOG_PREFIX} Initializing from localStorage...`);
     try {
       const storedMovieList = localStorage.getItem(STORAGE_KEYS.MOVIE_LIST);
       const storedTvList = localStorage.getItem(STORAGE_KEYS.TV_LIST);
-      const storedPublishedLists = localStorage.getItem(
-        STORAGE_KEYS.PUBLISHED_LISTS
-      );
-      const storedRecommendationLists = localStorage.getItem(
-        STORAGE_KEYS.RECOMMENDATION_LISTS
-      );
+      const storedPublishedLists = localStorage.getItem(STORAGE_KEYS.PUBLISHED_LISTS);
+      const storedRecommendationLists = localStorage.getItem(STORAGE_KEYS.RECOMMENDATION_LISTS);
+      const storedWatchedPool = localStorage.getItem(STORAGE_KEYS.WATCHED_POOL);
 
       if (storedMovieList) setMovieList(JSON.parse(storedMovieList));
       if (storedTvList) setTvList(JSON.parse(storedTvList));
-      if (storedPublishedLists)
-        setPublishedLists(JSON.parse(storedPublishedLists));
-      if (storedRecommendationLists)
-        setRecommendationLists(JSON.parse(storedRecommendationLists));
+      if (storedPublishedLists) setPublishedLists(JSON.parse(storedPublishedLists));
+      if (storedRecommendationLists) setRecommendationLists(JSON.parse(storedRecommendationLists));
+      if (storedWatchedPool) setWatchedPool(JSON.parse(storedWatchedPool));
+
+      console.log(`${LOG_PREFIX} Loaded from localStorage:`, {
+        movieList: storedMovieList ? JSON.parse(storedMovieList).length : 0,
+        tvList: storedTvList ? JSON.parse(storedTvList).length : 0,
+        publishedLists: storedPublishedLists ? Object.keys(JSON.parse(storedPublishedLists)).length : 0,
+        watchedPool: storedWatchedPool ? JSON.parse(storedWatchedPool).movies?.length : 0,
+      });
 
       setIsInitialized(true);
     } catch (error) {
-      console.error("Error loading lists from localStorage:", error);
-      setIsInitialized(true); // Ensure initialization completes even on error
+      console.error(`${LOG_PREFIX} Error loading from localStorage:`, error);
+      setIsInitialized(true);
     }
   }, []);
 
@@ -88,8 +152,9 @@ export function ListProvider({ children }) {
     if (!isInitialized) return;
     try {
       localStorage.setItem(STORAGE_KEYS.MOVIE_LIST, JSON.stringify(movieList));
+      console.log(`${LOG_PREFIX} Saved movieList (${movieList.length} items)`);
     } catch (error) {
-      console.error("Error saving movie list:", error);
+      console.error(`${LOG_PREFIX} Error saving movie list:`, error);
     }
   }, [movieList, isInitialized]);
 
@@ -98,8 +163,9 @@ export function ListProvider({ children }) {
     if (!isInitialized) return;
     try {
       localStorage.setItem(STORAGE_KEYS.TV_LIST, JSON.stringify(tvList));
+      console.log(`${LOG_PREFIX} Saved tvList (${tvList.length} items)`);
     } catch (error) {
-      console.error("Error saving TV list:", error);
+      console.error(`${LOG_PREFIX} Error saving TV list:`, error);
     }
   }, [tvList, isInitialized]);
 
@@ -107,12 +173,10 @@ export function ListProvider({ children }) {
   useEffect(() => {
     if (!isInitialized) return;
     try {
-      localStorage.setItem(
-        STORAGE_KEYS.PUBLISHED_LISTS,
-        JSON.stringify(publishedLists)
-      );
+      localStorage.setItem(STORAGE_KEYS.PUBLISHED_LISTS, JSON.stringify(publishedLists));
+      console.log(`${LOG_PREFIX} Saved publishedLists (${Object.keys(publishedLists).length} lists)`);
     } catch (error) {
-      console.error("Error saving published lists:", error);
+      console.error(`${LOG_PREFIX} Error saving published lists:`, error);
     }
   }, [publishedLists, isInitialized]);
 
@@ -120,61 +184,73 @@ export function ListProvider({ children }) {
   useEffect(() => {
     if (!isInitialized) return;
     try {
-      localStorage.setItem(
-        STORAGE_KEYS.RECOMMENDATION_LISTS,
-        JSON.stringify(recommendationLists)
-      );
+      localStorage.setItem(STORAGE_KEYS.RECOMMENDATION_LISTS, JSON.stringify(recommendationLists));
     } catch (error) {
-      console.error("Error saving recommendation lists:", error);
+      console.error(`${LOG_PREFIX} Error saving recommendation lists:`, error);
     }
   }, [recommendationLists, isInitialized]);
 
-  // Get total number of saved lists
-  function getTotalListCount() {
+  // Save watched pool to localStorage
+  useEffect(() => {
+    if (!isInitialized) return;
+    try {
+      localStorage.setItem(STORAGE_KEYS.WATCHED_POOL, JSON.stringify(watchedPool));
+      console.log(`${LOG_PREFIX} Saved watchedPool (${watchedPool.movies?.length || 0} movies, ${watchedPool.tv?.length || 0} TV)`);
+    } catch (error) {
+      console.error(`${LOG_PREFIX} Error saving watched pool:`, error);
+    }
+  }, [watchedPool, isInitialized]);
+
+  // ========================================
+  // List Limit Functions
+  // ========================================
+
+  const getTotalListCount = useCallback(() => {
     const publishedCount = Object.keys(publishedLists).length;
     const recommendationCount = Object.keys(recommendationLists).length;
     return publishedCount + recommendationCount;
-  }
+  }, [publishedLists, recommendationLists]);
 
-  // Get remaining list capacity
-  function getRemainingListCount() {
+  const getRemainingListCount = useCallback(() => {
     const currentCount = getTotalListCount();
     return Math.max(0, MAX_TOTAL_LISTS_ANONYMOUS - currentCount);
-  }
+  }, [getTotalListCount]);
 
-  // Check if user has reached combined list limit
-  function hasReachedTotalListLimit() {
-    // In the future, this will check auth status
-    const isLoggedIn = false; // For now, assume not logged in
-
-    if (isLoggedIn) return false; // No limit for logged in users
-
+  const hasReachedTotalListLimit = useCallback(() => {
+    // TODO: Check auth status - no limit for logged in users
+    const isLoggedIn = false;
+    if (isLoggedIn) return false;
     return getTotalListCount() >= MAX_TOTAL_LISTS_ANONYMOUS;
-  }
+  }, [getTotalListCount]);
 
-  // Check if item is in list
-  function isInList(itemType, itemId) {
+  // ========================================
+  // Temporary List Operations
+  // ========================================
+
+  const isInList = useCallback((itemType, itemId) => {
     const list = itemType === "movie" ? movieList : tvList;
     return list.some((item) => item.id === itemId);
-  }
+  }, [movieList, tvList]);
 
-  // Add item to list
-  function addToList(itemType, item) {
-    if (!item || !item.id) return false;
+  const addToList = useCallback((itemType, item) => {
+    if (!item || !item.id) {
+      console.warn(`${LOG_PREFIX} addToList: Invalid item`);
+      return false;
+    }
 
     const list = itemType === "movie" ? movieList : tvList;
     const setList = itemType === "movie" ? setMovieList : setTvList;
 
-    // Don't add duplicates
-    if (list.some((listItem) => listItem.id === item.id)) return false;
-
-    // Check list size limit
-    if (list.length >= MAX_LIST_SIZE) {
-      alert(`Your ${itemType} list is full (max ${MAX_LIST_SIZE} items).`);
+    if (list.some((listItem) => listItem.id === item.id)) {
+      console.log(`${LOG_PREFIX} Item already in list: ${item.id}`);
       return false;
     }
 
-    // Extract only essential data to minimize storage size
+    if (list.length >= MAX_LIST_SIZE) {
+      console.warn(`${LOG_PREFIX} List full (max ${MAX_LIST_SIZE})`);
+      return false;
+    }
+
     const essentialData = {
       id: item.id,
       title: itemType === "movie" ? item.title : undefined,
@@ -183,32 +259,25 @@ export function ListProvider({ children }) {
       release_date: itemType === "movie" ? item.release_date : undefined,
       first_air_date: itemType === "tv" ? item.first_air_date : undefined,
       vote_average: item.vote_average,
-      overview: item.overview?.substring(0, 300), // Trim long overviews
+      overview: item.overview?.substring(0, 300),
+      addedAt: new Date().toISOString(),
+      // New fields for enhanced lists
+      userRating: null,
+      comment: "",
     };
 
-    // Add with timestamp
-    setList([...list, { ...essentialData, addedAt: new Date().toISOString() }]);
+    setList([...list, essentialData]);
+    console.log(`${LOG_PREFIX} Added to ${itemType} list: ${item.title || item.name}`);
     return true;
-  }
+  }, [movieList, tvList]);
 
-  // Remove item from list
-  function removeFromList(itemType, itemId) {
-    const list = itemType === "movie" ? movieList : tvList;
+  const removeFromList = useCallback((itemType, itemId) => {
     const setList = itemType === "movie" ? setMovieList : setTvList;
-    setList(list.filter((item) => item.id !== itemId));
-  }
+    setList((prev) => prev.filter((item) => item.id !== itemId));
+    console.log(`${LOG_PREFIX} Removed from ${itemType} list: ${itemId}`);
+  }, []);
 
-  function deleteAllPublishedLists() {
-    setPublishedLists({});
-  }
-
-  // Delete all recommendation lists
-  function deleteAllRecommendationLists() {
-    setRecommendationLists({});
-  }
-
-  // Move item up in list
-  function moveItemUp(itemType, itemId) {
+  const moveItemUp = useCallback((itemType, itemId) => {
     const list = itemType === "movie" ? movieList : tvList;
     const setList = itemType === "movie" ? setMovieList : setTvList;
     const index = list.findIndex((item) => item.id === itemId);
@@ -218,10 +287,9 @@ export function ListProvider({ children }) {
     const newList = [...list];
     [newList[index - 1], newList[index]] = [newList[index], newList[index - 1]];
     setList(newList);
-  }
+  }, [movieList, tvList]);
 
-  // Move item down in list
-  function moveItemDown(itemType, itemId) {
+  const moveItemDown = useCallback((itemType, itemId) => {
     const list = itemType === "movie" ? movieList : tvList;
     const setList = itemType === "movie" ? setMovieList : setTvList;
     const index = list.findIndex((item) => item.id === itemId);
@@ -231,62 +299,277 @@ export function ListProvider({ children }) {
     const newList = [...list];
     [newList[index], newList[index + 1]] = [newList[index + 1], newList[index]];
     setList(newList);
-  }
+  }, [movieList, tvList]);
 
-  // Clear list
-  function clearList(itemType) {
+  // Move item to specific position
+  const moveItem = useCallback((itemType, itemId, newIndex) => {
+    const list = itemType === "movie" ? movieList : tvList;
+    const setList = itemType === "movie" ? setMovieList : setTvList;
+    const currentIndex = list.findIndex((item) => item.id === itemId);
+
+    if (currentIndex === -1 || newIndex < 0 || newIndex >= list.length) return;
+
+    const newList = [...list];
+    const [removed] = newList.splice(currentIndex, 1);
+    newList.splice(newIndex, 0, removed);
+    setList(newList);
+  }, [movieList, tvList]);
+
+  const clearList = useCallback((itemType) => {
     const setList = itemType === "movie" ? setMovieList : setTvList;
     setList([]);
-  }
+    console.log(`${LOG_PREFIX} Cleared ${itemType} list`);
+  }, []);
 
-  // Publish a list
-  function publishList(itemType) {
+  // ========================================
+  // Published List Operations
+  // ========================================
+
+  // Legacy publish function (for backwards compatibility)
+  const publishList = useCallback((itemType) => {
     const list = itemType === "movie" ? movieList : tvList;
 
     if (list.length === 0) {
-      alert("Cannot publish an empty list.");
+      console.warn(`${LOG_PREFIX} Cannot publish empty list`);
       return null;
     }
 
-    // Check if user has reached limit
     if (hasReachedTotalListLimit()) {
-      alert(
-        `You've reached the maximum of ${MAX_TOTAL_LISTS_ANONYMOUS} total lists. Sign in to create more!`
-      );
+      console.warn(`${LOG_PREFIX} List limit reached`);
       return null;
     }
 
     const listId = generateListId();
+    const shareCode = generateShareCode();
+
     const newPublishedList = {
       id: listId,
       type: itemType,
-      items: [...list], // Create a copy
-      title: `My Top ${itemType === "movie" ? "Movies" : "TV Shows"}`, // Default title
-      publishedAt: new Date().toISOString(), // Timestamp
+      items: list.map((item, index) => ({
+        ...item,
+        rank: index + 1,
+        userRating: item.userRating || null,
+        comment: item.comment || "",
+      })),
+      title: `My Top ${itemType === "movie" ? "Movies" : "TV Shows"}`,
+      description: "",
+      theme: "classic",
+      accentColor: "#3B82F6",
+      publishedAt: new Date().toISOString(),
+      shareCode,
+      isPublic: true,
+      year: new Date().getFullYear(),
     };
 
     setPublishedLists((prev) => ({ ...prev, [listId]: newPublishedList }));
 
-    // Clean up temporary list after publishing if enabled
     if (TEMP_LIST_CLEANUP_AFTER_PUBLISH) {
       clearList(itemType);
     }
 
+    console.log(`${LOG_PREFIX} Published list: ${listId} (shareCode: ${shareCode})`);
     return listId;
-  }
+  }, [movieList, tvList, hasReachedTotalListLimit, clearList]);
 
-  // Save a recommendation list
-  function saveRecommendationList(sourceListId, type, items, title) {
-    if (!items || items.length === 0) {
-      alert("Cannot save an empty recommendation list.");
+  // Enhanced list creation with all new features
+  const createEnhancedList = useCallback((options) => {
+    const {
+      type = "movie",
+      items = [],
+      title = "",
+      description = "",
+      theme = "classic",
+      accentColor = "#3B82F6",
+      year = new Date().getFullYear(),
+      isPublic = true,
+    } = options;
+
+    if (items.length === 0) {
+      console.warn(`${LOG_PREFIX} Cannot create empty list`);
       return null;
     }
 
-    // Check if user has reached limit
     if (hasReachedTotalListLimit()) {
-      alert(
-        `You've reached the maximum of ${MAX_TOTAL_LISTS_ANONYMOUS} total lists. Sign in to create more!`
+      console.warn(`${LOG_PREFIX} List limit reached`);
+      return null;
+    }
+
+    const listId = generateListId();
+    const shareCode = generateShareCode();
+
+    const enhancedItems = items.map((item, index) => ({
+      id: item.id,
+      title: item.title,
+      name: item.name,
+      poster_path: item.poster_path,
+      release_date: item.release_date,
+      first_air_date: item.first_air_date,
+      vote_average: item.vote_average,
+      overview: item.overview?.substring(0, 300),
+      rank: index + 1,
+      userRating: item.userRating || null,
+      comment: item.comment || "",
+    }));
+
+    const newList = {
+      id: listId,
+      type,
+      items: enhancedItems,
+      title: title || `My Top ${type === "movie" ? "Movies" : "TV Shows"} ${year}`,
+      description,
+      theme,
+      accentColor,
+      year,
+      publishedAt: new Date().toISOString(),
+      shareCode,
+      isPublic,
+    };
+
+    setPublishedLists((prev) => ({ ...prev, [listId]: newList }));
+    console.log(`${LOG_PREFIX} Created enhanced list: ${listId}`, { theme, year, itemCount: items.length });
+
+    return listId;
+  }, [hasReachedTotalListLimit]);
+
+  const getPublishedList = useCallback((listId) => {
+    if (!isInitialized) return null;
+    return publishedLists[listId] || null;
+  }, [isInitialized, publishedLists]);
+
+  const getListByShareCode = useCallback((shareCode) => {
+    if (!isInitialized || !shareCode) return null;
+
+    const list = Object.values(publishedLists).find(
+      (l) => l.shareCode === shareCode && l.isPublic
+    );
+
+    console.log(`${LOG_PREFIX} Looking up shareCode: ${shareCode}`, list ? "found" : "not found");
+    return list || null;
+  }, [isInitialized, publishedLists]);
+
+  const updatePublishedListItems = useCallback((listId, newItems) => {
+    setPublishedLists((prev) => {
+      if (!prev[listId]) return prev;
+
+      // Ensure items have ranks
+      const rankedItems = newItems.map((item, index) => ({
+        ...item,
+        rank: index + 1,
+      }));
+
+      return {
+        ...prev,
+        [listId]: {
+          ...prev[listId],
+          items: rankedItems,
+          publishedAt: new Date().toISOString(),
+        },
+      };
+    });
+  }, []);
+
+  const updatePublishedListMetadata = useCallback((listId, metadataUpdate) => {
+    console.log(`${LOG_PREFIX} Updating list metadata: ${listId}`, metadataUpdate);
+    setPublishedLists((prev) => {
+      if (!prev[listId]) return prev;
+
+      return {
+        ...prev,
+        [listId]: {
+          ...prev[listId],
+          ...metadataUpdate,
+          publishedAt: new Date().toISOString(),
+        },
+      };
+    });
+  }, []);
+
+  // Update comment for a specific item in a list
+  const updateItemComment = useCallback((listId, itemId, comment) => {
+    console.log(`${LOG_PREFIX} Updating item comment: list=${listId}, item=${itemId}`);
+    setPublishedLists((prev) => {
+      if (!prev[listId]) return prev;
+
+      const updatedItems = prev[listId].items.map((item) =>
+        item.id === itemId ? { ...item, comment } : item
       );
+
+      return {
+        ...prev,
+        [listId]: {
+          ...prev[listId],
+          items: updatedItems,
+          publishedAt: new Date().toISOString(),
+        },
+      };
+    });
+  }, []);
+
+  // Update user rating for a specific item in a list
+  const updateItemRating = useCallback((listId, itemId, rating) => {
+    console.log(`${LOG_PREFIX} Updating item rating: list=${listId}, item=${itemId}, rating=${rating}`);
+    setPublishedLists((prev) => {
+      if (!prev[listId]) return prev;
+
+      const updatedItems = prev[listId].items.map((item) =>
+        item.id === itemId ? { ...item, userRating: rating } : item
+      );
+
+      return {
+        ...prev,
+        [listId]: {
+          ...prev[listId],
+          items: updatedItems,
+          publishedAt: new Date().toISOString(),
+        },
+      };
+    });
+  }, []);
+
+  const removePublishedListItem = useCallback((listId, itemId) => {
+    setPublishedLists((prev) => {
+      if (!prev[listId]) return prev;
+
+      const newItems = prev[listId].items
+        .filter((item) => item.id !== itemId)
+        .map((item, index) => ({ ...item, rank: index + 1 }));
+
+      return {
+        ...prev,
+        [listId]: {
+          ...prev[listId],
+          items: newItems,
+          publishedAt: new Date().toISOString(),
+        },
+      };
+    });
+  }, []);
+
+  const deletePublishedList = useCallback((listId) => {
+    console.log(`${LOG_PREFIX} Deleting list: ${listId}`);
+    setPublishedLists((prev) => {
+      const newLists = { ...prev };
+      delete newLists[listId];
+      return newLists;
+    });
+  }, []);
+
+  const deleteAllPublishedLists = useCallback(() => {
+    console.log(`${LOG_PREFIX} Deleting all published lists`);
+    setPublishedLists({});
+  }, []);
+
+  // ========================================
+  // Recommendation List Operations
+  // ========================================
+
+  const saveRecommendationList = useCallback((sourceListId, type, items, title) => {
+    if (!items || items.length === 0) {
+      console.warn(`${LOG_PREFIX} Cannot save empty recommendation list`);
+      return null;
+    }
+
+    if (hasReachedTotalListLimit()) {
       return null;
     }
 
@@ -294,165 +577,182 @@ export function ListProvider({ children }) {
     const newRecommendationList = {
       id: listId,
       type,
-      sourceListId, // Link to the original list
-      items: [...items], // Create a copy
-      title:
-        title ||
-        `Recommendations based on My ${
-          type === "movie" ? "Movies" : "TV Shows"
-        }`,
-      savedAt: new Date().toISOString(), // Timestamp
+      sourceListId,
+      items: [...items],
+      title: title || `Recommendations based on My ${type === "movie" ? "Movies" : "TV Shows"}`,
+      savedAt: new Date().toISOString(),
     };
 
-    setRecommendationLists((prev) => ({
-      ...prev,
-      [listId]: newRecommendationList,
-    }));
-
+    setRecommendationLists((prev) => ({ ...prev, [listId]: newRecommendationList }));
+    console.log(`${LOG_PREFIX} Saved recommendation list: ${listId}`);
     return listId;
-  }
+  }, [hasReachedTotalListLimit]);
 
-  // Get a published list
-  function getPublishedList(listId) {
-    if (!isInitialized) return null; // Don't return until loaded
-    return publishedLists[listId] || null;
-  }
-
-  // Get a recommendation list
-  function getRecommendationList(listId) {
-    if (!isInitialized) return null; // Don't return until loaded
+  const getRecommendationList = useCallback((listId) => {
+    if (!isInitialized) return null;
     return recommendationLists[listId] || null;
-  }
+  }, [isInitialized, recommendationLists]);
 
-  // Update items in a published list
-  function updatePublishedListItems(listId, newItems) {
-    setPublishedLists((prev) => {
-      if (!prev[listId]) return prev; // List not found
+  const updateRecommendationList = useCallback((listId, newItems) => {
+    setRecommendationLists((prev) => {
+      if (!prev[listId]) return prev;
+      return {
+        ...prev,
+        [listId]: {
+          ...prev[listId],
+          items: newItems,
+          savedAt: new Date().toISOString(),
+        },
+      };
+    });
+  }, []);
+
+  const removeRecommendationItem = useCallback((listId, itemId) => {
+    setRecommendationLists((prev) => {
+      if (!prev[listId]) return prev;
+
+      const newItems = prev[listId].items.filter((item) => item.id !== itemId);
 
       return {
         ...prev,
         [listId]: {
           ...prev[listId],
           items: newItems,
-          publishedAt: new Date().toISOString(), // Update timestamp on modification
+          savedAt: new Date().toISOString(),
         },
       };
     });
-  }
+  }, []);
 
-  // Update items in a recommendation list
-  function updateRecommendationList(listId, newItems) {
+  const deleteRecommendationList = useCallback((listId) => {
     setRecommendationLists((prev) => {
-      if (!prev[listId]) return prev; // List not found
-
-      return {
-        ...prev,
-        [listId]: {
-          ...prev[listId],
-          items: newItems,
-          savedAt: new Date().toISOString(), // Update timestamp on modification
-        },
-      };
+      const newLists = { ...prev };
+      delete newLists[listId];
+      return newLists;
     });
-  }
+  }, []);
 
-  // Remove an item from a published list
-  function removePublishedListItem(listId, itemId) {
-    setPublishedLists((prev) => {
-      if (!prev[listId]) return prev;
+  const deleteAllRecommendationLists = useCallback(() => {
+    setRecommendationLists({});
+  }, []);
 
-      const currentItems = prev[listId].items || [];
-      const newItems = currentItems.filter((item) => item.id !== itemId);
+  // ========================================
+  // Watched Pool Operations
+  // ========================================
 
-      // Only update if items actually changed
-      if (newItems.length !== currentItems.length) {
-        return {
-          ...prev,
-          [listId]: {
-            ...prev[listId],
-            items: newItems,
-            publishedAt: new Date().toISOString(), // Update timestamp
-          },
-        };
+  const isInWatchedPool = useCallback((type, id) => {
+    const pool = type === "movie" ? watchedPool.movies : watchedPool.tv;
+    return pool?.some((item) => item.id === id) || false;
+  }, [watchedPool]);
+
+  const addToWatchedPool = useCallback((type, item) => {
+    if (!item || !item.id) return;
+
+    const key = type === "movie" ? "movies" : "tv";
+
+    setWatchedPool((prev) => {
+      const pool = prev[key] || [];
+
+      // Don't add duplicates
+      if (pool.some((p) => p.id === item.id)) {
+        console.log(`${LOG_PREFIX} Item already in watched pool: ${item.id}`);
+        return prev;
       }
-      return prev; // No change needed
-    });
-  }
 
-  // Remove an item from a recommendation list
-  function removeRecommendationItem(listId, itemId) {
-    setRecommendationLists((prev) => {
-      if (!prev[listId]) return prev;
+      const newItem = {
+        id: item.id,
+        title: item.title,
+        name: item.name,
+        year: item.year || (item.release_date ? parseInt(item.release_date.split("-")[0]) : null),
+        poster_path: item.poster_path,
+        rating: item.rating || item.userRating || null,
+        watchedDate: item.watchedDate || null,
+        source: item.source || "manual",
+        letterboxdUri: item.letterboxdUri || null,
+        addedAt: new Date().toISOString(),
+      };
 
-      const currentItems = prev[listId].items || [];
-      const newItems = currentItems.filter((item) => item.id !== itemId);
-
-      // Only update if items actually changed
-      if (newItems.length !== currentItems.length) {
-        return {
-          ...prev,
-          [listId]: {
-            ...prev[listId],
-            items: newItems,
-            savedAt: new Date().toISOString(), // Update timestamp
-          },
-        };
-      }
-      return prev; // No change needed
-    });
-  }
-
-  // Update metadata of a published list
-  function updatePublishedListMetadata(listId, metadataUpdate) {
-    setPublishedLists((prev) => {
-      if (!prev[listId]) return prev;
+      console.log(`${LOG_PREFIX} Added to watched pool: ${item.title || item.name}`);
 
       return {
         ...prev,
-        [listId]: {
-          ...prev[listId],
-          ...metadataUpdate, // Merge updates (e.g., { title: newTitle })
-          publishedAt: new Date().toISOString(), // Update timestamp on modification
-        },
+        [key]: [...pool, newItem],
       };
     });
-  }
+  }, []);
 
-  // Update metadata of a recommendation list
-  function updateRecommendationListMetadata(listId, metadataUpdate) {
-    setRecommendationLists((prev) => {
-      if (!prev[listId]) return prev;
+  const removeFromWatchedPool = useCallback((type, id) => {
+    const key = type === "movie" ? "movies" : "tv";
+
+    setWatchedPool((prev) => ({
+      ...prev,
+      [key]: (prev[key] || []).filter((item) => item.id !== id),
+    }));
+  }, []);
+
+  // Import from Letterboxd (bulk add)
+  const importToWatchedPool = useCallback((items, type = "movie") => {
+    console.log(`${LOG_PREFIX} Importing ${items.length} items to watched pool`);
+
+    const key = type === "movie" ? "movies" : "tv";
+
+    setWatchedPool((prev) => {
+      const existingPool = prev[key] || [];
+      const existingIds = new Set(existingPool.map((p) => p.id));
+
+      const newItems = items
+        .filter((item) => {
+          // For Letterboxd imports, use title+year as key since we don't have TMDB ID yet
+          const key = `${item.title?.toLowerCase()}-${item.year}`;
+          return item.title && !existingPool.some(
+            (p) => `${(p.title || p.name)?.toLowerCase()}-${p.year}` === key
+          );
+        })
+        .map((item) => ({
+          id: item.id || `lb-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          title: item.title,
+          year: item.year,
+          poster_path: item.poster_path || null,
+          rating: item.rating,
+          watchedDate: item.watchedDate,
+          source: item.source || "letterboxd",
+          letterboxdUri: item.letterboxdUri,
+          tags: item.tags || [],
+          isRewatch: item.isRewatch || false,
+          addedAt: new Date().toISOString(),
+          // Flag that this needs TMDB matching
+          needsTmdbMatch: !item.id || item.id.startsWith("lb-"),
+        }));
+
+      console.log(`${LOG_PREFIX} Adding ${newItems.length} new items (${items.length - newItems.length} duplicates skipped)`);
 
       return {
         ...prev,
-        [listId]: {
-          ...prev[listId],
-          ...metadataUpdate, // Merge updates
-          savedAt: new Date().toISOString(), // Update timestamp
-        },
+        [key]: [...existingPool, ...newItems],
       };
     });
-  }
+  }, []);
 
-  // Delete a published list
-  function deletePublishedList(listId) {
-    setPublishedLists((prev) => {
-      const newPublishedLists = { ...prev };
-      delete newPublishedLists[listId];
-      return newPublishedLists;
-    });
-  }
+  const clearWatchedPool = useCallback((type) => {
+    if (type) {
+      const key = type === "movie" ? "movies" : "tv";
+      setWatchedPool((prev) => ({ ...prev, [key]: [] }));
+    } else {
+      setWatchedPool({ movies: [], tv: [] });
+    }
+    console.log(`${LOG_PREFIX} Cleared watched pool${type ? ` (${type})` : ""}`);
+  }, []);
 
-  // Delete a recommendation list
-  function deleteRecommendationList(listId) {
-    setRecommendationLists((prev) => {
-      const newRecommendationLists = { ...prev };
-      delete newRecommendationLists[listId];
-      return newRecommendationLists;
-    });
-  }
+  const getWatchedPoolByYear = useCallback((type, year) => {
+    const pool = type === "movie" ? watchedPool.movies : watchedPool.tv;
+    if (!year) return pool || [];
+    return (pool || []).filter((item) => item.year === year);
+  }, [watchedPool]);
 
-  // Provide context values
+  // ========================================
+  // Context Provider
+  // ========================================
+
   return (
     <ListContext.Provider
       value={{
@@ -461,38 +761,55 @@ export function ListProvider({ children }) {
         tvList,
         publishedLists,
         recommendationLists,
+        watchedPool,
+        isInitialized,
 
         // Temporary list operations
         addToList,
         removeFromList,
         moveItemUp,
         moveItemDown,
+        moveItem,
         clearList,
         isInList,
 
         // Published list operations
         publishList,
+        createEnhancedList,
         getPublishedList,
+        getListByShareCode,
         updatePublishedListItems,
         updatePublishedListMetadata,
+        updateItemComment,
+        updateItemRating,
         removePublishedListItem,
-        deleteAllPublishedLists,
         deletePublishedList,
+        deleteAllPublishedLists,
 
         // Recommendation list operations
         saveRecommendationList,
         getRecommendationList,
         updateRecommendationList,
-        updateRecommendationListMetadata,
         removeRecommendationItem,
         deleteRecommendationList,
         deleteAllRecommendationLists,
 
-        // List limit functions - fixed names
+        // Watched pool operations
+        addToWatchedPool,
+        removeFromWatchedPool,
+        importToWatchedPool,
+        clearWatchedPool,
+        isInWatchedPool,
+        getWatchedPoolByYear,
+
+        // List limit functions
         getTotalListCount,
         getRemainingListCount,
         hasReachedTotalListLimit,
         ANONYMOUS_LIST_LIMIT: MAX_TOTAL_LISTS_ANONYMOUS,
+
+        // Theme helpers
+        LIST_THEMES,
       }}
     >
       {children}

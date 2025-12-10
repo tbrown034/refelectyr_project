@@ -333,6 +333,7 @@ export default function MyListsPage() {
               ? "Get personalized recommendations based on your lists."
               : "Start by browsing and creating lists of your favorite content."}
           </p>
+          {/* NOTE: TV browse option kept in code but hidden from UI for movie-focused MVP */}
           <div className="flex flex-wrap justify-center gap-3">
             {activeTab === "movies" || activeTab === "all" ? (
               <Link
@@ -343,7 +344,7 @@ export default function MyListsPage() {
                 Browse Movies
               </Link>
             ) : null}
-            {activeTab === "tv" || activeTab === "all" ? (
+            {/* {activeTab === "tv" || activeTab === "all" ? (
               <Link
                 href="/tv"
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center"
@@ -351,7 +352,7 @@ export default function MyListsPage() {
                 <TvIcon className="h-5 w-5 mr-2" />
                 Browse TV Shows
               </Link>
-            ) : null}
+            ) : null} */}
             {activeTab === "recs" && regularCount > 0 ? (
               <Link
                 href={
@@ -410,34 +411,36 @@ export default function MyListsPage() {
             to keep track of what you love and get personalized recommendations.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg">
+          {/* Primary CTA - Create a List */}
+          <Link
+            href="/create"
+            className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl text-lg font-medium"
+          >
+            <SparklesIcon className="h-6 w-6" />
+            Create Your First List
+          </Link>
+
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-4">
+            or browse to discover content
+          </p>
+
+          {/* NOTE: TV browse option kept in code but hidden from UI for movie-focused MVP */}
+          <div className="flex justify-center w-full max-w-lg mt-4">
             <Link
               href="/movies"
-              className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-md hover:shadow-lg"
+              className="flex items-center justify-center gap-3 p-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all shadow-md border border-gray-200 dark:border-gray-600"
             >
-              <FilmIcon className="h-6 w-6" />
+              <FilmIcon className="h-6 w-6 text-blue-500" />
               <span className="font-medium">Browse Movies</span>
             </Link>
 
-            <Link
+            {/* <Link
               href="/tv"
-              className="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl hover:from-purple-700 hover:to-purple-800 transition-all shadow-md hover:shadow-lg"
+              className="flex items-center justify-center gap-3 p-4 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-all shadow-md border border-gray-200 dark:border-gray-600"
             >
-              <TvIcon className="h-6 w-6" />
+              <TvIcon className="h-6 w-6 text-purple-500" />
               <span className="font-medium">Browse TV Shows</span>
-            </Link>
-          </div>
-
-          <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 w-full max-w-xl">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <UserIcon className="h-5 w-5 text-blue-500" />
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Sign up to unlock all features
-              </p>
-            </div>
-            <button className="px-6 py-3 bg-gray-800 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-900 dark:hover:bg-gray-600 transition-colors flex items-center justify-center mx-auto">
-              <span className="font-medium">Create Account</span>
-            </button>
+            </Link> */}
           </div>
         </div>
       </div>
@@ -649,8 +652,9 @@ export default function MyListsPage() {
 
       {/* Add new list button (floating) */}
       <Link
-        href="/movies"
+        href="/create"
         className="fixed bottom-6 right-6 p-4 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all hover:scale-105 flex items-center justify-center z-10"
+        title="Create a new list"
       >
         <PlusIcon className="h-6 w-6" />
       </Link>

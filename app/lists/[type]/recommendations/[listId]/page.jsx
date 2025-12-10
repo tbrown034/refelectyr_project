@@ -1,9 +1,10 @@
 // app/lists/[type]/recommendations/[listId]/page.jsx
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ListContext } from "@/library/contexts/ListContext";
+import { generateRecommendations } from "@/app/actions/recommendations";
 import RecommendationsDisplay from "./RecommendationsDisplay";
 import RecommendationsHeader from "./RecommendationsHeader";
 import RecommendationsActions from "./RecommendationsActions";
@@ -44,27 +45,19 @@ export default function RecommendationsPage() {
 
         setOriginalList(list);
 
-        // Fetch recommendations from API (now with TMDB enrichment)
-        const apiResponse = await fetch("/api/recommendations", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            listId,
-            type: list.type,
-            items: list.items,
-          }),
-        });
+        // Use Server Action for recommendations (faster than API route)
+        const result = await generateRecommendations(
+          listId,
+          list.type,
+          list.items
+        );
 
-        if (!apiResponse.ok) {
-          const errorData = await apiResponse.json();
-          throw new Error(errorData.error || "Failed to get recommendations");
+        if (result.error) {
+          throw new Error(result.error);
         }
 
-        const { recommendations } = await apiResponse.json();
-        setRecommendations(recommendations);
-        setFilteredRecommendations(recommendations); // Initialize filtered list
+        setRecommendations(result.recommendations);
+        setFilteredRecommendations(result.recommendations);
       } catch (err) {
         console.error("Error fetching recommendations:", err);
         setError(err.message || "Failed to get recommendations");

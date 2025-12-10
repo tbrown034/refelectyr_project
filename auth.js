@@ -14,8 +14,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth(() => {
       ? process.env.AUTH_GOOGLE_ID_PROD
       : process.env.AUTH_GOOGLE_ID_DEV;
 
-  console.log("[AUTH] Running in:", process.env.NODE_ENV);
-  console.log("[AUTH] Using Google Client ID:", googleClientId);
 
   return {
     adapter: NeonAdapter(pool),

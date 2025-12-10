@@ -12,12 +12,15 @@ import ThemeToggle from "@/components/ui/toggles/DarkModeToggle";
 const HeaderDropDown = () => {
   const { selectedYear } = use(YearContext);
 
+  // NOTE: TV routes kept in code but hidden from UI for movie-focused MVP
   const navItems = [
     { text: "Home", href: "/" },
+    { text: "Year-End", href: "/year-end", highlight: true },
     { text: "Movies", href: `/movies?year=${selectedYear}` },
-    { text: "TV Shows", href: `/tv?year=${selectedYear}` },
+    // { text: "TV Shows", href: `/tv?year=${selectedYear}` },
+    { text: "My Lists", href: "/lists" },
+    { text: "Create List", href: "/create" },
     { text: "About", href: "/about" },
-    { text: "Lists", href: "/lists" },
   ];
 
   return (
@@ -42,8 +45,11 @@ const HeaderDropDown = () => {
               key={index}
               as={Link}
               href={item.href}
-              // Consistent item styling
-              className="block w-full p-2 text-left rounded-md text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700"
+              className={`block w-full p-2 text-left rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 ${
+                item.highlight
+                  ? "text-blue-600 dark:text-blue-400 font-medium"
+                  : "text-slate-900 dark:text-slate-100"
+              }`}
             >
               {item.text}
             </MenuItem>

@@ -12,6 +12,7 @@ export default function HeroGetStarted({ year = "2025" }) {
         <ChevronDownIcon className="ml-2 h-5 w-5" aria-hidden="true" />
       </MenuButton>
       <MenuItems className="absolute right-0 mt-2 w-44 origin-top-right divide-y divide-gray-100 rounded-md bg-white dark:bg-slate-700 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+        {/* NOTE: TV option kept in code but hidden from UI for movie-focused MVP */}
         <div className="py-1">
           <MenuItem>
             {({ focus }) => (
@@ -25,7 +26,7 @@ export default function HeroGetStarted({ year = "2025" }) {
               </Link>
             )}
           </MenuItem>
-          <MenuItem>
+          {/* <MenuItem>
             {({ focus }) => (
               <Link
                 href={`/tv?year=${year}`}
@@ -36,7 +37,7 @@ export default function HeroGetStarted({ year = "2025" }) {
                 Add TV Shows
               </Link>
             )}
-          </MenuItem>
+          </MenuItem> */}
           <MenuItem>
             {({ focus }) => (
               <Link

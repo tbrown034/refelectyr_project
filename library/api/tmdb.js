@@ -170,8 +170,7 @@ export async function searchTmdbByTitle(
 ) {
   if (!title) return [];
 
-  const token =
-    process.env.NEXT_PUBLIC_TMDB_API_TOKEN || process.env.TMDB_API_TOKEN;
+  const token = process.env.TMDB_API_TOKEN;
 
   const queryParams = new URLSearchParams({
     query: title,
