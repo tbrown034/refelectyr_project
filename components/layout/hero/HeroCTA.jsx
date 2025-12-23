@@ -1,13 +1,18 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { SignInButton } from "@/components/ui/buttons/actions/SignInButton";
 import HeroGetStarted from "./HeroButtons/HeroGetStarted";
-import { auth } from "../../../auth.js";
+import { auth } from "@/library/auth";
 
 export default async function HeroCTA() {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  console.log("[HeroCTA] Session:", session ? `User: ${session.user?.email}` : "No session");
 
   return (
-    <div className="flex items-center text-center gap-4 ">
+    <div className="flex items-center text-center gap-4">
       <HeroGetStarted />
       {session?.user ? (
         <Link
@@ -17,7 +22,9 @@ export default async function HeroCTA() {
           View Profile
         </Link>
       ) : (
-        <SignInButton className="rounded-lg px-6 py-3 text-base font-semibold transition-all duration-150 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 active:scale-[0.98] cursor-pointer shadow-md transform bg-gradient-to-br from-blue-500 to-blue-700 text-white border border-transparent hover:from-blue-600 hover:to-blue-800 hover:shadow-lg focus-visible:ring-blue-500" />
+        <SignInButton
+          className="flex items-center gap-3 rounded-lg px-6 py-3 text-base font-semibold transition-all duration-150 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 active:scale-[0.98] cursor-pointer shadow-md transform bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 hover:border-gray-400 hover:shadow-lg focus-visible:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        />
       )}
     </div>
   );

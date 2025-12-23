@@ -1,7 +1,10 @@
-import { auth } from "@/auth";
+import { auth } from "@/library/auth";
+import { headers } from "next/headers";
 
 export default async function SignInStatus() {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   return (
     <p className="text-sm italic ">
