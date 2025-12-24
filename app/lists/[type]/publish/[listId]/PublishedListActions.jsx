@@ -55,7 +55,7 @@ export default function PublishedListActions({
             : `Start a new temporary ${pageTypeLabel} list (clears current temporary list)`
         }
       >
-        <PlusIcon className="h-5 w-5 flex-shrink-0" />
+        <PlusIcon className="h-5 w-5 shrink-0" />
         <span>Start New {pageTypeLabel} List</span>
       </button>
 
@@ -70,7 +70,7 @@ export default function PublishedListActions({
         }`}
         title={`Get personalized ${pageTypeLabel.toLowerCase()} recommendations based on your list`}
       >
-        <SparklesIcon className="h-5 w-5 flex-shrink-0" />
+        <SparklesIcon className="h-5 w-5 shrink-0" />
         <span>Get Recommendations</span>
       </button>
 
@@ -79,7 +79,7 @@ export default function PublishedListActions({
         href="/"
         className="inline-flex items-center gap-2 px-4 py-3 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 active:bg-gray-400 dark:active:bg-gray-400 transition-colors text-sm sm:text-base"
       >
-        <ArrowLeftIcon className="h-5 w-5 flex-shrink-0" />
+        <ArrowLeftIcon className="h-5 w-5 shrink-0" />
         <span>Back to Home</span>
       </Link>
 
@@ -89,7 +89,7 @@ export default function PublishedListActions({
         className="inline-flex items-center gap-2 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors text-sm sm:text-base ml-auto"
         title={`Delete this ${pageTypeLabel} list permanently`}
       >
-        <TrashIcon className="h-5 w-5 flex-shrink-0" />
+        <TrashIcon className="h-5 w-5 shrink-0" />
         <span>Delete List</span>
       </button>
     </div>

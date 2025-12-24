@@ -45,12 +45,12 @@ export default function PublishedListShare({
       >
         {copiedLinkSuccess ? (
           <>
-            <CheckCircleIcon className="h-4 w-4 flex-shrink-0" />
+            <CheckCircleIcon className="h-4 w-4 shrink-0" />
             <span>Copied!</span>
           </>
         ) : (
           <>
-            <LinkIcon className="h-4 w-4 flex-shrink-0" />
+            <LinkIcon className="h-4 w-4 shrink-0" />
             <span>Link</span>
           </>
         )}
@@ -75,12 +75,12 @@ export default function PublishedListShare({
       >
         {copiedTextSuccess ? (
           <>
-            <CheckCircleIcon className="h-4 w-4 flex-shrink-0" />
+            <CheckCircleIcon className="h-4 w-4 shrink-0" />
             <span>Copied!</span>
           </>
         ) : (
           <>
-            <DocumentTextIcon className="h-4 w-4 flex-shrink-0" />
+            <DocumentTextIcon className="h-4 w-4 shrink-0" />
             <span>Text</span>
           </>
         )}

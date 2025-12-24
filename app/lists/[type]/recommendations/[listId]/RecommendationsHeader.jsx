@@ -6,7 +6,7 @@ export default function RecommendationsHeader({ originalList, pageTypeLabel }) {
     `My Top ${pageTypeLabel === "Movie" ? "Movies" : "TV Shows"}`;
 
   return (
-    <div className="p-6 border-b dark:border-gray-700 bg-gradient-to-r from-purple-500 to-blue-500">
+    <div className="p-6 border-b dark:border-gray-700 bg-linear-to-r from-purple-500 to-blue-500">
       <h1 className="text-white text-2xl md:text-3xl font-bold mb-2">
         Recommended {pageTypeLabel}s
       </h1>

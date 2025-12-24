@@ -82,11 +82,11 @@ export default function YearEndPage() {
   }, [isInitialized, publishedLists, watchedPool]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
+    <div className="min-h-screen bg-linear-to-b from-gray-900 via-gray-900 to-black text-white">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {/* Background gradient effects */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20 blur-3xl" />
+        <div className="absolute inset-0 bg-linear-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20 blur-3xl" />
 
         <div className="relative container mx-auto px-4 py-16 md:py-24">
           <motion.div
@@ -99,7 +99,7 @@ export default function YearEndPage() {
               {CURRENT_YEAR} Edition
             </span>
 
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-linear-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent">
               Your Year in Movies
             </h1>
 
@@ -112,7 +112,7 @@ export default function YearEndPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/create"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
               >
                 <SparklesIcon className="h-6 w-6" />
                 {stats.hasStarted ? "Continue Your List" : "Start Your List"}
@@ -149,7 +149,7 @@ export default function YearEndPage() {
             >
               {/* Connector line */}
               {index < STEPS.length - 1 && (
-                <div className="hidden md:block absolute top-10 left-[60%] w-full h-0.5 bg-gradient-to-r from-gray-700 to-transparent" />
+                <div className="hidden md:block absolute top-10 left-[60%] w-full h-0.5 bg-linear-to-r from-gray-700 to-transparent" />
               )}
 
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-gray-600 transition-colors h-full">

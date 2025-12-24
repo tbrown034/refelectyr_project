@@ -242,7 +242,7 @@ export default function ComparePage() {
               </div>
 
               {/* Top Pick Comparison */}
-              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-xl p-6 shadow-lg">
+              <div className="bg-linear-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-xl p-6 shadow-lg">
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                   <TrophyIcon className="h-5 w-5 text-yellow-500" />
                   Top Picks
@@ -321,7 +321,7 @@ export default function ComparePage() {
                         key={item.id}
                         className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
                       >
-                        <div className="w-10 h-14 relative rounded overflow-hidden flex-shrink-0">
+                        <div className="w-10 h-14 relative rounded overflow-hidden shrink-0">
                           {item.poster_path && (
                             <Image
                               src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
@@ -388,7 +388,7 @@ export default function ComparePage() {
                           <span className="text-gray-400 w-5">
                             #{list1.items.findIndex((i) => i.id === item.id) + 1}
                           </span>
-                          <div className="w-8 h-12 relative rounded overflow-hidden flex-shrink-0">
+                          <div className="w-8 h-12 relative rounded overflow-hidden shrink-0">
                             {item.poster_path && (
                               <Image
                                 src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
@@ -421,7 +421,7 @@ export default function ComparePage() {
                           <span className="text-gray-400 w-5">
                             #{list2.items.findIndex((i) => i.id === item.id) + 1}
                           </span>
-                          <div className="w-8 h-12 relative rounded overflow-hidden flex-shrink-0">
+                          <div className="w-8 h-12 relative rounded overflow-hidden shrink-0">
                             {item.poster_path && (
                               <Image
                                 src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}

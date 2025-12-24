@@ -97,7 +97,7 @@ export default function RecommendationsDisplay({
                 className="flex flex-col md:flex-row gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
               >
                 {/* Poster image or placeholder */}
-                <div className="flex-shrink-0 w-full md:w-20 h-28 bg-gray-200 dark:bg-gray-600 rounded overflow-hidden">
+                <div className="shrink-0 w-full md:w-20 h-28 bg-gray-200 dark:bg-gray-600 rounded overflow-hidden">
                   {posterPath ? (
                     <div className="relative w-full h-full">
                       <Image

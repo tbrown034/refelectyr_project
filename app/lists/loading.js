@@ -31,13 +31,13 @@ export default function ListsLoading() {
             className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden animate-pulse border-l-4 border-blue-500 dark:border-blue-400"
           >
             <div className="p-4 flex items-center">
-              <div className="flex-shrink-0 w-16 h-20 bg-gray-300 dark:bg-gray-600 rounded mr-4"></div>
+              <div className="shrink-0 w-16 h-20 bg-gray-300 dark:bg-gray-600 rounded mr-4"></div>
               <div className="flex-grow">
                 <div className="h-6 w-3/4 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
                 <div className="h-4 w-1/2 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
                 <div className="h-4 w-full bg-gray-300 dark:bg-gray-600 rounded"></div>
               </div>
-              <div className="flex-shrink-0 ml-4">
+              <div className="shrink-0 ml-4">
                 <div className="h-8 w-8 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
               </div>
             </div>

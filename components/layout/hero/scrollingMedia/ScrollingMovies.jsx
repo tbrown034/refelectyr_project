@@ -69,7 +69,7 @@ export default async function ScrollingMovies({ year = "2025" }) {
             <Link
               key={`${movie.id}-${index}`}
               href={`/movies/${movie.id}`}
-              className="flex-shrink-0 w-28 sm:w-36 transition-transform hover:scale-105 cursor-pointer"
+              className="shrink-0 w-28 sm:w-36 transition-transform hover:scale-105 cursor-pointer"
             >
               <div className="relative w-full aspect-[2/3] rounded-lg overflow-hidden shadow-md">
                 <Image

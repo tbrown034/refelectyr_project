@@ -90,7 +90,7 @@ export default function PublishedListHeader({
         )}
 
         {/* Container for edit/confirm/cancel buttons */}
-        <div className="flex-shrink-0 flex items-center gap-1 sm:gap-2 mt-1 sm:mt-0">
+        <div className="shrink-0 flex items-center gap-1 sm:gap-2 mt-1 sm:mt-0">
           {/* Conditional rendering: Confirm/Cancel or Edit button */}
           {isEditingTitle ? (
             <>

@@ -334,7 +334,7 @@ export default function CreateListPage() {
                           {index + 1}
                         </span>
 
-                        <div className="w-10 h-14 relative rounded overflow-hidden flex-shrink-0">
+                        <div className="w-10 h-14 relative rounded overflow-hidden shrink-0">
                           {item.poster_path ? (
                             <Image
                               src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
@@ -429,7 +429,7 @@ export default function CreateListPage() {
                                   : "hover:bg-gray-100 dark:hover:bg-gray-700"
                               }`}
                             >
-                              <div className="w-10 h-14 relative rounded overflow-hidden flex-shrink-0 bg-gray-200 dark:bg-gray-600">
+                              <div className="w-10 h-14 relative rounded overflow-hidden shrink-0 bg-gray-200 dark:bg-gray-600">
                                 {movie.poster_path && (
                                   <Image
                                     src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
@@ -492,7 +492,7 @@ export default function CreateListPage() {
                                   : "hover:bg-gray-100 dark:hover:bg-gray-700"
                               }`}
                             >
-                              <div className="w-10 h-14 relative rounded overflow-hidden flex-shrink-0 bg-gray-200 dark:bg-gray-600">
+                              <div className="w-10 h-14 relative rounded overflow-hidden shrink-0 bg-gray-200 dark:bg-gray-600">
                                 {movie.poster_path && (
                                   <Image
                                     src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}

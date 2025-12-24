@@ -328,7 +328,7 @@ export default function PublishedListPage() {
               className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 active:bg-green-800 transition-colors text-sm"
               title={`Add more ${pageTypeLabel}s to your temporary list`}
             >
-              <PlusIcon className="h-5 w-5 flex-shrink-0" />
+              <PlusIcon className="h-5 w-5 shrink-0" />
               <span>Add More {pageTypeLabel}s</span>
             </Link>
           </div>

@@ -84,7 +84,7 @@ export default function ListThemePosterGrid({
             </div>
 
             {/* Hover Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
               <h3 className="font-semibold text-white text-sm line-clamp-2">
                 {item.title || item.name}
               </h3>

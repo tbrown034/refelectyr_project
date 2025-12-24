@@ -206,7 +206,7 @@ export default function LetterboxdImport({ onImportComplete, onClose }) {
                 className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 mb-6"
               >
                 <div className="flex items-start gap-3">
-                  <ExclamationCircleIcon className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <ExclamationCircleIcon className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
                   <div>
                     <h4 className="font-medium text-red-800 dark:text-red-300">
                       Import Error
@@ -325,7 +325,7 @@ export default function LetterboxdImport({ onImportComplete, onClose }) {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl"
+                    className="mt-6 p-4 bg-linear-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl"
                   >
                     <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-3">
                       Import Preview

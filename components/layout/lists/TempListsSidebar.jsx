@@ -413,7 +413,7 @@ export default function TempListsSidebar() {
                     `}
                   >
                     {/* Rank number */}
-                    <div className="flex-shrink-0 w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mr-3">
+                    <div className="shrink-0 w-10 h-10 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mr-3">
                       <span className="text-gray-800 dark:text-gray-200 font-semibold">
                         {index + 1}
                       </span>
@@ -424,7 +424,7 @@ export default function TempListsSidebar() {
                       className="flex flex-grow items-center min-w-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded transition-colors"
                       onClick={() => handleViewDetails(item)}
                     >
-                      <div className="flex-shrink-0 w-10 h-14 relative mr-3">
+                      <div className="shrink-0 w-10 h-14 relative mr-3">
                         <Image
                           src={posterPath}
                           alt={`${title} poster`}
@@ -446,7 +446,7 @@ export default function TempListsSidebar() {
                     </div>
 
                     {/* Actions */}
-                    <div className="flex-shrink-0 flex items-center space-x-2">
+                    <div className="shrink-0 flex items-center space-x-2">
                       <div className="flex flex-col">
                         {index > 0 && (
                           <button

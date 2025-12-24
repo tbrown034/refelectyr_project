@@ -50,7 +50,7 @@ export default function MovieCard({ movie }) {
             </div>
           </div>
 
-          <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600"></div>
+          <div className="h-1.5 w-full bg-linear-to-r from-blue-500 via-blue-600 to-purple-600"></div>
 
           <div className="p-5 flex-grow flex flex-col bg-white dark:bg-gray-800">
             <h3 className="font-bold text-lg text-gray-900 dark:text-white line-clamp-2 mb-1">

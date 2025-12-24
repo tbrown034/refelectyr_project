@@ -85,7 +85,7 @@ export default function RecommendationsActions({
         href={listLink}
         className="inline-flex items-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm sm:text-base"
       >
-        <ArrowLeftIcon className="h-5 w-5 flex-shrink-0" />
+        <ArrowLeftIcon className="h-5 w-5 shrink-0" />
         <span>Back to My List</span>
       </Link>
 
@@ -94,7 +94,7 @@ export default function RecommendationsActions({
         onClick={handleRegenerateClick}
         className="inline-flex items-center gap-2 px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 active:bg-purple-800 transition-colors text-sm sm:text-base"
       >
-        <ArrowPathIcon className="h-5 w-5 flex-shrink-0" />
+        <ArrowPathIcon className="h-5 w-5 shrink-0" />
         <span>Regenerate Recommendations</span>
       </button>
 
@@ -112,12 +112,12 @@ export default function RecommendationsActions({
       >
         {saveSuccess ? (
           <>
-            <CheckCircleIcon className="h-5 w-5 flex-shrink-0" />
+            <CheckCircleIcon className="h-5 w-5 shrink-0" />
             <span>Saved!</span>
           </>
         ) : (
           <>
-            <BookmarkIcon className="h-5 w-5 flex-shrink-0" />
+            <BookmarkIcon className="h-5 w-5 shrink-0" />
             <span>{isSaving ? "Saving..." : "Save Recommendations"}</span>
           </>
         )}
@@ -128,7 +128,7 @@ export default function RecommendationsActions({
         href={`/${type}`}
         className="inline-flex items-center gap-2 px-4 py-3 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors text-sm sm:text-base"
       >
-        <DocumentTextIcon className="h-5 w-5 flex-shrink-0" />
+        <DocumentTextIcon className="h-5 w-5 shrink-0" />
         <span>Browse All {pageTypeLabel}s</span>
       </Link>
     </div>

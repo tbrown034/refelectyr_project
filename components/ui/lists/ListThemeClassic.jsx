@@ -86,14 +86,14 @@ export default function ListThemeClassic({
           >
             {/* Rank */}
             <div
-              className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl text-white"
+              className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl text-white"
               style={{ backgroundColor: accentColor }}
             >
               {item.rank || index + 1}
             </div>
 
             {/* Poster */}
-            <div className="flex-shrink-0 w-16 h-24 relative rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
+            <div className="shrink-0 w-16 h-24 relative rounded-lg overflow-hidden bg-gray-200 dark:bg-gray-700">
               {item.poster_path ? (
                 <Image
                   src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}

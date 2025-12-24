@@ -106,14 +106,14 @@ export default function ListThemeFamilyFeud({
                   >
                     {/* Rank */}
                     <div
-                      className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center font-bold text-2xl text-white"
+                      className="shrink-0 w-12 h-12 rounded-lg flex items-center justify-center font-bold text-2xl text-white"
                       style={{ backgroundColor: accentColor }}
                     >
                       {item.rank || index + 1}
                     </div>
 
                     {/* Poster */}
-                    <div className="flex-shrink-0 w-12 h-16 relative rounded overflow-hidden">
+                    <div className="shrink-0 w-12 h-16 relative rounded overflow-hidden">
                       {item.poster_path ? (
                         <Image
                           src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
@@ -139,7 +139,7 @@ export default function ListThemeFamilyFeud({
 
                     {/* Rating Stars */}
                     {item.userRating && (
-                      <div className="flex-shrink-0">
+                      <div className="shrink-0">
                         <span className="text-yellow-400 text-lg">
                           {"★".repeat(item.userRating)}
                           {"☆".repeat(5 - item.userRating)}

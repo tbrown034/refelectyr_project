@@ -93,7 +93,7 @@ export default function ListThemeAwards({
 
             <div className="relative flex flex-col sm:flex-row items-center gap-6">
               {/* Large Poster */}
-              <div className="flex-shrink-0 w-40 h-60 relative rounded-xl overflow-hidden shadow-2xl ring-4 ring-yellow-400/50">
+              <div className="shrink-0 w-40 h-60 relative rounded-xl overflow-hidden shadow-2xl ring-4 ring-yellow-400/50">
                 {winner.poster_path ? (
                   <Image
                     src={`https://image.tmdb.org/t/p/w500${winner.poster_path}`}

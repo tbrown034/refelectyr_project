@@ -106,7 +106,7 @@ export default function SavedRecommendationsPage() {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
         {/* Header */}
-        <div className="p-6 border-b dark:border-gray-700 bg-gradient-to-r from-purple-500 to-blue-500">
+        <div className="p-6 border-b dark:border-gray-700 bg-linear-to-r from-purple-500 to-blue-500">
           <h1 className="text-3xl font-bold text-white mb-2">{list.title}</h1>
           {sourceList && (
             <div className="text-white opacity-90">
@@ -160,7 +160,7 @@ export default function SavedRecommendationsPage() {
                     className="flex flex-col md:flex-row gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
                   >
                     {/* Poster image or placeholder */}
-                    <div className="flex-shrink-0 w-full md:w-20 h-28 bg-gray-200 dark:bg-gray-600 rounded overflow-hidden">
+                    <div className="shrink-0 w-full md:w-20 h-28 bg-gray-200 dark:bg-gray-600 rounded overflow-hidden">
                       {posterPath ? (
                         <Link href={detailPath}>
                           <div className="relative w-full h-full">
@@ -235,7 +235,7 @@ export default function SavedRecommendationsPage() {
               href="/lists"
               className="inline-flex items-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors text-sm sm:text-base"
             >
-              <ArrowLeftIcon className="h-5 w-5 flex-shrink-0" />
+              <ArrowLeftIcon className="h-5 w-5 shrink-0" />
               <span>Back to Lists</span>
             </Link>
 
@@ -245,7 +245,7 @@ export default function SavedRecommendationsPage() {
                 href={`/lists/${type}/recommendations/${sourceList.id}`}
                 className="inline-flex items-center gap-2 px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 active:bg-purple-800 transition-colors text-sm sm:text-base"
               >
-                <SparklesIcon className="h-5 w-5 flex-shrink-0" />
+                <SparklesIcon className="h-5 w-5 shrink-0" />
                 <span>Generate New Recommendations</span>
               </Link>
             )}
@@ -255,7 +255,7 @@ export default function SavedRecommendationsPage() {
               onClick={handleDeleteList}
               className="inline-flex items-center gap-2 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors text-sm sm:text-base ml-auto"
             >
-              <TrashIcon className="h-5 w-5 flex-shrink-0" />
+              <TrashIcon className="h-5 w-5 shrink-0" />
               <span>Delete List</span>
             </button>
           </div>

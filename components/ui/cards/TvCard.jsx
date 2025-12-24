@@ -50,7 +50,7 @@ export default function TvCard({ show }) {
             </div>
           </div>
 
-          <div className="h-1.5 w-full bg-gradient-to-r from-purple-500 via-purple-600 to-blue-600"></div>
+          <div className="h-1.5 w-full bg-linear-to-r from-purple-500 via-purple-600 to-blue-600"></div>
 
           <div className="p-5 flex-grow flex flex-col bg-white dark:bg-gray-800">
             <h3 className="font-bold text-lg text-gray-900 dark:text-white line-clamp-2 mb-1">

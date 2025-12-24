@@ -228,12 +228,12 @@ export default function MyListsPage() {
             className="object-cover blur-sm"
             priority={false}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-gray-900/60 to-transparent"></div>
         </div>
 
         <Link href={path} className="block h-full">
           <div className="relative z-10 p-4 flex items-center">
-            <div className="flex-shrink-0 mr-4">
+            <div className="shrink-0 mr-4">
               {isRecommendation ? (
                 <div className="relative w-16 h-20 rounded overflow-hidden bg-purple-100 dark:bg-purple-900 flex items-center justify-center">
                   <SparklesIcon className="h-8 w-8 text-purple-500 dark:text-purple-300" />
@@ -261,11 +261,11 @@ export default function MyListsPage() {
             <div className="flex-grow min-w-0">
               <div className="flex items-center">
                 {isRecommendation ? (
-                  <SparklesIcon className="flex-shrink-0 h-5 w-5 text-purple-500 mr-1.5" />
+                  <SparklesIcon className="shrink-0 h-5 w-5 text-purple-500 mr-1.5" />
                 ) : type === "movie" ? (
-                  <FilmIcon className="flex-shrink-0 h-5 w-5 text-blue-500 mr-1.5" />
+                  <FilmIcon className="shrink-0 h-5 w-5 text-blue-500 mr-1.5" />
                 ) : (
-                  <TvIcon className="flex-shrink-0 h-5 w-5 text-purple-500 mr-1.5" />
+                  <TvIcon className="shrink-0 h-5 w-5 text-purple-500 mr-1.5" />
                 )}
                 <h2 className="text-lg font-semibold truncate">{list.title}</h2>
               </div>
@@ -290,7 +290,7 @@ export default function MyListsPage() {
               </p>
             </div>
 
-            <div className="flex-shrink-0 ml-4">
+            <div className="shrink-0 ml-4">
               <div className="h-8 w-8 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900 transition-colors">
                 <ArrowRightIcon className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
               </div>
@@ -414,7 +414,7 @@ export default function MyListsPage() {
           {/* Primary CTA - Create a List */}
           <Link
             href="/create"
-            className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl text-lg font-medium"
+            className="flex items-center justify-center gap-3 px-8 py-4 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl text-lg font-medium"
           >
             <SparklesIcon className="h-6 w-6" />
             Create Your First List
@@ -498,13 +498,13 @@ export default function MyListsPage() {
           transition={{ duration: 0.4 }}
           className={`mb-6 p-4 rounded-xl shadow-md ${
             isAtLimit
-              ? "bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/30 dark:to-red-800/30 border border-red-200 dark:border-red-800/50"
-              : "bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-900/30 dark:to-amber-800/30 border border-amber-200 dark:border-amber-800/50"
+              ? "bg-linear-to-r from-red-50 to-red-100 dark:from-red-900/30 dark:to-red-800/30 border border-red-200 dark:border-red-800/50"
+              : "bg-linear-to-r from-amber-50 to-amber-100 dark:from-amber-900/30 dark:to-amber-800/30 border border-amber-200 dark:border-amber-800/50"
           }`}
         >
           <div className="flex items-start gap-3">
             <ExclamationCircleIcon
-              className={`h-6 w-6 flex-shrink-0 mt-0.5 ${
+              className={`h-6 w-6 shrink-0 mt-0.5 ${
                 isAtLimit
                   ? "text-red-500 dark:text-red-400"
                   : "text-amber-500 dark:text-amber-400"

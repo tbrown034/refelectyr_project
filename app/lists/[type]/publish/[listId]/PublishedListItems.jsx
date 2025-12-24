@@ -90,7 +90,7 @@ export default function PublishedListItems({
             `}
           >
             {/* Rank */}
-            <div className="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3 font-semibold text-blue-800 dark:text-blue-100">
+            <div className="shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3 font-semibold text-blue-800 dark:text-blue-100">
               {index + 1}
             </div>
 
@@ -100,7 +100,7 @@ export default function PublishedListItems({
               className="flex items-center flex-grow min-w-0 group mr-2 cursor-pointer"
               title={`View details for ${title}`}
             >
-              <div className="flex-shrink-0 w-10 h-14 relative mr-3 bg-gray-200 dark:bg-gray-600 rounded">
+              <div className="shrink-0 w-10 h-14 relative mr-3 bg-gray-200 dark:bg-gray-600 rounded">
                 <Image
                   src={posterPath}
                   alt={`${title} poster`}
@@ -124,7 +124,7 @@ export default function PublishedListItems({
             </Link>
 
             {/* Action Buttons */}
-            <div className="flex-shrink-0 flex items-center space-x-1">
+            <div className="shrink-0 flex items-center space-x-1">
               {/* Reorder Buttons */}
               <div className="flex flex-col">
                 {!isFirstItem && (

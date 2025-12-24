@@ -59,7 +59,7 @@ export default function PublishPageActions({
             : `Start a new temporary ${pageTypeLabel} list (clears current temporary list)`
         }
       >
-        <PlusIcon className="h-5 w-5 flex-shrink-0" />
+        <PlusIcon className="h-5 w-5 shrink-0" />
         <span>New {pageTypeLabel} List</span>
       </button>
 
@@ -73,7 +73,7 @@ export default function PublishPageActions({
             : "bg-purple-600 text-white hover:bg-purple-700 active:bg-purple-800"
         }`}
       >
-        <SparklesIcon className="h-5 w-5 flex-shrink-0" />
+        <SparklesIcon className="h-5 w-5 shrink-0" />
         <span>Get Recommendations</span>
       </button>
 
@@ -82,7 +82,7 @@ export default function PublishPageActions({
         href="/"
         className="inline-flex items-center gap-2 px-4 py-3 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 active:bg-gray-400 dark:active:bg-gray-400 transition-colors text-sm sm:text-base shadow-sm"
       >
-        <ArrowLeftIcon className="h-5 w-5 flex-shrink-0" />
+        <ArrowLeftIcon className="h-5 w-5 shrink-0" />
         <span>Back to Home</span>
       </Link>
     </div>
