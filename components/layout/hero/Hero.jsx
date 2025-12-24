@@ -5,7 +5,6 @@ import ScrollingMovies from "./scrollingMedia/ScrollingMovies";
 // import ScrollingTV from "./scrollingMedia/ScrollingTV";
 import { DEFAULT_YEAR } from "@/library/utils/defaults";
 import HeroList from "./HeroList";
-import HeroYearSelector from "./HeroYearSelector";
 
 export default async function Hero({ searchParams }) {
   const year = searchParams?.year || DEFAULT_YEAR;
@@ -20,10 +19,7 @@ export default async function Hero({ searchParams }) {
         <ScrollingMovies year={year} />
         {/* NOTE: TV kept in code but hidden from UI for movie-focused MVP */}
         {/* <ScrollingTV year={year} /> */}
-        <div className="flex justify-center mt-4 mb-6">
-          <HeroYearSelector />
-        </div>
-        <div className="mb-16">
+        <div className="mb-16 mt-4">
           <HeroList />
         </div>
       </div>
