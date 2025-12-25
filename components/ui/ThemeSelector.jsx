@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { LIST_THEMES } from "@/library/contexts/ListContext";
@@ -87,7 +86,9 @@ export default function ThemeSelector({
   onThemeChange,
   onColorChange,
 }) {
-  console.log(`${LOG_PREFIX} Rendering with theme: ${selectedTheme}, color: ${selectedColor}`);
+  console.log(
+    `${LOG_PREFIX} Rendering with theme: ${selectedTheme}, color: ${selectedColor}`
+  );
 
   return (
     <div className="space-y-6">
